@@ -24,6 +24,33 @@ const s = (v: number, se: number | null = null): Score => ({ v, se, setting: 'ma
 const model = (id: string, scores: Record<string, Score>, extra: Partial<Model> = {}): Model =>
   ({ id, name: id, org: 'Lab', released: '2026-09-01', open: false, eci: 150, price: null, scores, ...extra });
 
+describe('ties and decisions', () => {
+  it('a tie grazes both fighters for the same small amount', () => {
+    const a = model('a', { b1: s(60, 2) }), b = model('b', { b1: s(59, 2) });
+    const p = planFight(data([a, b]), a, b, ['r1']);
+    expect(p.rounds[0].winner).toBe(-1);
+    expect(p.rounds[0].graze).toEqual([3, 3]);
+    expect(p.hp).toEqual([97, 97]);
+    expect(p.decision).toBe('draw');
+  });
+  it('a graze never knocks anyone out', () => {
+    const a = model('a', { b1: s(90), b2: s(50, 2) }), b = model('b', { b1: s(41), b2: s(50, 2) });
+    const p = planFight(data([a, b]), a, b, ['r1', 'r2']); // b falls to 2 HP, then a tie
+    expect(p.hp[1]).toBe(1);
+    expect(p.ko).toBe(false);
+    expect(p.rounds[1].graze).toEqual([3, 1]);
+  });
+  it('more HP and more rounds is unanimous; more HP but fewer rounds is split', () => {
+    const d = data([]);
+    const a = model('a', { b1: s(90), b2: s(40) }), b = model('b', { b1: s(80), b2: s(45) });
+    const unanimous = planFight(d, a, b, ['r1', 'r1', 'r2']); // a wins 2 rounds
+    expect([unanimous.winner, unanimous.decision]).toEqual([0, 'unanimous']);
+    const c = model('c', { b1: s(70), b2: s(50) }), e = model('e', { b1: s(72), b2: s(20) });
+    const split = planFight(d, c, e, ['r1', 'r1', 'r2']); // e wins 2 small rounds, c one big one
+    expect([split.winner, split.decision]).toEqual([0, 'split']);
+  });
+});
+
 describe('averaged rounds', () => {
   const avg = (models: Model[]) => { const d = data(models); d.rounds[0] = { ...d.rounds[0], combine: 'average' }; return d; };
   it('averages the gaps over every benchmark both have, with a combined margin', () => {

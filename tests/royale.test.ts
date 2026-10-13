@@ -38,12 +38,14 @@ describe('planRoyale', () => {
     expect(r.winner).toBe(0);
   });
 
-  it('a two-model royale deals the same damage as a fight (outside averaged rounds)', () => {
+  it('a two-model royale lands the same hits as a fight (outside averaged rounds)', () => {
     const [a, b] = data.models;
     const rounds = data.defaultRounds.filter((id) => !data.rounds.find((r) => r.id === id)!.combine);
     const fight = planFight(data, a, b, rounds);
     const royale = planRoyale(data, [a, b], rounds);
-    expect(royale.hp).toEqual(fight.hp);
+    // royales have no tie graze (a fighter inside the margin dodges), so compare the hits round by round
+    const n = Math.min(fight.rounds.length, royale.rounds.length);
+    expect(royale.rounds.slice(0, n).map((R) => R.hits[0]?.dmg ?? 0)).toEqual(fight.rounds.slice(0, n).map((R) => R.dmg));
   });
 
   it('plays a full 8-model royale on the real data', () => {

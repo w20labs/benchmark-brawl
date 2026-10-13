@@ -10,6 +10,8 @@ export const PRICE_POINTS_PER_DOUBLING = 10;
 export const PRICE_TIE_RATIO = 1.15;
 /** Two scores closer than this many standard errors (combined) are a statistical tie. */
 export const TIE_Z = 1.96;
+/** A tie still grazes both fighters for this much HP. It never knocks anyone out (it stops at 1 HP). */
+export const TIE_GRAZE = 3;
 
 export type WeaponId = 'mg' | 'rocket' | 'meteor' | 'laser' | 'tie';
 export const WEAPONS: { id: Exclude<WeaponId, 'tie'>; name: string; maxPoints: number }[] = [
@@ -38,6 +40,8 @@ export type RoundResult = {
   points: number;
   dmg: number;
   weapon: WeaponId;
+  /** HP each fighter lost to a tie's graze (0 unless the round was a tie). */
+  graze: [number, number];
   hpBefore: [number, number];
   hpAfter: [number, number];
 };
@@ -49,6 +53,8 @@ export type FightResult = {
   /** -1 draw, else the winner's index. */
   winner: -1 | 0 | 1;
   ko: boolean;
+  /** How it was won. Without a K.O., the most HP wins "by decision": unanimous if it also won more rounds, split if not. */
+  decision: 'ko' | 'unanimous' | 'split' | 'draw';
   roundsWon: [number, number];
 };
 
@@ -63,7 +69,7 @@ export function pickBench(data: BrawlData, round: Round, a: Model, b: Model): Be
   return null;
 }
 
-export function judgeRound(data: BrawlData, round: Round, a: Model, b: Model): Omit<RoundResult, 'hpBefore' | 'hpAfter'> {
+export function judgeRound(data: BrawlData, round: Round, a: Model, b: Model): Omit<RoundResult, 'hpBefore' | 'hpAfter' | 'graze'> {
   if (round.combine === 'average') {
     const shared = round.benches.map((id) => benchById(data, id)).filter((bench) => bench.kind === 'score' && hasBench(bench, a) && hasBench(bench, b));
     if (shared.length > 1) return { round, ...compareAverage(round, shared, a, b) };
@@ -75,7 +81,7 @@ export function judgeRound(data: BrawlData, round: Round, a: Model, b: Model): O
  * Averages over several benchmarks both fighters have: the gap is the mean of the per-benchmark gaps, and the
  * margin of error combines all of theirs (it shrinks as more benchmarks agree). Compares like with like only.
  */
-export function compareAverage(round: Round, benches: Benchmark[], a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter'> {
+export function compareAverage(round: Round, benches: Benchmark[], a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter' | 'graze'> {
   const n = benches.length;
   const parts = benches.map((bench) => ({ bench, values: [a.scores[bench.id].v, b.scores[bench.id].v] as [number, number] }));
   const mean = (k: 0 | 1) => Math.round((parts.reduce((s, p) => s + p.values[k], 0) / n) * 10) / 10;
@@ -94,7 +100,7 @@ export function compareAverage(round: Round, benches: Benchmark[], a: Model, b: 
 }
 
 /** Compares two models on one benchmark (which both must have). Shared by fights and royales. */
-export function compareOn(bench: Benchmark | null, a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter'> {
+export function compareOn(bench: Benchmark | null, a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter' | 'graze'> {
   const none = { bench, values: [null, null] as [null, null], winner: null, tie: null, margin: null, points: 0, dmg: 0, weapon: 'tie' as const };
   if (!bench) return none;
   if (bench.kind === 'price') {
@@ -127,11 +133,15 @@ export function planFight(data: BrawlData, a: Model, b: Model, roundIds: string[
     if (!round) continue;
     const r = judgeRound(data, round, a, b);
     const hpBefore: [number, number] = [...hp];
+    const graze: [number, number] = [0, 0];
     if (r.winner === 0 || r.winner === 1) hp[1 - r.winner] = Math.max(0, hp[1 - r.winner] - r.dmg);
-    rounds.push({ ...r, hpBefore, hpAfter: [...hp] });
+    else if (r.winner === -1) for (const k of [0, 1] as const) { graze[k] = Math.max(0, Math.min(TIE_GRAZE, hp[k] - 1)); hp[k] -= graze[k]; }
+    rounds.push({ ...r, graze, hpBefore, hpAfter: [...hp] });
   }
   const roundsWon: [number, number] = [rounds.filter((r) => r.winner === 0).length, rounds.filter((r) => r.winner === 1).length];
-  return { fighters: [a, b], rounds, hp, winner: hp[0] === hp[1] ? -1 : hp[0] > hp[1] ? 0 : 1, ko: hp[0] === 0 || hp[1] === 0, roundsWon };
+  const winner = hp[0] === hp[1] ? -1 : hp[0] > hp[1] ? 0 : 1, ko = hp[0] === 0 || hp[1] === 0;
+  const decision = winner === -1 ? 'draw' : ko ? 'ko' : roundsWon[winner] > roundsWon[1 - winner] ? 'unanimous' : 'split';
+  return { fighters: [a, b], rounds, hp, winner, ko, decision, roundsWon };
 }
 
 /** "73.6" for scores, "$4.00" for prices. */

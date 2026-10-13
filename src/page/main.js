@@ -395,7 +395,7 @@ function startFight(opts = {}) {
   F = { daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
   setView('arena');
   $('arena').classList.remove('royale');
-  $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · within the margin of error = tie';
+  $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
   $('rec').hidden = !F.recording;
   $('arena').classList.toggle('recording', F.recording);
   for (const k of [0, 1]) {
@@ -442,12 +442,17 @@ function roundBar(R, shown, result) {
   }
   $('rres').textContent = result || '';
 }
+/** "−3 HP each", or each side's number when one fighter is down to its last HP. */
+const grazeText = (R) => (R.graze[0] === R.graze[1] ? `−${R.graze[0]} HP each` : `−${R.graze[0]} / −${R.graze[1]} HP`);
+/** "by K.O.", "by unanimous decision" or "by split decision". */
+const decisionText = (p) => (p.ko ? 'by K.O.' : p.decision === 'unanimous' ? 'by unanimous decision' : p.decision === 'split' ? 'by split decision' : '');
 function resultLine(R) {
   const [a, b] = F.plan.fighters;
   if (R.winner == null) return 'No shared benchmark for this round. No damage.';
-  if (R.tie === 'margin') return `Within the margin of error (±${R.margin}). Bullets collide, no damage.`;
-  if (R.tie === 'price') return 'Prices within 15% of each other. Crossfire, no damage.';
-  if (R.winner === -1) return 'Dead even. Crossfire, no damage.';
+  if (R.winner === -1) {
+    const why = R.tie === 'margin' ? `Within the margin of error (±${R.margin})` : R.tie === 'price' ? 'Prices within 15% of each other' : 'Dead even';
+    return `${why}. Crossfire grazes both: ${grazeText(R)}.`;
+  }
   const w = R.winner === 0 ? a : b;
   const by = R.bench.kind === 'price' ? `${(Math.max(...R.values) / Math.min(...R.values)).toFixed(1)}× cheaper` : `by ${R.points} point${R.points === 1 ? '' : 's'}`;
   return `${F.special?.[R.winner] === F.plan.rounds.indexOf(R) ? moveNameFor(w.org) : weaponName(R.weapon)}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
@@ -485,7 +490,7 @@ function finish() {
   F.hp = [...p.hp]; setHp(false);
   if (w >= 0) { F.pose[w] = 'win'; F.pose[1 - w] = p.ko ? 'down' : 'hurt'; }
   if (p.ko) { banner('K.O.!', `${p.fighters[w].name} wins`, 'ko'); sfx.ko(); }
-  else if (w >= 0) { banner(`${p.fighters[w].name.toUpperCase()} WINS`, 'On points: more HP left after the last round'); sfx.win(); }
+  else if (w >= 0) { banner(`${p.fighters[w].name.toUpperCase()} WINS`, p.decision === 'unanimous' ? 'By unanimous decision: more HP and more rounds won' : (p.roundsWon[0] === p.roundsWon[1] ? 'By split decision: same rounds won, more HP left' : 'By split decision: fewer rounds won, but more HP left')); sfx.win(); }
   else banner('DRAW', 'Same HP after the last round');
 }
 function frame(now) {
@@ -617,6 +622,17 @@ function updateFx(fx, R, dt) {
     if (fx.kind === 'tie') {
       const mid = (F.x[0] + F.x[1]) / 2;
       fx.shots = fx.shots.filter((b) => { if ((b.vx > 0 && b.x < mid) || (b.vx < 0 && b.x > mid)) return true; if (b.k === 0) { burstSparks(mid, b.y, 5, '#FFE066'); sfx.clink(); } return false; });
+      if (!fx.grazed && fx.fired >= fx.toFire && !fx.shots.length) {
+        fx.grazed = true;
+        F.hp = [...R.hpAfter]; setHp(false);
+        for (const k of [0, 1]) {
+          if (!R.graze[k]) continue;
+          F.flash[k] = 0.1; F.pose[k] = 'hurt';
+          burstSparks(F.x[k] - dirOf(k) * 20, FLOOR - 110, 6, '#FFE066');
+          F.floats.push({ x: F.x[k], y: FLOOR - 200, text: `−${R.graze[k]}`, c: '#FF6B6B', life: 1.1, size: 20 });
+        }
+        sfx.ricochet();
+      }
     } else {
       fx.shots = fx.shots.filter((b) => {
         const hitX = F.x[l] - dirOf(w) * 26;
@@ -806,14 +822,14 @@ function drawClipOverlay() {
 function verdictText() {
   const p = F.plan;
   if (p.winner < 0) return `Draw · ${p.hp[0]} HP each`;
-  return `${p.fighters[p.winner].name} wins ${p.ko ? 'by K.O.' : 'on points'} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds`;
+  return `${p.fighters[p.winner].name} wins ${decisionText(p)} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds`;
 }
 
 // ---------- result ----------
 function shareText(plan = F.plan) {
   const [a, b] = plan.fighters;
   const row = plan.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
-  const how = plan.winner < 0 ? 'Draw' : `${plan.fighters[plan.winner].name} wins ${plan.ko ? 'by K.O.' : 'on points'} (${plan.hp[plan.winner]} HP left)`;
+  const how = plan.winner < 0 ? 'Draw' : `${plan.fighters[plan.winner].name} wins ${decisionText(plan)} (${plan.hp[plan.winner]} HP left)`;
   return [`🥊 Benchmark Brawl`, `${a.name} vs ${b.name} · ${plan.roundsWon[0]}–${plan.roundsWon[1]}`, row, how, `${SITE_URL}${hashFor(a.id, b.id, rounds)}`].join('\n');
 }
 function showResult() {
@@ -823,8 +839,7 @@ function showResult() {
   const w = p.winner >= 0 ? p.fighters[p.winner] : null;
   $('verdict').style.setProperty('--c', w ? F.colors[p.winner] : '#F3F4F8');
   $('verdict').textContent = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
-  const upset = w && p.roundsWon[p.winner] < p.roundsWon[1 - p.winner];
-  $('verdictSub').textContent = !w ? `Same HP after the last round` : `${p.ko ? 'by K.O.' : 'on points'} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${upset ? ' · an upset: fewer rounds, bigger wins' : ''}`;
+  $('verdictSub').textContent = !w ? `Same HP after the last round` : `${decisionText(p)} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${p.decision === 'split' ? (p.roundsWon[0] === p.roundsWon[1] ? ': same rounds won, bigger wins' : ': fewer rounds, but bigger wins') : ''}`;
   drawVictory($('winCv'), p, F.looks);
   const rec = F.daily ? daily.days[F.daily.no] : null;
   $('yourCall').hidden = !F.daily;
@@ -845,7 +860,7 @@ function showResult() {
         R.parts ? h('span', { class: 't' }, R.parts.map((pt) => `${pt.bench.name} ${pt.values[k].toFixed(1)}`).join(' · '))
           : s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
     }),
-    h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? (R.tie === 'margin' ? 'tie (margin)' : 'tie') : `−${R.dmg} HP`))));
+    h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? h('span', null, R.tie === 'margin' ? 'tie (margin)' : 'tie', h('span', { class: 't' }, grazeText(R))) : `−${R.dmg} HP`))));
   $('share').textContent = F.daily ? dailyText(p, rec) : shareText();
   $('backToBracket').hidden = !fromBracket;
   $('result').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
@@ -954,7 +969,7 @@ function showBracket() {
   $('bracket').replaceChildren(...bracket.rounds.map((ms, ri) => h('div', { class: 'bcol' }, h('h3', null, titles[ri]), ...ms.map((m) => {
     const side = (x, k) => h('div', { class: `p ${m.winner === x ? 'w' : ''}`, style: `--c:${colorOf(x)}` }, h('span', { class: 'n' }, `${bracket.seeds.indexOf(x) + 1}. ${x.name}`), h('span', { class: 'hp2' }, `${m.fight.hp[k]} HP`));
     return h('button', { type: 'button', class: 'match', title: 'Watch this fight', onclick: () => { picks = [m.a.id, m.b.id]; fromBracket = true; startFight(); } },
-      side(m.a, 0), side(m.b, 1), h('span', { class: 'note2' }, m.tiebreak ? 'Draw: higher seed advances' : m.fight.ko ? 'K.O.' : `On points · ${m.fight.roundsWon[0]}–${m.fight.roundsWon[1]}`));
+      side(m.a, 0), side(m.b, 1), h('span', { class: 'note2' }, m.tiebreak ? 'Draw: higher seed advances' : m.fight.ko ? 'K.O.' : `${m.fight.decision === 'unanimous' ? 'Unanimous' : 'Split'} decision · ${m.fight.roundsWon[0]}–${m.fight.roundsWon[1]}`));
   }))));
   $('tshare').textContent = tournamentText();
   $('tourney').scrollIntoView({ block: 'start' });
