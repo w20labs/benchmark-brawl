@@ -7,6 +7,8 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from
 import { build } from 'esbuild';
 
 const siteUrl = process.argv[2] || '';
+/** Anonymous, cookie-free visit counts for the published site (dashboard: benchmark-brawl.goatcounter.com). */
+const GOATCOUNTER = 'https://benchmark-brawl.goatcounter.com/count';
 const OUT = '_site';
 
 const data = readFileSync('data/brawl.json', 'utf8');
@@ -46,6 +48,7 @@ ${head}
 ${body}
 <script type="application/json" id="brawl-data">${safe(data)}</script>
 <script>${js.replace(/<\/script/gi, '<\\/script')}</script>
+${siteUrl ? `<script data-goatcounter="${GOATCOUNTER}" async src="https://gc.zgo.at/count.js"></script>` : ''}
 </body>
 </html>
 `;

@@ -58,6 +58,8 @@ The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-dat
 
 **Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). FrontierCode lets each lab use its own agent, so it is only used for Coding when DeepSWE doesn't cover both models. There is no speed round: we found no free, independent speed data whose terms allow reuse.
 
+Visits to the site are counted anonymously with [GoatCounter](https://www.goatcounter.com/) (no cookies, no personal data).
+
 Benchmark Brawl is independent and not affiliated with any AI lab, Epoch AI, Datacurve, Cognition or OpenRouter.
 
 ## Run it locally

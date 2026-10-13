@@ -298,6 +298,7 @@ function startFight(opts = {}) {
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
   setHp(true);
   writeHashFight();
+  if (!F.recording) track(`fight/${a.id}-vs-${b.id}`);
   $('arena').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   enterPhase();
   cancelAnimationFrame(raf);
@@ -696,6 +697,9 @@ function backHome() {
   $('select').scrollIntoView({ block: 'start' });
 }
 
+/** Anonymous GoatCounter event (published site only; a no-op locally or when blocked). */
+function track(path) { try { window.goatcounter?.count?.({ path, event: true }); } catch { /* fine */ } }
+
 let toastTimer = 0;
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 2200); }
 async function copyText(text, done) {
@@ -706,7 +710,7 @@ async function copyText(text, done) {
 $('fight').addEventListener('click', () => startFight());
 $('rematch').addEventListener('click', () => startFight());
 $('again').addEventListener('click', backHome);
-$('copy').addEventListener('click', () => copyText(shareText(), 'Copied result and link'));
+$('copy').addEventListener('click', () => { track('share'); copyText(shareText(), 'Copied result and link'); });
 $('skip').addEventListener('click', () => {
   if (!F || F.over) return endFight();
   F.i = F.plan.rounds.length - 1; F.fx = null; F.white = 0;
@@ -721,6 +725,7 @@ async function recordClip() {
   const types = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
   const mimeType = types.find((t) => MediaRecorder.isTypeSupported(t));
   if (!mimeType) return toast("This browser can't record clips");
+  track('clip');
   const stream = cv.captureStream(30);
   const a = audio();
   if (a) { recDest = a.createMediaStreamDestination(); master?.connect(recDest); for (const tr of recDest.stream.getAudioTracks()) stream.addTrack(tr); }
@@ -755,6 +760,7 @@ function openTournament() {
   const pool = DATA.models.filter((m) => inClass(m, classId));
   bracket = runTournament(DATA, pool, rounds);
   if (!bracket) return toast('A tournament needs at least 8 fighters in this weight class');
+  track(`tournament/${classId}`);
   sfx.bell();
   showBracket();
 }
@@ -781,7 +787,7 @@ function tournamentText() {
   return [`🏆 Benchmark Brawl tournament · ${CLASSES.find((c) => c.id === classId).name}`, `Champion: ${bracket.champion.name}`, `Final: beat ${loser.name}`, `Semifinalists: ${semis.join(', ')}`, `${SITE_URL}#t=1&r=${rounds.join(',')}${classPart()}`].join('\n');
 }
 $('watchFinal').addEventListener('click', () => { const f = bracket.rounds.at(-1)[0]; picks = [f.a.id, f.b.id]; fromBracket = true; startFight(); });
-$('tcopy').addEventListener('click', () => copyText(tournamentText(), 'Copied bracket and link'));
+$('tcopy').addEventListener('click', () => { track('share-bracket'); copyText(tournamentText(), 'Copied bracket and link'); });
 
 // ---------- start ----------
 const shared = readHash();
