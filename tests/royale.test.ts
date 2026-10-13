@@ -38,10 +38,11 @@ describe('planRoyale', () => {
     expect(r.winner).toBe(0);
   });
 
-  it('a two-model royale deals the same damage as a fight', () => {
+  it('a two-model royale deals the same damage as a fight (outside averaged rounds)', () => {
     const [a, b] = data.models;
-    const fight = planFight(data, a, b, data.defaultRounds);
-    const royale = planRoyale(data, [a, b], data.defaultRounds);
+    const rounds = data.defaultRounds.filter((id) => !data.rounds.find((r) => r.id === id)!.combine);
+    const fight = planFight(data, a, b, rounds);
+    const royale = planRoyale(data, [a, b], rounds);
     expect(royale.hp).toEqual(fight.hp);
   });
 

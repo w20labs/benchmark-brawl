@@ -57,7 +57,8 @@ Moves live in [`src/page/specials.js`](src/page/specials.js). They're affectiona
 
 | Rule | Detail |
 |---|---|
-| One benchmark per round | A round lists benchmarks in order (Coding: DeepSWE, then FrontierCode). The fight uses the first one **both** models have, so it always compares like with like |
+| One benchmark per round | A round lists benchmarks in order (Math: FrontierMath Tier 4, then Tiers 1–3, then OTIS Mock AIME). The fight uses the first one **both** models have, so it always compares like with like |
+| Coding is averaged | Coding averages the gap over **every** coding benchmark both models have (DeepSWE, SWE-bench Verified, MirrorCode, WeirdML v3), with their margins of error combined. One noisy benchmark can't decide it alone. In a battle royale, Coding uses the single benchmark most fighters have |
 | Best reported setting | Each model's best score across its reasoning settings (low, high, max…); the scorecard says which |
 | Damage | 2 × the score gap in percentage points |
 | Ties | A gap inside the combined 95% margin of error is a tie: no damage. Rounds without a published margin only tie on equal scores, and the game says so |
@@ -73,18 +74,20 @@ The rules live in [`src/fight.ts`](src/fight.ts) and [`src/league.ts`](src/leagu
 
 | Data | Source | Terms |
 |---|---|---|
-| Math, Science, Facts, Puzzles, Chess, Capabilities Index, model metadata | [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks), Epoch's own runs | CC BY 4.0 |
-| Coding: DeepSWE | [Datacurve](https://deepswe.datacurve.ai/), as republished by Epoch AI | The original source's terms |
-| Coding: FrontierCode | [Cognition](https://cognition.com/frontiercode), as republished by Epoch AI | The original source's terms |
-| Prices | [OpenRouter](https://openrouter.ai/models) public model list | Public list prices |
+| Coding (SWE-bench Verified, MirrorCode), Math, Science, Facts, Puzzles, Chess, Capabilities Index, model metadata | [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks), Epoch's own runs | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| Coding: DeepSWE | [Datacurve](https://deepswe.datacurve.ai/), as republished by Epoch AI | Open-source benchmark ([Apache-2.0](https://github.com/datacurve-ai/deep-swe)); results credited to Datacurve |
+| Coding: WeirdML v3 | [Håvard Tveit Ihle](https://htihle.github.io/weirdml.html), as republished by Epoch AI. Each model runs in its maker's own coding agent | Credited to the author; no separate license published |
+| Prices | Each lab's own API list price, via [models.dev](https://models.dev) | [MIT](https://github.com/sst/models.dev) |
+
+**Changes we make to Epoch's data:** scores are shown as percentages, each model shows its best reasoning setting, and Coding averages the benchmarks two models share. Third-party hosts' prices are left out on purpose: they often undercut the lab for open-weight models.
 
 The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Numbers are never edited by hand. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
 
-**Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). FrontierCode lets each lab use its own agent, so it is only used for Coding when DeepSWE doesn't cover both models. There is no speed round: we found no free, independent speed data whose terms allow reuse.
+**Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). We don't use FrontierCode (its publisher's terms don't allow republishing) or Terminal-Bench (Epoch's copy is the older 2.0 version and stops in March 2026). There is no speed round: we found no free, independent speed data whose terms allow reuse.
 
 Visits to the site are counted anonymously with [GoatCounter](https://www.goatcounter.com/) (no cookies, no personal data).
 
-Benchmark Brawl is independent and not affiliated with any AI lab, Epoch AI, Datacurve, Cognition or OpenRouter.
+Benchmark Brawl is independent and not affiliated with any AI lab, Epoch AI, Datacurve, WeirdML or models.dev.
 
 ## Run it locally
 

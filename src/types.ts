@@ -19,6 +19,8 @@ export type Round = {
   id: string;
   name: string;
   benches: string[];
+  /** 'average': a 1v1 round averages the gaps over every benchmark in `benches` both fighters have. */
+  combine?: 'average';
 };
 
 export type Score = {
@@ -38,7 +40,9 @@ export type Price = {
   output: number;
   /** (3 × input + output) / 4: a common blend for typical chat traffic. */
   blended: number;
-  openrouterId: string;
+  /** Where the price comes from: the lab's own API, as listed on models.dev. */
+  provider: string;
+  modelsDevId: string;
 };
 
 export type Model = {

@@ -23,6 +23,32 @@ const s = (v: number, se: number | null = null): Score => ({ v, se, setting: 'ma
 const model = (id: string, scores: Record<string, Score>, extra: Partial<Model> = {}): Model =>
   ({ id, name: id, org: 'Lab', released: '2026-09-01', open: false, eci: 150, price: null, scores, ...extra });
 
+describe('averaged rounds', () => {
+  const avg = (models: Model[]) => { const d = data(models); d.rounds[0] = { ...d.rounds[0], combine: 'average' }; return d; };
+  it('averages the gaps over every benchmark both have, with a combined margin', () => {
+    const a = model('a', { b1: s(80, 2), b2: s(50, 2) }), b = model('b', { b1: s(70, 2), b2: s(46, 2) });
+    const d = avg([a, b]);
+    const r = judgeRound(d, d.rounds[0], a, b);
+    expect(r.parts?.map((p) => p.bench.id)).toEqual(['b1', 'b2']);
+    expect(r.values).toEqual([65, 58]); // gap 7 = mean of 10 and 4
+    expect(r.margin).toBe(3.9); // 1.96 * sqrt(4 × 2²) / 2
+    expect(r.winner).toBe(0);
+    expect(r.dmg).toBe(14);
+  });
+  it('falls back to the single shared benchmark', () => {
+    const a = model('a', { b1: s(80, 2), b2: s(50, 2) }), b = model('b', { b2: s(40, 2) });
+    const d = avg([a, b]);
+    const r = judgeRound(d, d.rounds[0], a, b);
+    expect(r.parts).toBeUndefined();
+    expect(r.bench?.id).toBe('b2');
+  });
+  it('a gap that one benchmark shows but the other cancels is a tie', () => {
+    const a = model('a', { b1: s(80, 1), b2: s(40, 1) }), b = model('b', { b1: s(76, 1), b2: s(43, 1) });
+    const d = avg([a, b]);
+    expect(judgeRound(d, d.rounds[0], a, b).winner).toBe(-1);
+  });
+});
+
 describe('judgeRound', () => {
   it('uses the first benchmark both fighters have', () => {
     const a = model('a', { b1: s(80), b2: s(50) }), b = model('b', { b2: s(40) });
@@ -52,7 +78,7 @@ describe('judgeRound', () => {
     expect([r.winner, r.dmg, r.weapon]).toEqual([0, 20, 'meteor']);
   });
   it('makes the cheaper model win the price round, by doublings', () => {
-    const p = (blended: number) => ({ input: blended, output: blended, blended, openrouterId: 'x' });
+    const p = (blended: number) => ({ input: blended, output: blended, blended, provider: 'x', modelsDevId: 'x' });
     const a = model('a', {}, { price: p(20) }), b = model('b', {}, { price: p(5) });
     const d = data([a, b]);
     const r = judgeRound(d, d.rounds[2], a, b);
@@ -95,7 +121,7 @@ describe('league', () => {
     expect(featuredFight([old, fresh], new Date('2026-10-12'))?.map((m) => m.id)).toEqual(['fresh', 'old']);
   });
   it('sorts fighters into weight classes', () => {
-    const cheap = model('c', {}, { open: true, price: { input: 0.1, output: 0.4, blended: 0.18, openrouterId: 'x' } });
+    const cheap = model('c', {}, { open: true, price: { input: 0.1, output: 0.4, blended: 0.18, provider: 'x', modelsDevId: 'x' } });
     expect(inClass(cheap, 'open') && inClass(cheap, 'budget') && !inClass(cheap, 'premium')).toBe(true);
   });
   it('runs an 8-seed bracket to one champion', () => {

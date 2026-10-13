@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-13T00:01:51.796Z",
+ "generatedAt": "2026-10-13T05:58:01.459Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -14,15 +14,51 @@
    }
   },
   {
-   "id": "frontiercode",
-   "name": "FrontierCode",
-   "what": "Long coding tasks, each lab in its own agent",
+   "id": "swebench",
+   "name": "SWE-bench Verified",
+   "what": "Fix real GitHub issues in open-source Python projects",
+   "kind": "score",
+   "epochRun": true,
+   "source": {
+    "name": "Epoch AI Benchmarking Hub",
+    "url": "https://epoch.ai/benchmarks",
+    "license": "CC BY 4.0"
+   }
+  },
+  {
+   "id": "mirrorcode",
+   "name": "MirrorCode",
+   "what": "Rebuild real software from its behaviour alone",
+   "kind": "score",
+   "epochRun": true,
+   "source": {
+    "name": "Epoch AI Benchmarking Hub",
+    "url": "https://epoch.ai/benchmarks",
+    "license": "CC BY 4.0"
+   }
+  },
+  {
+   "id": "weirdml",
+   "name": "WeirdML v3",
+   "what": "Unusual machine-learning coding tasks, each model in its maker's coding agent",
    "kind": "score",
    "epochRun": false,
    "source": {
-    "name": "FrontierCode by Cognition, via Epoch AI",
-    "url": "https://cognition.com/frontiercode",
+    "name": "WeirdML by Håvard Tveit Ihle, via Epoch AI",
+    "url": "https://htihle.github.io/weirdml.html",
     "license": "Original source terms (see their site)"
+   }
+  },
+  {
+   "id": "frontiermath-t4",
+   "name": "FrontierMath Tier 4",
+   "what": "The hardest research-level math problems",
+   "kind": "score",
+   "epochRun": true,
+   "source": {
+    "name": "Epoch AI Benchmarking Hub",
+    "url": "https://epoch.ai/benchmarks",
+    "license": "CC BY 4.0"
    }
   },
   {
@@ -99,14 +135,14 @@
   },
   {
    "id": "price",
-   "name": "OpenRouter list price",
-   "what": "Cheaper wins: dollars per million tokens, blended 3:1 input to output",
+   "name": "API list price",
+   "what": "Cheaper wins: the lab's own API price per million tokens, blended 3:1 input to output",
    "kind": "price",
    "epochRun": false,
    "source": {
-    "name": "OpenRouter model list",
-    "url": "https://openrouter.ai/models",
-    "license": "Public list prices"
+    "name": "models.dev (each lab's API prices)",
+    "url": "https://models.dev",
+    "license": "MIT"
    }
   }
  ],
@@ -116,13 +152,17 @@
    "name": "Coding",
    "benches": [
     "deepswe",
-    "frontiercode"
-   ]
+    "swebench",
+    "mirrorcode",
+    "weirdml"
+   ],
+   "combine": "average"
   },
   {
    "id": "math",
    "name": "Math",
    "benches": [
+    "frontiermath-t4",
     "frontiermath",
     "aime"
    ]
@@ -182,13 +222,24 @@
     "input": 4,
     "output": 20,
     "blended": 8,
-    "openrouterId": "anthropic/claude-opus-5.5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-5-5"
    },
    "scores": {
-    "frontiercode": {
-     "v": 54.6,
-     "se": null,
-     "setting": "medium"
+    "mirrorcode": {
+     "v": 77.4,
+     "se": 8.31,
+     "setting": "max"
+    },
+    "weirdml": {
+     "v": 31.2,
+     "se": 0.63,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 95,
+     "se": 4.12,
+     "setting": "max"
     },
     "frontiermath": {
      "v": 91.2,
@@ -228,7 +279,8 @@
     "input": 10,
     "output": 50,
     "blended": 20,
-    "openrouterId": "openai/gpt-6-astra"
+    "provider": "openai",
+    "modelsDevId": "gpt-6-astra"
    },
    "scores": {
     "deepswe": {
@@ -236,10 +288,20 @@
      "se": 1.46,
      "setting": "xhigh"
     },
-    "frontiercode": {
-     "v": 53.3,
-     "se": null,
-     "setting": "max"
+    "mirrorcode": {
+     "v": 46.7,
+     "se": 11.86,
+     "setting": "high"
+    },
+    "weirdml": {
+     "v": 42.2,
+     "se": 1,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 97.6,
+     "se": 2.44,
+     "setting": "medium"
     },
     "frontiermath": {
      "v": 93.7,
@@ -284,13 +346,19 @@
     "input": 2,
     "output": 10,
     "blended": 4,
-    "openrouterId": "openai/gpt-6.1-sol"
+    "provider": "openai",
+    "modelsDevId": "gpt-6.1-sol"
    },
    "scores": {
-    "frontiercode": {
-     "v": 50.2,
-     "se": null,
-     "setting": "medium"
+    "weirdml": {
+     "v": 35.5,
+     "se": 1.14,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 100,
+     "se": 0,
+     "setting": "max"
     },
     "frontiermath": {
      "v": 93.7,
@@ -335,13 +403,19 @@
     "input": 2,
     "output": 10,
     "blended": 4,
-    "openrouterId": "anthropic/claude-sonnet-5.5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-sonnet-5-5"
    },
    "scores": {
-    "frontiercode": {
-     "v": 52.1,
-     "se": null,
+    "weirdml": {
+     "v": 20,
+     "se": 0.83,
      "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 80.5,
+     "se": 6.27,
+     "setting": "max"
     },
     "frontiermath": {
      "v": 88.8,
@@ -381,13 +455,24 @@
     "input": 10,
     "output": 50,
     "blended": 20,
-    "openrouterId": "anthropic/claude-fable-5.1"
+    "provider": "anthropic",
+    "modelsDevId": "claude-fable-5-1"
    },
    "scores": {
-    "frontiercode": {
-     "v": 50.9,
-     "se": null,
-     "setting": "medium"
+    "mirrorcode": {
+     "v": 73.3,
+     "se": 9.17,
+     "setting": "high"
+    },
+    "weirdml": {
+     "v": 26,
+     "se": 0.7,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 87.8,
+     "se": 5.17,
+     "setting": "max"
     },
     "frontiermath": {
      "v": 90.2,
@@ -427,7 +512,8 @@
     "input": 5,
     "output": 25,
     "blended": 10,
-    "openrouterId": "anthropic/claude-opus-5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-5"
    },
    "scores": {
     "deepswe": {
@@ -435,10 +521,16 @@
      "se": 1.98,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 53.4,
-     "se": null,
-     "setting": "medium"
+    "weirdml": {
+     "v": 19,
+     "se": 0.89,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 73.2,
+     "se": 7.01,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fji3kMn49Jcr9t4whxcpjj4.eval"
     },
     "frontiermath": {
      "v": 85.6,
@@ -484,12 +576,18 @@
     "input": 2,
     "output": 10,
     "blended": 4,
-    "openrouterId": "openai/gpt-6-sol"
+    "provider": "openai",
+    "modelsDevId": "gpt-6-sol"
    },
    "scores": {
-    "frontiercode": {
-     "v": 49.3,
-     "se": null,
+    "weirdml": {
+     "v": 19.7,
+     "se": 0.66,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 90,
+     "se": 5.17,
      "setting": "max"
     },
     "frontiermath": {
@@ -530,7 +628,8 @@
     "input": 10,
     "output": 50,
     "blended": 20,
-    "openrouterId": "anthropic/claude-fable-5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-fable-5"
    },
    "scores": {
     "deepswe": {
@@ -538,10 +637,21 @@
      "se": 1.66,
      "setting": "xhigh"
     },
-    "frontiercode": {
-     "v": 53.5,
-     "se": null,
+    "mirrorcode": {
+     "v": 63.9,
+     "se": 10.4,
+     "setting": "high"
+    },
+    "weirdml": {
+     "v": 15.5,
+     "se": 1.05,
      "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 90.2,
+     "se": 4.6,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FReDAtJGGfRtrEGGWf4Zbsd.eval"
     },
     "frontiermath": {
      "v": 87,
@@ -587,10 +697,11 @@
    "open": false,
    "eci": 161.66,
    "price": {
-    "input": 2,
-    "output": 10,
-    "blended": 4,
-    "openrouterId": "openai/gpt-5.6-sol"
+    "input": 4,
+    "output": 20,
+    "blended": 8,
+    "provider": "openai",
+    "modelsDevId": "gpt-5.6-sol"
    },
    "scores": {
     "deepswe": {
@@ -598,10 +709,21 @@
      "se": 1.44,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 47.5,
-     "se": null,
-     "setting": "max"
+    "mirrorcode": {
+     "v": 20,
+     "se": 9.23,
+     "setting": "high"
+    },
+    "weirdml": {
+     "v": 15,
+     "se": 0.72,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 82.9,
+     "se": 5.95,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQJ5rJMVypB4PMxPcBGftc8.eval"
     },
     "frontiermath": {
      "v": 89.1,
@@ -647,7 +769,8 @@
     "input": 2,
     "output": 12,
     "blended": 4.5,
-    "openrouterId": "openai/gpt-5.6-terra"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.6-terra"
    },
    "scores": {
     "deepswe": {
@@ -655,10 +778,11 @@
      "se": 1.3,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 41.3,
-     "se": null,
-     "setting": "max"
+    "frontiermath-t4": {
+     "v": 70.7,
+     "se": 7.19,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZUygpkXqg3NjchXXfedAWV.eval"
     },
     "frontiermath": {
      "v": 86,
@@ -704,7 +828,8 @@
     "input": 5,
     "output": 30,
     "blended": 11.25,
-    "openrouterId": "openai/gpt-5.5"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.5"
    },
    "scores": {
     "deepswe": {
@@ -712,9 +837,20 @@
      "se": 3.3,
      "setting": "xhigh"
     },
-    "frontiercode": {
-     "v": 43,
-     "se": null,
+    "swebench": {
+     "v": 80.6,
+     "se": 1.8,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLbhPRqUkXrs5KJ7vyT4CR7.eval"
+    },
+    "mirrorcode": {
+     "v": 10,
+     "se": 6.04,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 72.5,
+     "se": 7.15,
      "setting": "xhigh"
     },
     "frontiermath": {
@@ -764,9 +900,16 @@
     "input": 30,
     "output": 180,
     "blended": 67.5,
-    "openrouterId": "openai/gpt-5.4-pro"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.4-pro"
    },
    "scores": {
+    "frontiermath-t4": {
+     "v": 58.5,
+     "se": 7.79,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FW6b3C8AeNC7CAFs5DQma8N.eval"
+    },
     "frontiermath": {
      "v": 82.5,
      "se": 2.26,
@@ -802,7 +945,8 @@
     "input": 5,
     "output": 25,
     "blended": 10,
-    "openrouterId": "anthropic/claude-opus-4.8"
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-4-8"
    },
    "scores": {
     "deepswe": {
@@ -810,10 +954,11 @@
      "se": 0.9,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 46.5,
-     "se": null,
-     "setting": "max"
+    "frontiermath-t4": {
+     "v": 56.1,
+     "se": 7.85,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJiqgqBTfkGx797uowZgJbk.eval"
     },
     "frontiermath": {
      "v": 80,
@@ -857,10 +1002,11 @@
    "open": true,
    "eci": 157.45,
    "price": {
-    "input": 0.73,
-    "output": 10,
-    "blended": 3.05,
-    "openrouterId": "moonshotai/kimi-k3"
+    "input": 3,
+    "output": 15,
+    "blended": 6,
+    "provider": "moonshotai",
+    "modelsDevId": "kimi-k3"
    },
    "scores": {
     "deepswe": {
@@ -868,10 +1014,16 @@
      "se": 2.31,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 44.2,
-     "se": null,
-     "setting": "none"
+    "weirdml": {
+     "v": 7.3,
+     "se": 0.79,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 39,
+     "se": 7.71,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZERSAQwxBAevQzBsWfUie.eval"
     },
     "frontiermath": {
      "v": 72.2,
@@ -917,7 +1069,8 @@
     "input": 0.75,
     "output": 3.75,
     "blended": 1.5,
-    "openrouterId": "google/gemini-3.7-flash"
+    "provider": "google",
+    "modelsDevId": "gemini-3.7-flash"
    },
    "scores": {
     "deepswe": {
@@ -925,10 +1078,11 @@
      "se": 1.57,
      "setting": "medium"
     },
-    "frontiercode": {
-     "v": 43.6,
-     "se": null,
-     "setting": "medium"
+    "frontiermath-t4": {
+     "v": 36.6,
+     "se": 7.62,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKptKXK5nE2Ns2WbiaSSnbc.eval"
     },
     "frontiermath": {
      "v": 71.6,
@@ -975,13 +1129,31 @@
     "input": 2.5,
     "output": 15,
     "blended": 5.63,
-    "openrouterId": "openai/gpt-5.4"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.4"
    },
    "scores": {
     "deepswe": {
      "v": 51.8,
      "se": 0.77,
      "setting": "xhigh"
+    },
+    "swebench": {
+     "v": 76.9,
+     "se": 1.92,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fi9HTMbAxcwsrTf2w2FuJ6N.eval"
+    },
+    "mirrorcode": {
+     "v": 15.6,
+     "se": 7.71,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 49,
+     "se": 8,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdoiQDghqnLzbE8CFijLNQJ.eval"
     },
     "frontiermath": {
      "v": 78.6,
@@ -1021,6 +1193,47 @@
    }
   },
   {
+   "id": "musespark13",
+   "name": "Muse Spark 1.3",
+   "org": "Meta AI",
+   "released": "2026-09-02",
+   "open": false,
+   "eci": 156.75,
+   "price": null,
+   "scores": {
+    "weirdml": {
+     "v": 6.9,
+     "se": 0.71,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 46.3,
+     "se": 7.88,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 74.4,
+     "se": 2.59,
+     "setting": "xhigh"
+    },
+    "aime": {
+     "v": 99.2,
+     "se": 0.62,
+     "setting": "xhigh"
+    },
+    "mystery": {
+     "v": 25,
+     "se": 4.46,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 38,
+     "se": 4.88,
+     "setting": "max"
+    }
+   }
+  },
+  {
    "id": "gemini38flash",
    "name": "Gemini 3.8 Flash",
    "org": "Google DeepMind",
@@ -1031,7 +1244,8 @@
     "input": 0.75,
     "output": 3.75,
     "blended": 1.5,
-    "openrouterId": "google/gemini-3.8-flash"
+    "provider": "google",
+    "modelsDevId": "gemini-3.8-flash"
    },
    "scores": {
     "deepswe": {
@@ -1039,10 +1253,15 @@
      "se": 0.72,
      "setting": "high"
     },
-    "frontiercode": {
-     "v": 41.2,
-     "se": null,
-     "setting": "medium"
+    "weirdml": {
+     "v": 7.4,
+     "se": 0.53,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 22,
+     "se": 6.54,
+     "setting": "high"
     },
     "frontiermath": {
      "v": 68.4,
@@ -1087,7 +1306,8 @@
     "input": 2,
     "output": 6,
     "blended": 3,
-    "openrouterId": "x-ai/grok-4.6"
+    "provider": "xai",
+    "modelsDevId": "grok-4.6"
    },
    "scores": {
     "deepswe": {
@@ -1095,10 +1315,11 @@
      "se": 1.16,
      "setting": "medium"
     },
-    "frontiercode": {
-     "v": 48,
-     "se": null,
-     "setting": "high"
+    "frontiermath-t4": {
+     "v": 31.7,
+     "se": 7.36,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbg3JRdd33iWfvRoGSvyXXE.eval"
     },
     "frontiermath": {
      "v": 66,
@@ -1141,12 +1362,24 @@
    "released": "2026-08-02",
    "open": false,
    "eci": 156.41,
-   "price": null,
+   "price": {
+    "input": 2,
+    "output": 6,
+    "blended": 3,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.8-max"
+   },
    "scores": {
     "deepswe": {
      "v": 57.5,
      "se": 1.36,
      "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 46.3,
+     "se": 7.88,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
     },
     "frontiermath": {
      "v": 74.7,
@@ -1193,7 +1426,8 @@
     "input": 0.2,
     "output": 1.2,
     "blended": 0.45,
-    "openrouterId": "openai/gpt-5.6-luna"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.6-luna"
    },
    "scores": {
     "deepswe": {
@@ -1201,10 +1435,16 @@
      "se": 2.04,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 39.8,
-     "se": null,
-     "setting": "max"
+    "weirdml": {
+     "v": 5.2,
+     "se": 0.74,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 61,
+     "se": 7.71,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNLiiJJSyA9wmg2FHENFpAq.eval"
     },
     "frontiermath": {
      "v": 82.1,
@@ -1250,12 +1490,18 @@
     "input": 0.1,
     "output": 0.5,
     "blended": 0.2,
-    "openrouterId": "openai/gpt-6-luna"
+    "provider": "openai",
+    "modelsDevId": "gpt-6-luna"
    },
    "scores": {
-    "frontiercode": {
-     "v": 42.4,
-     "se": null,
+    "weirdml": {
+     "v": 7.9,
+     "se": 0.52,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 56.1,
+     "se": 7.85,
      "setting": "max"
     },
     "frontiermath": {
@@ -1301,13 +1547,26 @@
     "input": 5,
     "output": 25,
     "blended": 10,
-    "openrouterId": "anthropic/claude-opus-4.7"
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-4-7"
    },
    "scores": {
-    "frontiercode": {
-     "v": 38.5,
-     "se": null,
-     "setting": "max"
+    "swebench": {
+     "v": 83.5,
+     "se": 1.69,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnCmGWWMBip2s9AVEZNYXDX.eval"
+    },
+    "mirrorcode": {
+     "v": 31.1,
+     "se": 9.04,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 31.7,
+     "se": 7.36,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FP4LXQ9PyDDziEANMB5jVRd.eval"
     },
     "frontiermath": {
      "v": 70.2,
@@ -1356,7 +1615,8 @@
     "input": 2,
     "output": 10,
     "blended": 4,
-    "openrouterId": "anthropic/claude-sonnet-5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-sonnet-5"
    },
    "scores": {
     "deepswe": {
@@ -1364,10 +1624,11 @@
      "se": 2.16,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 42.7,
-     "se": null,
-     "setting": "xhigh"
+    "frontiermath-t4": {
+     "v": 29.3,
+     "se": 7.19,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbqiVinHXFcgyFGPstJwXJN.eval"
     },
     "frontiermath": {
      "v": 65.6,
@@ -1411,10 +1672,11 @@
    "open": false,
    "eci": 155.61,
    "price": {
-    "input": 0.08,
-    "output": 4.8,
-    "blended": 1.26,
-    "openrouterId": "z-ai/glm-5.3"
+    "input": 1.4,
+    "output": 4.4,
+    "blended": 2.15,
+    "provider": "zai",
+    "modelsDevId": "glm-5.3"
    },
    "scores": {
     "deepswe": {
@@ -1422,9 +1684,9 @@
      "se": 1.54,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 40.1,
-     "se": null,
+    "frontiermath-t4": {
+     "v": 29.3,
+     "se": 7.19,
      "setting": "max"
     },
     "frontiermath": {
@@ -1471,13 +1733,15 @@
     "input": 0.66,
     "output": 1.98,
     "blended": 0.99,
-    "openrouterId": "deepseek/deepseek-v4-pro-0813"
+    "provider": "deepseek",
+    "modelsDevId": "deepseek-v4-pro"
    },
    "scores": {
-    "frontiercode": {
-     "v": 28.6,
-     "se": null,
-     "setting": "high"
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fa4uV8HMMBAcHXLVSmZfBgX.eval"
     },
     "frontiermath": {
      "v": 64.6,
@@ -1524,13 +1788,21 @@
     "input": 5,
     "output": 25,
     "blended": 10,
-    "openrouterId": "anthropic/claude-opus-4.6"
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-4-6"
    },
    "scores": {
-    "frontiercode": {
-     "v": 26.6,
-     "se": null,
-     "setting": "high"
+    "swebench": {
+     "v": 78.7,
+     "se": 1.86,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2hH2GAPUFaJR7pfVKhhicg.eval"
+    },
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2hbbp8z6PhB7c2T33os9q5.eval"
     },
     "frontiermath": {
      "v": 66,
@@ -1576,13 +1848,13 @@
    "released": "2026-09-01",
    "open": false,
    "eci": 155.05,
-   "price": {
-    "input": 2,
-    "output": 6,
-    "blended": 3,
-    "openrouterId": "qwen/qwen3.8-max-0902"
-   },
+   "price": null,
    "scores": {
+    "frontiermath-t4": {
+     "v": 34.1,
+     "se": 7.5,
+     "setting": "xhigh"
+    },
     "frontiermath": {
      "v": 65.6,
      "se": 2.82,
@@ -1621,9 +1893,20 @@
     "input": 0.15,
     "output": 0.6,
     "blended": 0.26,
-    "openrouterId": "deepseek/deepseek-v4.1-flash"
+    "provider": "deepseek",
+    "modelsDevId": "deepseek-flash"
    },
    "scores": {
+    "weirdml": {
+     "v": 5.9,
+     "se": 0.95,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "max"
+    },
     "frontiermath": {
      "v": 67.4,
      "se": 2.78,
@@ -1653,12 +1936,35 @@
    "released": "2026-02-19",
    "open": false,
    "eci": 154.77,
-   "price": null,
+   "price": {
+    "input": 2,
+    "output": 12,
+    "blended": 4.5,
+    "provider": "google",
+    "modelsDevId": "gemini-3.1-pro-preview"
+   },
    "scores": {
     "deepswe": {
      "v": 11.7,
      "se": 0.76,
      "setting": "high"
+    },
+    "swebench": {
+     "v": 75.6,
+     "se": 1.95,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F8QQQWDgmmEsmQVUJWcxx4P.eval"
+    },
+    "mirrorcode": {
+     "v": 8.9,
+     "se": 4.56,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeXVWr3RBeSsWy5DAU8ed46.eval"
     },
     "frontiermath": {
      "v": 59.6,
@@ -1703,17 +2009,13 @@
    "released": "2026-07-31",
    "open": true,
    "eci": 154.49,
-   "price": {
-    "input": 0.02,
-    "output": 0.64,
-    "blended": 0.17,
-    "openrouterId": "deepseek/deepseek-v4-flash-0731"
-   },
+   "price": null,
    "scores": {
-    "frontiercode": {
-     "v": 18.8,
-     "se": null,
-     "setting": "high"
+    "frontiermath-t4": {
+     "v": 24.4,
+     "se": 6.79,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWYs83xB6NwrkMNyQJtuMcQ.eval"
     },
     "frontiermath": {
      "v": 57.5,
@@ -1760,13 +2062,26 @@
     "input": 1.5,
     "output": 9,
     "blended": 3.38,
-    "openrouterId": "google/gemini-3.5-flash"
+    "provider": "google",
+    "modelsDevId": "gemini-3.5-flash"
    },
    "scores": {
     "deepswe": {
      "v": 37.4,
      "se": 0.91,
      "setting": "medium"
+    },
+    "swebench": {
+     "v": 79.3,
+     "se": 1.84,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdwRzFGTghYEy4HNZajJXoc.eval"
+    },
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FcXn5zzns6VFwbTgotDwZjV.eval"
     },
     "frontiermath": {
      "v": 62.8,
@@ -1816,7 +2131,8 @@
     "input": 0.75,
     "output": 3.75,
     "blended": 1.5,
-    "openrouterId": "google/gemini-3.6-flash"
+    "provider": "google",
+    "modelsDevId": "gemini-3.6-flash"
    },
    "scores": {
     "deepswe": {
@@ -1824,10 +2140,11 @@
      "se": 1.89,
      "setting": "high"
     },
-    "frontiercode": {
-     "v": 34.4,
-     "se": null,
-     "setting": "medium"
+    "frontiermath-t4": {
+     "v": 22,
+     "se": 6.54,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJCMjXU6FRiiLV3xvs9R2Xv.eval"
     },
     "frontiermath": {
      "v": 58.9,
@@ -1875,7 +2192,8 @@
     "input": 2,
     "output": 6,
     "blended": 3,
-    "openrouterId": "x-ai/grok-4.5"
+    "provider": "xai",
+    "modelsDevId": "grok-4.5"
    },
    "scores": {
     "deepswe": {
@@ -1883,9 +2201,9 @@
      "se": 1.16,
      "setting": "high"
     },
-    "frontiercode": {
-     "v": 42.4,
-     "se": null,
+    "frontiermath-t4": {
+     "v": 24.4,
+     "se": 6.79,
      "setting": "high"
     },
     "frontiermath": {
@@ -1924,12 +2242,25 @@
    "open": false,
    "eci": 153.68,
    "price": {
-    "input": 1.48,
-    "output": 4.43,
-    "blended": 2.21,
-    "openrouterId": "qwen/qwen3.7-max"
+    "input": 2.5,
+    "output": 7.5,
+    "blended": 3.75,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.7-max"
    },
    "scores": {
+    "swebench": {
+     "v": 77.3,
+     "se": 1.91,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F83hhDhcT9UUrZ2NiUbWSUU.eval"
+    },
+    "frontiermath-t4": {
+     "v": 34.1,
+     "se": 7.5,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFHZCKbtfvpKGXU99vZFnXN.eval"
+    },
     "frontiermath": {
      "v": 64.6,
      "se": 2.84,
@@ -1978,13 +2309,19 @@
     "input": 2,
     "output": 6,
     "blended": 3,
-    "openrouterId": "x-ai/grok-4.7"
+    "provider": "xai",
+    "modelsDevId": "grok-4.7"
    },
    "scores": {
-    "frontiercode": {
-     "v": 47.6,
-     "se": null,
-     "setting": "high"
+    "weirdml": {
+     "v": 8.6,
+     "se": 0.68,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "xhigh"
     },
     "frontiermath": {
      "v": 53,
@@ -2029,9 +2366,21 @@
     "input": 1.75,
     "output": 14,
     "blended": 4.81,
-    "openrouterId": "openai/gpt-5.2"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.2"
    },
    "scores": {
+    "swebench": {
+     "v": 73.8,
+     "se": 2,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9owdbpnWJ5pkQQC3GWKP5L.eval"
+    },
+    "frontiermath-t4": {
+     "v": 31.7,
+     "se": 7.3,
+     "setting": "xhigh"
+    },
     "frontiermath": {
      "v": 67.4,
      "se": 2.8,
@@ -2068,6 +2417,41 @@
    }
   },
   {
+   "id": "gemini3pro",
+   "name": "Gemini 3 Pro",
+   "org": "Google DeepMind",
+   "released": "2025-11-18",
+   "open": false,
+   "eci": 152.92,
+   "price": null,
+   "scores": {
+    "swebench": {
+     "v": 72.9,
+     "se": 2.02,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5XdYZBG5Wy8DUMRqcYv4fn.eval"
+    },
+    "aime": {
+     "v": 91.4,
+     "se": 3.66,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4QM4h7ndQiDRL2anjKeddK.eval"
+    },
+    "gpqa": {
+     "v": 92.6,
+     "se": 1.65,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCg54udQGcTCnfDGX2qePLZ.eval"
+    },
+    "chess": {
+     "v": 31,
+     "se": 4.65,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEy65gb5LG3RdtZxMweDfAU.eval"
+    }
+   }
+  },
+  {
    "id": "claudesonnet46",
    "name": "Claude Sonnet 4.6",
    "org": "Anthropic",
@@ -2078,7 +2462,8 @@
     "input": 3,
     "output": 15,
     "blended": 6,
-    "openrouterId": "anthropic/claude-sonnet-4.6"
+    "provider": "anthropic",
+    "modelsDevId": "claude-sonnet-4-6"
    },
    "scores": {
     "deepswe": {
@@ -2086,10 +2471,11 @@
      "se": 2.09,
      "setting": "high"
     },
-    "frontiercode": {
-     "v": 24.3,
-     "se": null,
-     "setting": "max"
+    "swebench": {
+     "v": 75.2,
+     "se": 1.96,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKEdgiMmtJKHxgGiS82agYj.eval"
     },
     "aime": {
      "v": 85.8,
@@ -2132,9 +2518,16 @@
     "input": 1.25,
     "output": 2.5,
     "blended": 1.56,
-    "openrouterId": "x-ai/grok-4.20"
+    "provider": "xai",
+    "modelsDevId": "grok-4.20-0309-reasoning"
    },
    "scores": {
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSX5FCWMk3HF83gGsP3WFA6.eval"
+    },
     "frontiermath": {
      "v": 44.9,
      "se": 2.95,
@@ -2172,10 +2565,11 @@
    "open": true,
    "eci": 151.88,
    "price": {
-    "input": 0.02,
-    "output": 1.2,
-    "blended": 0.32,
-    "openrouterId": "z-ai/glm-5.3-flash"
+    "input": 0.15,
+    "output": 0.5,
+    "blended": 0.24,
+    "provider": "zai",
+    "modelsDevId": "glm-5.3-flash"
    },
    "scores": {
     "deepswe": {
@@ -2183,9 +2577,9 @@
      "se": 2.23,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 31.8,
-     "se": null,
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
      "setting": "max"
     },
     "frontiermath": {
@@ -2224,6 +2618,18 @@
    "eci": 151.8,
    "price": null,
    "scores": {
+    "swebench": {
+     "v": 75.4,
+     "se": 1.96,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjxoyMNmTnYirjLJN6wRNmG.eval"
+    },
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZczEhu69FQ9Cnns8NT6ew4.eval"
+    },
     "frontiermath": {
      "v": 51.2,
      "se": 2.97,
@@ -2269,10 +2675,11 @@
    "open": true,
    "eci": 151.78,
    "price": {
-    "input": 0.06,
-    "output": 7,
-    "blended": 1.8,
-    "openrouterId": "z-ai/glm-5.2"
+    "input": 1.4,
+    "output": 4.4,
+    "blended": 2.15,
+    "provider": "zai",
+    "modelsDevId": "glm-5.2"
    },
    "scores": {
     "deepswe": {
@@ -2280,10 +2687,17 @@
      "se": 0.88,
      "setting": "max"
     },
-    "frontiercode": {
-     "v": 24.5,
-     "se": null,
-     "setting": "none"
+    "swebench": {
+     "v": 78.7,
+     "se": 1.87,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4AfhcmYVNrw6gM5u8CQsyy.eval"
+    },
+    "frontiermath-t4": {
+     "v": 29.3,
+     "se": 7.19,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJebA8dYLVov6H49ZQSLXh5.eval"
     },
     "frontiermath": {
      "v": 59.2,
@@ -2326,12 +2740,25 @@
    "open": true,
    "eci": 151.05,
    "price": {
-    "input": 0.65,
-    "output": 3.41,
-    "blended": 1.34,
-    "openrouterId": "moonshotai/kimi-k2.6"
+    "input": 0.95,
+    "output": 4,
+    "blended": 1.71,
+    "provider": "moonshotai",
+    "modelsDevId": "kimi-k2.6"
    },
    "scores": {
+    "swebench": {
+     "v": 76.7,
+     "se": 1.92,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbUPtAK7spEwvmiC8pi6afc.eval"
+    },
+    "frontiermath-t4": {
+     "v": 25.6,
+     "se": 7.08,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeVKA2eavdRAbSN6AnzyBxA.eval"
+    },
     "frontiermath": {
      "v": 57.2,
      "se": 2.94,
@@ -2375,13 +2802,14 @@
    "released": "2026-07-15",
    "open": true,
    "eci": 150.15,
-   "price": {
-    "input": 0.45,
-    "output": 1.2,
-    "blended": 0.64,
-    "openrouterId": "thinkingmachines/inkling-small"
-   },
+   "price": null,
    "scores": {
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDVD8G8DHNyzkowBzK7JvMt.eval"
+    },
     "frontiermath": {
      "v": 46.3,
      "se": 2.96,
@@ -2427,9 +2855,27 @@
     "input": 5,
     "output": 25,
     "blended": 10,
-    "openrouterId": "anthropic/claude-opus-4.5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-4-5"
    },
    "scores": {
+    "swebench": {
+     "v": 76.7,
+     "se": 1.92,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmKQKxkpGDrFHBPBYR3mBrB.eval"
+    },
+    "weirdml": {
+     "v": 6.5,
+     "se": 0.77,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 4.9,
+     "se": 3.41,
+     "setting": "32K",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fazk4theXxAsizmoi2HDD49.eval"
+    },
     "frontiermath": {
      "v": 34.4,
      "se": 2.82,
@@ -2475,10 +2921,11 @@
    "open": true,
    "eci": 149.97,
    "price": {
-    "input": 0.67,
-    "output": 3.35,
-    "blended": 1.34,
-    "openrouterId": "moonshotai/kimi-k2.7-code"
+    "input": 0.95,
+    "output": 4,
+    "blended": 1.71,
+    "provider": "moonshotai",
+    "modelsDevId": "kimi-k2.7-code"
    },
    "scores": {
     "deepswe": {
@@ -2486,10 +2933,11 @@
      "se": 0.26,
      "setting": "default"
     },
-    "frontiercode": {
-     "v": 30.1,
-     "se": null,
-     "setting": "none"
+    "frontiermath-t4": {
+     "v": 12.2,
+     "se": 5.17,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUTVSgirxQpTgmTHbgE9EUk.eval"
     },
     "frontiermath": {
      "v": 54,
@@ -2531,12 +2979,18 @@
    "open": true,
    "eci": 149.84,
    "price": {
-    "input": 0.97,
-    "output": 3.04,
-    "blended": 1.48,
-    "openrouterId": "z-ai/glm-5.1"
+    "input": 1.4,
+    "output": 4.4,
+    "blended": 2.15,
+    "provider": "zai",
+    "modelsDevId": "glm-5.1"
    },
    "scores": {
+    "swebench": {
+     "v": 74.2,
+     "se": 1.99,
+     "setting": "default"
+    },
     "frontiermath": {
      "v": 36.8,
      "se": 2.86,
@@ -2580,9 +3034,16 @@
     "input": 1.25,
     "output": 10,
     "blended": 3.44,
-    "openrouterId": "openai/gpt-5.1"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.1"
    },
    "scores": {
+    "swebench": {
+     "v": 68,
+     "se": 2.12,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYoHtZpMNdsRE6qdj2K4Ucj.eval"
+    },
     "aime": {
      "v": 88.6,
      "se": 4.05,
@@ -2621,8 +3082,20 @@
    "released": "2026-04-20",
    "open": false,
    "eci": 149.24,
-   "price": null,
+   "price": {
+    "input": 1.3,
+    "output": 7.8,
+    "blended": 2.93,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-max-preview"
+   },
    "scores": {
+    "swebench": {
+     "v": 76.7,
+     "se": 1.92,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFkDMVLdEnJDR5PyUCT6BNQ.eval"
+    },
     "aime": {
      "v": 91.1,
      "se": 4.29,
@@ -2663,6 +3136,12 @@
    "eci": 149.16,
    "price": null,
    "scores": {
+    "frontiermath-t4": {
+     "v": 14.6,
+     "se": 5.59,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F3iRQkf5v7Wu7YuZhxa76Gg.eval"
+    },
     "frontiermath": {
      "v": 42.8,
      "se": 2.94,
@@ -2699,12 +3178,25 @@
    "released": "2026-04-24",
    "open": true,
    "eci": 149.13,
-   "price": null,
+   "price": {
+    "input": 0.66,
+    "output": 1.98,
+    "blended": 0.99,
+    "provider": "deepseek",
+    "modelsDevId": "deepseek-v4-pro"
+   },
    "scores": {
-    "frontiercode": {
-     "v": 17.6,
-     "se": null,
-     "setting": "none"
+    "swebench": {
+     "v": 77.6,
+     "se": 1.9,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWUk3f44JhxtAJaSxi6gFZR.eval"
+    },
+    "frontiermath-t4": {
+     "v": 2.4,
+     "se": 2.44,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRAZ6VMfGtQSE8EvUZRRz4Q.eval"
     },
     "frontiermath": {
      "v": 45.3,
@@ -2752,12 +3244,13 @@
     "input": 0.75,
     "output": 4.5,
     "blended": 1.69,
-    "openrouterId": "openai/gpt-5.4-mini"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.4-mini"
    },
    "scores": {
-    "frontiercode": {
-     "v": 27,
-     "se": null,
+    "frontiermath-t4": {
+     "v": 9.8,
+     "se": 4.69,
      "setting": "xhigh"
     },
     "frontiermath": {
@@ -2804,16 +3297,18 @@
    "open": true,
    "eci": 148.54,
    "price": {
-    "input": 1,
-    "output": 4.05,
-    "blended": 1.76,
-    "openrouterId": "thinkingmachines/inkling"
+    "input": 1.87,
+    "output": 4.68,
+    "blended": 2.57,
+    "provider": "thinkingmachines",
+    "modelsDevId": "thinkingmachines/Inkling"
    },
    "scores": {
-    "frontiercode": {
-     "v": 14,
-     "se": null,
-     "setting": "0.99"
+    "frontiermath-t4": {
+     "v": 4.9,
+     "se": 3.41,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjvJPoRYkPH9Sb5MX252oHp.eval"
     },
     "frontiermath": {
      "v": 33.3,
@@ -2851,13 +3346,14 @@
    "released": "2026-01-27",
    "open": true,
    "eci": 148.03,
-   "price": {
-    "input": 0.5,
-    "output": 2.5,
-    "blended": 1,
-    "openrouterId": "moonshotai/kimi-k2.5"
-   },
+   "price": null,
    "scores": {
+    "swebench": {
+     "v": 73.8,
+     "se": 2,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5wVjUb3yn6bdjPSfPEMuiZ.eval"
+    },
     "aime": {
      "v": 92.2,
      "se": 3.9,
@@ -2892,12 +3388,19 @@
    "open": false,
    "eci": 147.65,
    "price": {
-    "input": 0.33,
-    "output": 1.95,
-    "blended": 0.73,
-    "openrouterId": "qwen/qwen3.6-plus"
+    "input": 0.5,
+    "output": 3,
+    "blended": 1.13,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-plus"
    },
    "scores": {
+    "swebench": {
+     "v": 57.9,
+     "se": 2.25,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F8HV4HP9EM5KuLSwzifuLye.eval"
+    },
     "frontiermath": {
      "v": 38.2,
      "se": 2.88,
@@ -2943,17 +3446,13 @@
    "open": false,
    "eci": 147.37,
    "price": {
-    "input": 0.32,
-    "output": 1.28,
-    "blended": 0.56,
-    "openrouterId": "qwen/qwen3.7-plus"
+    "input": 0.4,
+    "output": 1.6,
+    "blended": 0.7,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.7-plus"
    },
    "scores": {
-    "frontiercode": {
-     "v": 10.2,
-     "se": null,
-     "setting": "none"
-    },
     "frontiermath": {
      "v": 34.4,
      "se": 2.82,
@@ -2996,14 +3495,10 @@
     "input": 0.3,
     "output": 1.2,
     "blended": 0.52,
-    "openrouterId": "minimax/minimax-m3"
+    "provider": "minimax",
+    "modelsDevId": "MiniMax-M3"
    },
    "scores": {
-    "frontiercode": {
-     "v": 14.7,
-     "se": null,
-     "setting": "none"
-    },
     "aime": {
      "v": 71.1,
      "se": 6.83,
@@ -3077,10 +3572,11 @@
    "open": true,
    "eci": 146.65,
    "price": {
-    "input": 0.55,
-    "output": 3.5,
-    "blended": 1.29,
-    "openrouterId": "qwen/qwen3.5-397b-a17b"
+    "input": 0.6,
+    "output": 3.6,
+    "blended": 1.35,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.5-397b-a17b"
    },
    "scores": {
     "frontiermath": {
@@ -3122,10 +3618,11 @@
    "open": true,
    "eci": 146.5,
    "price": {
-    "input": 0.32,
-    "output": 3.2,
-    "blended": 1.04,
-    "openrouterId": "qwen/qwen3.6-27b"
+    "input": 0.6,
+    "output": 3.6,
+    "blended": 1.35,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-27b"
    },
    "scores": {
     "frontiermath": {
@@ -3167,17 +3664,13 @@
    "open": true,
    "eci": 146.17,
    "price": {
-    "input": 0.6,
-    "output": 2.4,
-    "blended": 1.05,
-    "openrouterId": "nvidia/nemotron-3-ultra-550b-a55b"
+    "input": 0.5,
+    "output": 2.5,
+    "blended": 1,
+    "provider": "nvidia",
+    "modelsDevId": "nvidia/nemotron-3-ultra-550b-a55b"
    },
    "scores": {
-    "frontiercode": {
-     "v": 13.6,
-     "se": null,
-     "setting": "none"
-    },
     "aime": {
      "v": 86.7,
      "se": 5.12,
@@ -3204,6 +3697,47 @@
    }
   },
   {
+   "id": "glm5",
+   "name": "GLM-5",
+   "org": "Z.ai (Zhipu AI)",
+   "released": "2026-02-11",
+   "open": true,
+   "eci": 145.83,
+   "price": {
+    "input": 1,
+    "output": 3.2,
+    "blended": 1.55,
+    "provider": "zai",
+    "modelsDevId": "glm-5"
+   },
+   "scores": {
+    "swebench": {
+     "v": 72.1,
+     "se": 2.09,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhKkJEu4ueLiNWsTtrJ78PS.eval"
+    },
+    "aime": {
+     "v": 80,
+     "se": 6,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fccbx7KQY9bTD563vzBXwSg.eval"
+    },
+    "gpqa": {
+     "v": 87.8,
+     "se": 2.34,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fn4hyz75SVpwPEisKVVjvNg.eval"
+    },
+    "chess": {
+     "v": 10,
+     "se": 3.02,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7czodbcgEF5zN68ppPFzBN.eval"
+    }
+   }
+  },
+  {
    "id": "gpt54nano",
    "name": "GPT-5.4 Nano",
    "org": "OpenAI",
@@ -3214,9 +3748,16 @@
     "input": 0.2,
     "output": 1.25,
     "blended": 0.46,
-    "openrouterId": "openai/gpt-5.4-nano"
+    "provider": "openai",
+    "modelsDevId": "gpt-5.4-nano"
    },
    "scores": {
+    "frontiermath-t4": {
+     "v": 12.2,
+     "se": 5.17,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSF6FYnnKztPCDWQc4v4EJa.eval"
+    },
     "frontiermath": {
      "v": 44.9,
      "se": 2.95,
@@ -3265,9 +3806,16 @@
     "input": 0.3,
     "output": 2.5,
     "blended": 0.85,
-    "openrouterId": "google/gemini-3.5-flash-lite"
+    "provider": "google",
+    "modelsDevId": "gemini-3.5-flash-lite"
    },
    "scores": {
+    "frontiermath-t4": {
+     "v": 0,
+     "se": 0,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjuNVfKBcYTwaKnk9GRA2zL.eval"
+    },
     "frontiermath": {
      "v": 26,
      "se": 2.6,
@@ -3310,7 +3858,8 @@
     "input": 0.03,
     "output": 0.13,
     "blended": 0.06,
-    "openrouterId": "qwen/qwen3.7-flash"
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.7-flash"
    },
    "scores": {
     "frontiermath": {
@@ -3398,10 +3947,11 @@
    "open": true,
    "eci": 143.93,
    "price": {
-    "input": 0.1,
-    "output": 0.95,
-    "blended": 0.31,
-    "openrouterId": "qwen/qwen3.6-35b-a3b"
+    "input": 0.25,
+    "output": 1.49,
+    "blended": 0.56,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-35b-a3b"
    },
    "scores": {
     "frontiermath": {
@@ -3446,7 +3996,8 @@
     "input": 0.6,
     "output": 2.2,
     "blended": 1,
-    "openrouterId": "z-ai/glm-4.7"
+    "provider": "zai",
+    "modelsDevId": "glm-4.7"
    },
    "scores": {
     "aime": {
@@ -3486,7 +4037,8 @@
     "input": 0.19,
     "output": 1.13,
     "blended": 0.42,
-    "openrouterId": "qwen/qwen3.6-flash"
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-flash"
    },
    "scores": {
     "frontiermath": {
@@ -3572,7 +4124,8 @@
     "input": 1,
     "output": 5,
     "blended": 2,
-    "openrouterId": "anthropic/claude-haiku-4.5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-haiku-4-5"
    },
    "scores": {
     "aime": {
@@ -3611,9 +4164,15 @@
     "input": 0.1,
     "output": 0.5,
     "blended": 0.2,
-    "openrouterId": "anthropic/claude-haiku-5.5"
+    "provider": "anthropic",
+    "modelsDevId": "claude-haiku-5-5"
    },
    "scores": {
+    "frontiermath-t4": {
+     "v": 46.3,
+     "se": 7.88,
+     "setting": "max"
+    },
     "frontiermath": {
      "v": 75.1,
      "se": 2.57,

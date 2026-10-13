@@ -1,5 +1,5 @@
 /**
- * Builds data/brawl.json from Epoch AI's Benchmarking Hub (CC BY 4.0) and OpenRouter's public model list (prices).
+ * Builds data/brawl.json from Epoch AI's Benchmarking Hub (CC BY 4.0) and models.dev (MIT): each lab's own API prices.
  *
  *   npm run data             download fresh data
  *   npm run data -- --cached reuse data/cache (no network)
@@ -13,19 +13,25 @@ import { parseCsv } from '../src/csv.ts';
 import type { Benchmark, BrawlData, Model, Price, Round, Score } from '../src/types.ts';
 
 const EPOCH_ZIP = 'https://epoch.ai/data/benchmark_data.zip';
-const OPENROUTER = 'https://openrouter.ai/api/v1/models';
+const MODELS_DEV = 'https://models.dev/api.json';
 const CACHE = 'data/cache';
 const cached = process.argv.includes('--cached');
 
 const EPOCH = { name: 'Epoch AI Benchmarking Hub', url: 'https://epoch.ai/benchmarks', license: 'CC BY 4.0' };
 const via = (name: string, url: string) => ({ name: `${name}, via Epoch AI`, url, license: 'Original source terms (see their site)' });
 
-type Spec = Benchmark & { file: string; scoreCol: string; seFrom?: 'stderr' | 'ci95' };
+type Spec = Benchmark & { file: string; scoreCol: string; seFrom?: 'stderr' | 'ci95' | 'ciBounds' };
 const SPECS: Spec[] = [
   { id: 'deepswe', name: 'DeepSWE', what: 'Fix real software issues, every model in the same agent setup', kind: 'score', epochRun: false,
     source: via('DeepSWE by Datacurve', 'https://deepswe.datacurve.ai/'), file: 'deepswe_external.csv', scoreCol: 'Pass@1', seFrom: 'ci95' },
-  { id: 'frontiercode', name: 'FrontierCode', what: 'Long coding tasks, each lab in its own agent', kind: 'score', epochRun: false,
-    source: via('FrontierCode by Cognition', 'https://cognition.com/frontiercode'), file: 'frontiercode_external.csv', scoreCol: 'Main score' },
+  { id: 'swebench', name: 'SWE-bench Verified', what: 'Fix real GitHub issues in open-source Python projects', kind: 'score', epochRun: true,
+    source: EPOCH, file: 'swe_bench_verified.csv', scoreCol: 'Best score (across scorers)', seFrom: 'stderr' },
+  { id: 'mirrorcode', name: 'MirrorCode', what: 'Rebuild real software from its behaviour alone', kind: 'score', epochRun: true,
+    source: EPOCH, file: 'mirrorcode.csv', scoreCol: 'Best score (across scorers)', seFrom: 'stderr' },
+  { id: 'weirdml', name: 'WeirdML v3', what: 'Unusual machine-learning coding tasks, each model in its maker\'s coding agent', kind: 'score', epochRun: false,
+    source: via('WeirdML by Håvard Tveit Ihle', 'https://htihle.github.io/weirdml.html'), file: 'weirdml_v3_external.csv', scoreCol: 'Score', seFrom: 'ciBounds' },
+  { id: 'frontiermath-t4', name: 'FrontierMath Tier 4', what: 'The hardest research-level math problems', kind: 'score', epochRun: true,
+    source: EPOCH, file: 'frontiermath_tier_4_v2.csv', scoreCol: 'Best score (across scorers)', seFrom: 'stderr' },
   { id: 'frontiermath', name: 'FrontierMath Tiers 1–3', what: 'Research-level math problems', kind: 'score', epochRun: true,
     source: EPOCH, file: 'frontiermath_tiers_1_3_v2.csv', scoreCol: 'Best score (across scorers)', seFrom: 'stderr' },
   { id: 'aime', name: 'OTIS Mock AIME', what: 'High-school competition math', kind: 'score', epochRun: true,
@@ -40,12 +46,12 @@ const SPECS: Spec[] = [
     source: EPOCH, file: 'chess_puzzles.csv', scoreCol: 'Best score (across scorers)', seFrom: 'stderr' },
 ];
 const PRICE: Benchmark = {
-  id: 'price', name: 'OpenRouter list price', what: 'Cheaper wins: dollars per million tokens, blended 3:1 input to output', kind: 'price', epochRun: false,
-  source: { name: 'OpenRouter model list', url: 'https://openrouter.ai/models', license: 'Public list prices' },
+  id: 'price', name: 'API list price', what: "Cheaper wins: the lab's own API price per million tokens, blended 3:1 input to output", kind: 'price', epochRun: false,
+  source: { name: "models.dev (each lab's API prices)", url: 'https://models.dev', license: 'MIT' },
 };
 const ROUNDS: Round[] = [
-  { id: 'coding', name: 'Coding', benches: ['deepswe', 'frontiercode'] },
-  { id: 'math', name: 'Math', benches: ['frontiermath', 'aime'] },
+  { id: 'coding', name: 'Coding', benches: ['deepswe', 'swebench', 'mirrorcode', 'weirdml'], combine: 'average' },
+  { id: 'math', name: 'Math', benches: ['frontiermath-t4', 'frontiermath', 'aime'] },
   { id: 'science', name: 'Science', benches: ['gpqa'] },
   { id: 'facts', name: 'Facts', benches: ['simpleqa'] },
   { id: 'puzzles', name: 'Puzzles', benches: ['mystery'] },
@@ -100,7 +106,8 @@ async function main() {
       groups.set(name, g);
       const v = Math.round(raw * 1000) / 10;
       const se = spec.seFrom === 'stderr' && row['stderr'] ? Number(row['stderr']) * 100
-        : spec.seFrom === 'ci95' && row['95% CI half-width'] ? (Number(row['95% CI half-width']) * 100) / 1.96 : null;
+        : spec.seFrom === 'ci95' && row['95% CI half-width'] ? (Number(row['95% CI half-width']) * 100) / 1.96
+        : spec.seFrom === 'ciBounds' && row['Score 95% CI high'] ? ((Number(row['Score 95% CI high']) - Number(row['Score 95% CI low'])) * 100) / 2 / 1.96 : null;
       const prev = g.scores[spec.id];
       if (!prev || v > prev.v) {
         g.scores[spec.id] = { v, se: se != null && Number.isFinite(se) ? Math.round(se * 100) / 100 : null, setting: settingOf(version, row), ...(row['Log viewer'] ? { log: row['Log viewer'] } : {}) };
@@ -110,16 +117,20 @@ async function main() {
 
   const eci = new Map(csv('epoch_capabilities_index/eci_scores.csv').map((r) => [r['Model'], Number(r['eci'])]));
 
-  // OpenRouter list prices, matched by name ("Anthropic: Claude Opus 5.5" <-> "Claude Opus 5.5")
-  const or = JSON.parse((await fetchCached(OPENROUTER, 'openrouter-models.json')).toString()) as { data: { id: string; name: string; pricing: { prompt: string; completion: string } }[] };
-  const prices = new Map<string, Price>();
-  for (const m of or.data) {
-    if (m.id.includes(':')) continue; // :batch, :free and other variants
-    const input = Number(m.pricing.prompt) * 1e6, output = Number(m.pricing.completion) * 1e6;
-    if (!(input > 0 && output > 0)) continue;
-    const key = norm(m.name.replace(/^[^:]*:\s*/, ''));
-    if (!prices.has(key)) prices.set(key, { input: round2(input), output: round2(output), blended: round2((3 * input + output) / 4), openrouterId: m.id });
-  }
+  // Prices: the lab's own API list price from models.dev, matched by name or model id. Third-party hosts are
+  // left out on purpose: they often undercut the lab for open-weight models, which would skew the price round.
+  const md = JSON.parse((await fetchCached(MODELS_DEV, 'models-dev.json')).toString()) as Record<string, { models?: Record<string, { name?: string; cost?: { input?: number; output?: number } }> }>;
+  const priceOf = (name: string, org: string): Price | null => {
+    const [provider, alias] = PRICE_ALIASES[name] ?? [LAB_PROVIDER[org], null];
+    const models = md[provider]?.models ?? {};
+    for (const [id, m] of Object.entries(models)) {
+      if (alias ? id !== alias : norm(m.name ?? '') !== norm(name) && norm(id.split('/').pop()!) !== norm(name)) continue;
+      const input = m.cost?.input, output = m.cost?.output;
+      if (!(input! > 0 && output! > 0)) continue;
+      return { input: round2(input!), output: round2(output!), blended: round2((3 * input! + output!) / 4), provider, modelsDevId: id };
+    }
+    return null;
+  };
 
   const now = new Date();
   const cutoff = new Date(now.getTime() - MAX_AGE_DAYS * 864e5).toISOString().slice(0, 10);
@@ -133,7 +144,7 @@ async function main() {
       released: g.released,
       open: /^open weights/i.test(g.access),
       eci: eci.get(g.name) ?? null,
-      price: prices.get(norm(g.name)) ?? null,
+      price: priceOf(g.name, g.org.split(',')[0].trim()),
       scores: g.scores,
     }))
     .sort((a, b) => (b.eci ?? 0) - (a.eci ?? 0) || b.released.localeCompare(a.released));
@@ -151,6 +162,20 @@ async function main() {
   console.log(`Wrote data/brawl.json: ${models.length} fighters (${priced} with prices), ${data.benchmarks.length} rounds.`);
   for (const id of DEFAULT_ROUNDS) console.log(`  ${id}: ${models.filter((m) => hasRound(m.scores, id)).length}/${models.length}`);
 }
+
+/** Lab -> its own provider on models.dev. */
+const LAB_PROVIDER: Record<string, string> = {
+  Anthropic: 'anthropic', OpenAI: 'openai', 'Google DeepMind': 'google', xAI: 'xai', DeepSeek: 'deepseek', Alibaba: 'alibaba',
+  Moonshot: 'moonshotai', 'Z.ai (Zhipu AI)': 'zai', MiniMax: 'minimax', Nvidia: 'nvidia', 'Thinking Machines': 'thinkingmachines',
+};
+/** Models whose lab lists them under a different name: Epoch name -> [provider, models.dev id]. Checked by hand. */
+const PRICE_ALIASES: Record<string, [string, string]> = {
+  'Gemini 3.1 Pro': ['google', 'gemini-3.1-pro-preview'],
+  'Grok 4.20': ['xai', 'grok-4.20-0309-reasoning'],
+  'Nemotron 3 Ultra': ['nvidia', 'nvidia/nemotron-3-ultra-550b-a55b'],
+  Inkling: ['thinkingmachines', 'thinkingmachines/Inkling'],
+  'DeepSeek V4 Pro 0813': ['deepseek', 'deepseek-v4-pro'],
+};
 
 function round2(n: number) { return Math.round(n * 100) / 100; }
 

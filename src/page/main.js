@@ -170,10 +170,11 @@ function renderFeatured() {
     h('button', { type: 'button', class: 'btn go', onclick: () => { mode = '1v1'; picks = [a.id, b.id]; renderAll(); startFight(); } }, 'FIGHT OF THE WEEK')));
 }
 $('credits').replaceChildren(
-  'Scores: ', h('a', { href: 'https://epoch.ai/benchmarks', target: '_blank', rel: 'noopener' }, 'Epoch AI Benchmarking Hub'), ' (CC BY 4.0), including ',
-  h('a', { href: 'https://deepswe.datacurve.ai/', target: '_blank', rel: 'noopener' }, 'DeepSWE'), ' (Datacurve) and ',
-  h('a', { href: 'https://cognition.com/frontiercode', target: '_blank', rel: 'noopener' }, 'FrontierCode'), ' (Cognition) as republished by Epoch AI. Prices: ',
-  h('a', { href: 'https://openrouter.ai/models', target: '_blank', rel: 'noopener' }, 'OpenRouter'), ' list prices. Benchmark Brawl is independent and not affiliated with any AI lab or with these sources. ',
+  'Scores: Epoch AI, ', h('a', { href: 'https://epoch.ai/benchmarks', target: '_blank', rel: 'noopener' }, '“Capabilities & benchmarking”'), ', licensed ',
+  h('a', { href: 'https://creativecommons.org/licenses/by/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY 4.0'),
+  '; changes: scores shown as percentages, each model’s best reasoning setting, coding averaged over shared benchmarks. Includes ',
+  h('a', { href: 'https://deepswe.datacurve.ai/', target: '_blank', rel: 'noopener' }, 'DeepSWE'), ' (Datacurve) and ' , h('a', { href: 'https://htihle.github.io/weirdml.html', target: '_blank', rel: 'noopener' }, 'WeirdML'), ' (Håvard Tveit Ihle) as republished by Epoch AI. Prices: each lab’s own API list price via ',
+  h('a', { href: 'https://models.dev', target: '_blank', rel: 'noopener' }, 'models.dev'), ' (MIT). Benchmark Brawl is independent and not affiliated with any AI lab or with these sources. ',
   h('a', { href: 'https://github.com/w20labs/benchmark-brawl', target: '_blank', rel: 'noopener' }, 'Source code'), '.');
 
 // ---------- arena builder ----------
@@ -736,13 +737,16 @@ function showResult() {
   $('th1').textContent = a.name; $('th1').style.color = F.colors[0];
   $('th2').textContent = b.name; $('th2').style.color = F.colors[1];
   $('rows').replaceChildren(...p.rounds.map((R) => h('tr', null,
-    h('td', null, R.round.name, h('span', { class: 't' }, R.bench ? h('a', { href: R.bench.source.url, target: '_blank', rel: 'noopener' }, R.bench.name) : 'No benchmark in common', R.bench ? ` · ${R.bench.source.name}` : '')),
+    h('td', null, R.round.name, h('span', { class: 't' }, R.parts
+      ? ['Average of ', ...R.parts.flatMap((p, i) => [i ? ' + ' : '', h('a', { href: p.bench.source.url, target: '_blank', rel: 'noopener' }, p.bench.name)])]
+      : R.bench ? [h('a', { href: R.bench.source.url, target: '_blank', rel: 'noopener' }, R.bench.name), ` · ${R.bench.source.name}`] : 'No benchmark in common')),
     ...[0, 1].map((k) => {
       const m = p.fighters[k], s = R.bench && R.bench.kind === 'score' ? m.scores[R.bench.id] : null;
       return h('td', { class: `num ${R.winner === k ? 'win' : ''}`, style: `--c:${F.colors[k]}` },
         s?.log ? h('a', { href: s.log, target: '_blank', rel: 'noopener', title: 'Epoch AI run logs', style: 'color:inherit' }, formatValue(R.bench, R.values[k])) : formatValue(R.bench, R.values[k]),
         R.winner === k ? ' ✓' : '',
-        s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
+        R.parts ? h('span', { class: 't' }, R.parts.map((pt) => `${pt.bench.name} ${pt.values[k].toFixed(1)}`).join(' · '))
+          : s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
     }),
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? (R.tie === 'margin' ? 'tie (margin)' : 'tie') : `−${R.dmg} HP`))));
   $('share').textContent = shareText();

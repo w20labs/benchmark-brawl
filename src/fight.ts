@@ -32,6 +32,8 @@ export type RoundResult = {
   tie: 'exact' | 'margin' | 'price' | null;
   /** The margin of error used for the tie call, in percentage points (scores only). */
   margin: number | null;
+  /** For an averaged round: each benchmark both had, with both scores. `bench` is then a summary of them. */
+  parts?: { bench: Benchmark; values: [number, number] }[];
   /** Weapon-scale points: the score gap, or PRICE_POINTS_PER_DOUBLING per doubling of price. */
   points: number;
   dmg: number;
@@ -62,7 +64,33 @@ export function pickBench(data: BrawlData, round: Round, a: Model, b: Model): Be
 }
 
 export function judgeRound(data: BrawlData, round: Round, a: Model, b: Model): Omit<RoundResult, 'hpBefore' | 'hpAfter'> {
+  if (round.combine === 'average') {
+    const shared = round.benches.map((id) => benchById(data, id)).filter((bench) => bench.kind === 'score' && hasBench(bench, a) && hasBench(bench, b));
+    if (shared.length > 1) return { round, ...compareAverage(round, shared, a, b) };
+  }
   return { round, ...compareOn(pickBench(data, round, a, b), a, b) };
+}
+
+/**
+ * Averages over several benchmarks both fighters have: the gap is the mean of the per-benchmark gaps, and the
+ * margin of error combines all of theirs (it shrinks as more benchmarks agree). Compares like with like only.
+ */
+export function compareAverage(round: Round, benches: Benchmark[], a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter'> {
+  const n = benches.length;
+  const parts = benches.map((bench) => ({ bench, values: [a.scores[bench.id].v, b.scores[bench.id].v] as [number, number] }));
+  const mean = (k: 0 | 1) => Math.round((parts.reduce((s, p) => s + p.values[k], 0) / n) * 10) / 10;
+  const values: [number, number] = [mean(0), mean(1)];
+  const ses = benches.flatMap((bench) => [a.scores[bench.id].se, b.scores[bench.id].se]);
+  const margin = ses.every((x) => x != null) ? Math.round((TIE_Z * Math.sqrt(ses.reduce((s, x) => s + x! ** 2, 0)) / n) * 10) / 10 : null;
+  const bench: Benchmark = {
+    id: `${round.id}-average`, name: `Average of ${benches.map((x) => x.name).join(' + ')}`, kind: 'score', epochRun: benches.every((x) => x.epochRun),
+    what: `The average over the ${n} ${round.name.toLowerCase()} benchmarks both models have`, source: benches[0].source,
+  };
+  const gap = Math.round(Math.abs(values[0] - values[1]) * 10) / 10;
+  const none = { bench, values, parts, margin, points: 0, dmg: 0, weapon: 'tie' as const };
+  if (gap < 0.5) return { ...none, winner: -1, tie: 'exact' };
+  if (margin != null && gap <= margin) return { ...none, winner: -1, tie: 'margin' };
+  return { ...none, winner: values[0] > values[1] ? 0 : 1, tie: null, points: gap, dmg: Math.round(gap * DAMAGE_PER_POINT), weapon: weaponFor(gap) };
 }
 
 /** Compares two models on one benchmark (which both must have). Shared by fights and royales. */
