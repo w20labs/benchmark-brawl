@@ -1,5 +1,5 @@
 // Benchmark Brawl page. The rules live in ../fight.ts and ../league.ts; this file draws and plays them.
-import { formatValue, planFight, weaponName } from '../fight.ts';
+import { formatValue, planFight, STYLE_NAMES, weaponName } from '../fight.ts';
 import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
 import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
 import { CLASSES, dailyBrawl, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
@@ -538,6 +538,7 @@ function startFight(opts = {}) {
   const [a, b] = picks.map((id) => byId.get(id));
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, opts.rounds || rounds);
+  if (!plan.rounds.length) return toast(`${a.name} and ${b.name} have no benchmark in common in these rounds. Try other rounds.`);
   F = { daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
   setView('arena');
   $('arena').classList.remove('royale');
@@ -601,7 +602,7 @@ function resultLine(R) {
   }
   const w = R.winner === 0 ? a : b;
   const by = R.bench.kind === 'price' ? `${(Math.max(...R.values) / Math.min(...R.values)).toFixed(1)}× cheaper` : `by ${R.points} point${R.points === 1 ? '' : 's'}`;
-  return `${F.special?.[R.winner] === F.plan.rounds.indexOf(R) ? moveNameFor(w.org) : weaponName(R.weapon)}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
+  return `${F.special?.[R.winner] === F.plan.rounds.indexOf(R) ? moveNameFor(w.org) : (STYLE_NAMES[R.style] || weaponName(R.weapon))}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
 }
 function enterPhase() {
   const R = F.plan.rounds[F.i];
@@ -701,10 +702,17 @@ function bigHits(plan) {
   return [0, 1].map((k) => { let best = -1, d = 0; plan.rounds.forEach((R, i) => { if (R.winner === k && R.dmg > d) { d = R.dmg; best = i; } }); return best; });
 }
 const dirOf = (k) => (k === 0 ? 1 : -1);
+/** Small-gun styles: how many shots, how often, how fast, pellets per shot, and how they look. */
+const GUNS = {
+  mg: { n: 10, every: 0.075, speed: 1700, pellets: 1, spread: 6, len: 26, width: 3, c: '#FFF3B0', glow: '#FFE066', sound: () => { sfx.shot(); sfx.casing(); } },
+  shotgun: { n: 3, every: 0.34, speed: 1500, pellets: 5, spread: 40, len: 9, width: 4, c: '#FFD08A', glow: '#FFA94D', sound: () => { noise({ dur: 0.18, vol: 1.6, freq: 2400, to: 300 }); tone(90, { to: 40, dur: 0.15, type: 'sine', vol: 0.6 }); } },
+  pistol: { n: 6, every: 0.16, speed: 2500, pellets: 1, spread: 4, len: 44, width: 4, c: '#FFD1F4', glow: '#FF4FD8', sound: () => tone(1800, { to: 300, dur: 0.12, type: 'sawtooth', vol: 0.18 }) },
+};
 function startFx(R) {
-  const w = R.winner, kind = R.weapon;
-  const fx = { kind, t: 0, shots: [], rockets: [], meteors: [], hits: 0, landed: 0, fired: 0, nextShot: 0.25, muzzle: [0, 0], title: weaponName(kind), titleC: w >= 0 ? F.colors[w] : '#F3F4F8' };
-  if (kind === 'tie') { F.pose = ['aim', 'aim']; fx.toFire = 7; return fx; }
+  const w = R.winner, kind = R.weapon, style = R.style || kind;
+  const fx = { kind, style, gear: style === 'rocket' ? 'rocket' : kind === 'meteor' || kind === 'laser' ? kind : 'mg', t: 0, shots: [], rockets: [], meteors: [], hits: 0, landed: 0, fired: 0, nextShot: 0.25, muzzle: [0, 0],
+    title: kind === 'tie' ? 'CROSSFIRE' : STYLE_NAMES[style] || weaponName(kind), titleC: w >= 0 ? F.colors[w] : '#F3F4F8' };
+  if (kind === 'tie') { F.pose = ['aim', 'aim']; fx.gun = GUNS[style] || GUNS.mg; fx.toFire = Math.max(3, Math.round(fx.gun.n * 0.7)); return fx; }
   if (F.special[w] === F.i) {
     const l = 1 - w, m = F.plan.fighters[w];
     F.pose[w] = 'summon';
@@ -714,10 +722,14 @@ function startFx(R) {
     return fx;
   }
   F.pose[w] = kind === 'meteor' || kind === 'laser' ? 'summon' : 'aim';
-  fx.hits = kind === 'mg' ? 10 : kind === 'rocket' ? (R.points >= 7 ? 2 : 1) : kind === 'meteor' ? 6 : 1;
-  fx.toFire = fx.hits;
-  if (kind === 'meteor') sfx.rumble();
-  if (kind === 'laser') { sfx.lock(); setTimeout(() => sfx.charge(), 250); }
+  if (kind === 'mg') { fx.gun = GUNS[style] || GUNS.mg; fx.toFire = fx.gun.n; fx.hits = fx.gun.n * fx.gun.pellets; }
+  else if (kind === 'rocket') fx.hits = fx.toFire = R.points >= 7 ? 2 : 1;
+  else if (kind === 'meteor') fx.hits = fx.toFire = style === 'swarm' ? 6 : style === 'lightning' ? 5 : 6;
+  else fx.hits = fx.toFire = 1;
+  if (style === 'meteor') sfx.rumble();
+  if (style === 'lightning') noise({ dur: 1.4, vol: 0.4, freq: 120 });
+  if (style === 'laser') { sfx.lock(); setTimeout(() => sfx.charge(), 250); }
+  if (style === 'anvil') sfx.whistle();
   return fx;
 }
 function landHit(fx, R, x, y, size) {
@@ -728,7 +740,7 @@ function landHit(fx, R, x, y, size) {
   setHp(false);
   F.pose[l] = 'hurt'; F.flash[l] = 0.12;
   F.shake = reduced ? 0 : Math.max(F.shake, size === 'big' ? 18 : size === 'mid' ? 10 : 4);
-  if (size !== 'small') explode(x, y, size === 'big', fx.kind === 'laser' ? 0.85 : undefined);
+  if (size !== 'small') explode(x, y, size === 'big', fx.style === 'laser' ? 0.85 : undefined);
   else burstSparks(x, y, 6, '#FFE066');
   if (fx.landed >= fx.hits) F.floats.push({ x: F.x[l], y: FLOOR - 200, text: `−${R.hpBefore[l] - R.hpAfter[l]}`, c: '#FF6B6B', life: 1.3 });
 }
@@ -754,17 +766,20 @@ function updateFx(fx, R, dt) {
   const w = R.winner, l = 1 - w;
   if (fx.kind === 'special') { updateMove(fx.sp, dt); return; }
   if (fx.kind === 'mg' || fx.kind === 'tie') {
-    const shooters = fx.kind === 'tie' ? [0, 1] : [w];
+    const shooters = fx.kind === 'tie' ? [0, 1] : [w], gun = fx.gun;
     if (fx.fired < fx.toFire && fx.t >= fx.nextShot) {
       for (const k of shooters) {
-        fx.shots.push({ k, x: F.x[k] + dirOf(k) * 132, y: FLOOR - 109 + (Math.random() - 0.5) * 6, vx: dirOf(k) * 1700 });
-        fx.muzzle[k] = 0.05;
-        if (k === shooters[0]) { sfx.shot(); sfx.casing(); }
-        F.sparks.push({ kind: 'spark', x: F.x[k] - dirOf(k) * 10, y: FLOOR - 112, vx: -dirOf(k) * (60 + Math.random() * 80), vy: -220 - Math.random() * 120, life: 0.5, c: '#E8C66A' });
+        for (let p = 0; p < gun.pellets; p++) {
+          const spread = gun.pellets > 1 ? (p / (gun.pellets - 1) - 0.5) * gun.spread : (Math.random() - 0.5) * gun.spread;
+          fx.shots.push({ k, gun, x: F.x[k] + dirOf(k) * 132, y: FLOOR - 109 + spread * 0.2, vy: spread * 3, vx: dirOf(k) * gun.speed });
+        }
+        fx.muzzle[k] = gun.pellets > 1 ? 0.1 : 0.05;
+        if (k === shooters[0]) gun.sound();
+        if (fx.style === 'mg') F.sparks.push({ kind: 'spark', x: F.x[k] - dirOf(k) * 10, y: FLOOR - 112, vx: -dirOf(k) * (60 + Math.random() * 80), vy: -220 - Math.random() * 120, life: 0.5, c: '#E8C66A' });
       }
-      fx.fired++; fx.nextShot += 0.075;
+      fx.fired++; fx.nextShot += gun.every;
     }
-    for (const b of fx.shots) b.x += b.vx * dt;
+    for (const b of fx.shots) { b.x += b.vx * dt; b.y += b.vy * dt; }
     if (fx.kind === 'tie') {
       const mid = (F.x[0] + F.x[1]) / 2;
       fx.shots = fx.shots.filter((b) => { if ((b.vx > 0 && b.x < mid) || (b.vx < 0 && b.x > mid)) return true; if (b.k === 0) { burstSparks(mid, b.y, 5, '#FFE066'); sfx.clink(); } return false; });
@@ -783,24 +798,48 @@ function updateFx(fx, R, dt) {
       fx.shots = fx.shots.filter((b) => {
         const hitX = F.x[l] - dirOf(w) * 26;
         if ((b.vx > 0 && b.x < hitX) || (b.vx < 0 && b.x > hitX)) return true;
-        landHit(fx, R, hitX, b.y, 'small'); if (Math.random() < 0.4) sfx.ricochet(); return false;
+        landHit(fx, R, hitX, b.y, 'small'); if (Math.random() < 0.3) sfx.ricochet(); return false;
       });
     }
   } else if (fx.kind === 'rocket') {
     if (fx.fired < fx.toFire && fx.t >= 0.3 + fx.fired * 0.35) {
-      const x0 = F.x[w] + dirOf(w) * 84, y0 = FLOOR - 145;
-      fx.rockets.push({ x0, y0, x1: F.x[l], y1: FLOOR - 100, t: 0, dur: 0.55 });
-      fx.muzzle[w] = 0.12; fx.fired++; sfx.launch();
-      for (let i = 0; i < 6; i++) F.sparks.push({ kind: 'smoke', x: F.x[w] - dirOf(w) * 50, y: y0, vx: -dirOf(w) * (40 + Math.random() * 80), vy: -20 - Math.random() * 30, r: 10, life: 0.9, c: '#4a4f63' });
+      const st = fx.style, x0 = F.x[w] + dirOf(w) * (st === 'rocket' ? 84 : 132), y0 = FLOOR - (st === 'rocket' ? 145 : 109);
+      fx.rockets.push({ x0, y0, x1: F.x[l], y1: FLOOR - 100, t: 0, dur: st === 'grenade' ? 0.8 : st === 'plasma' ? 0.5 : 0.55, arc: st === 'grenade' ? 170 : st === 'plasma' ? 0 : 70, style: st });
+      fx.muzzle[w] = 0.12; fx.fired++;
+      if (st === 'plasma') { tone(220, { to: 900, dur: 0.35, type: 'sawtooth', vol: 0.2 }); } else if (st === 'grenade') { tone(320, { dur: 0.08, type: 'square', vol: 0.25 }); sfx.whistle(); } else sfx.launch();
+      if (st === 'rocket') for (let i = 0; i < 6; i++) F.sparks.push({ kind: 'smoke', x: F.x[w] - dirOf(w) * 50, y: y0, vx: -dirOf(w) * (40 + Math.random() * 80), vy: -20 - Math.random() * 30, r: 10, life: 0.9, c: '#4a4f63' });
     }
     fx.rockets = fx.rockets.filter((r) => {
       r.t += dt;
       const k = Math.min(1, r.t / r.dur);
-      r.x = r.x0 + (r.x1 - r.x0) * k; r.y = r.y0 + (r.y1 - r.y0) * k - Math.sin(k * Math.PI) * 70;
-      r.a = Math.atan2((r.y1 - r.y0) - Math.cos(k * Math.PI) * Math.PI * 70, r.x1 - r.x0);
-      if (!reduced) F.sparks.push({ kind: 'smoke', x: r.x - Math.cos(r.a) * 26, y: r.y - Math.sin(r.a) * 26, vx: (Math.random() - 0.5) * 20, vy: -10, r: 6, life: 0.6, c: '#5a5f73' });
+      r.x = r.x0 + (r.x1 - r.x0) * k; r.y = r.y0 + (r.y1 - r.y0) * k - Math.sin(k * Math.PI) * r.arc;
+      r.a = Math.atan2((r.y1 - r.y0) - Math.cos(k * Math.PI) * Math.PI * r.arc, r.x1 - r.x0);
+      if (!reduced && r.style === 'rocket') F.sparks.push({ kind: 'smoke', x: r.x - Math.cos(r.a) * 26, y: r.y - Math.sin(r.a) * 26, vx: (Math.random() - 0.5) * 20, vy: -10, r: 6, life: 0.6, c: '#5a5f73' });
+      if (!reduced && r.style === 'plasma') F.sparks.push({ kind: 'spark', x: r.x, y: r.y, vx: (Math.random() - 0.5) * 60, vy: (Math.random() - 0.5) * 60, life: 0.3, c: '#B79CF2' });
       if (k < 1) return true;
       landHit(fx, R, r.x1, r.y1, fx.toFire > 1 ? 'mid' : 'big'); return false;
+    });
+  } else if (fx.kind === 'meteor' && fx.style === 'lightning') {
+    if (fx.fired < fx.toFire && fx.t >= 0.35 + fx.fired * 0.22) {
+      const tx = F.x[l] + (Math.random() - 0.5) * 50, ty = FLOOR - 60 - Math.random() * 70;
+      fx.meteors.push({ bolt: true, tx, ty, t: 0, pts: Array.from({ length: 9 }, (_, i) => [tx + (i === 8 ? 0 : (Math.random() - 0.5) * 50), (ty * i) / 8]) });
+      fx.fired++; noise({ dur: 0.25, vol: 1.4, freq: 6000, to: 400 }); if (!reduced) F.white = Math.max(F.white, 0.25);
+      landHit(fx, R, tx, ty, fx.landed === fx.hits - 1 ? 'big' : 'mid');
+    }
+    for (const m of fx.meteors) m.t += dt;
+    fx.meteors = fx.meteors.filter((m) => m.t < 0.22);
+  } else if (fx.kind === 'meteor' && fx.style === 'swarm') {
+    if (fx.fired < fx.toFire && fx.t >= 0.3 + fx.fired * 0.12) {
+      fx.rockets.push({ x0: F.x[w], y0: FLOOR - 186, x1: F.x[l] + (Math.random() - 0.5) * 60, y1: FLOOR - 70 - Math.random() * 60, t: 0, dur: 0.75, arc: 220, style: 'mini' });
+      fx.fired++; tone(500 + fx.fired * 60, { to: 1400, dur: 0.2, type: 'sawtooth', vol: 0.1 });
+    }
+    fx.rockets = fx.rockets.filter((r) => {
+      r.t += dt; const k = Math.min(1, r.t / r.dur);
+      r.x = r.x0 + (r.x1 - r.x0) * k; r.y = r.y0 + (r.y1 - r.y0) * k - Math.sin(k * Math.PI) * r.arc;
+      r.a = Math.atan2((r.y1 - r.y0) - Math.cos(k * Math.PI) * Math.PI * r.arc, r.x1 - r.x0);
+      if (!reduced) F.sparks.push({ kind: 'smoke', x: r.x, y: r.y, vx: 0, vy: -8, r: 4, life: 0.4, c: '#5a5f73' });
+      if (k < 1) return true;
+      landHit(fx, R, r.x1, r.y1, fx.landed === fx.hits - 1 ? 'big' : 'mid'); return false;
     });
   } else if (fx.kind === 'meteor') {
     if (fx.fired < fx.toFire && fx.t >= 0.4 + fx.fired * 0.2) {
@@ -815,6 +854,10 @@ function updateFx(fx, R, dt) {
       if (m.y < m.ty) return true;
       landHit(fx, R, m.tx, m.ty, fx.landed === fx.hits - 1 ? 'big' : 'mid'); return false;
     });
+  } else if (fx.kind === 'laser' && fx.style === 'anvil') {
+    const k = Math.min(1, Math.max(0, (fx.t - 0.35) / 0.7));
+    fx.anvilY = -120 + (FLOOR - 70 + 120) * k * k;
+    if (fx.fired === 0 && k >= 1) { fx.fired = 1; landHit(fx, R, F.x[l], FLOOR - 40, 'big'); tone(70, { to: 30, dur: 0.5, type: 'square', vol: 0.5 }); tone(2400, { dur: 0.4, type: 'triangle', vol: 0.15 }); }
   } else if (fx.kind === 'laser') {
     if (fx.fired === 0 && fx.t >= 1.15) { fx.fired = 1; fx.beamT = 0; sfx.zap(); landHit(fx, R, F.x[l], FLOOR - 90, 'big'); }
     if (fx.beamT != null) fx.beamT += dt;
@@ -825,11 +868,22 @@ function drawFx(fx, t) {
   if (fx.t < 1.1) drawTitle(fx.title, fx.titleC, Math.min(1, fx.t * 6) * Math.min(1, (1.1 - fx.t) * 3), 1 + Math.max(0, 0.25 - fx.t) * 2);
   if (fx.kind === 'special') drawMove(fx.sp, g, t);
   for (const b of fx.shots) {
-    g.save(); g.shadowColor = '#FFE066'; g.shadowBlur = 10; g.strokeStyle = '#FFF3B0'; g.lineWidth = 3;
-    g.beginPath(); g.moveTo(b.x, b.y); g.lineTo(b.x - Math.sign(b.vx) * 26, b.y); g.stroke(); g.restore();
+    const gun = b.gun || GUNS.mg, a = Math.atan2(b.vy, Math.abs(b.vx));
+    g.save(); g.shadowColor = gun.glow; g.shadowBlur = 10; g.strokeStyle = gun.c; g.lineWidth = gun.width;
+    g.beginPath(); g.moveTo(b.x, b.y); g.lineTo(b.x - Math.sign(b.vx) * gun.len, b.y - Math.sin(a) * gun.len); g.stroke(); g.restore();
   }
   for (const r of fx.rockets) {
-    g.save(); g.translate(r.x, r.y); g.rotate(r.a);
+    if (r.style === 'grenade') {
+      g.save(); g.translate(r.x, r.y); g.rotate(r.t * 14); g.fillStyle = '#4b5a2a'; g.beginPath(); g.ellipse(0, 0, 11, 14, 0, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = '#2f3a18'; g.lineWidth = 2; g.beginPath(); g.moveTo(-11, 0); g.lineTo(11, 0); g.moveTo(0, -14); g.lineTo(0, 14); g.stroke(); g.fillStyle = '#9aa3b8'; g.fillRect(-4, -19, 8, 6); g.restore();
+      continue;
+    }
+    if (r.style === 'plasma') {
+      g.save(); g.shadowColor = '#B79CF2'; g.shadowBlur = 30; g.fillStyle = '#E4D8FF'; g.beginPath(); g.arc(r.x, r.y, 16, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#B79CF2'; g.beginPath(); g.arc(r.x, r.y, 10 + Math.sin(r.t * 40) * 2, 0, Math.PI * 2); g.fill(); g.restore();
+      continue;
+    }
+    g.save(); g.translate(r.x, r.y); g.rotate(r.a); if (r.style === 'mini') g.scale(0.55, 0.55);
     g.fillStyle = '#FFA94D'; g.beginPath(); g.moveTo(-18, -5); g.lineTo(-34 - Math.random() * 12, 0); g.lineTo(-18, 5); g.fill();
     g.fillStyle = '#d9dde8'; roundRect(g, -18, -6, 30, 12, 4); g.fill();
     g.fillStyle = '#FF6B6B'; g.beginPath(); g.moveTo(12, -6); g.lineTo(22, 0); g.lineTo(12, 6); g.fill();
@@ -837,12 +891,27 @@ function drawFx(fx, t) {
     g.restore();
   }
   for (const m of fx.meteors) {
+    if (m.bolt) {
+      g.save(); g.globalAlpha = 1 - m.t / 0.22; g.shadowColor = '#7FD3F0'; g.shadowBlur = 20; g.strokeStyle = '#F3FBFF'; g.lineWidth = 5; g.lineJoin = 'round';
+      g.beginPath(); m.pts.forEach(([px, py], i) => (i ? g.lineTo(px, py) : g.moveTo(px, py))); g.stroke(); g.lineWidth = 2; g.strokeStyle = '#7FD3F0'; g.stroke(); g.restore();
+      continue;
+    }
     g.save(); g.shadowColor = '#FF8A3D'; g.shadowBlur = 24;
     g.fillStyle = '#7a3b22'; g.beginPath(); g.arc(m.x, m.y, m.r, 0, Math.PI * 2); g.fill();
     g.fillStyle = '#FFB36B'; g.beginPath(); g.arc(m.x - m.r * 0.3, m.y - m.r * 0.3, m.r * 0.45, 0, Math.PI * 2); g.fill();
     g.restore();
   }
-  if (fx.kind === 'laser') {
+  if (fx.style === 'anvil' && fx.anvilY != null) {
+    const l = 1 - F.plan.rounds[F.i].winner, x = F.x[l], y = fx.anvilY, k = Math.min(1, (y + 120) / (FLOOR + 50));
+    g.save(); g.globalAlpha = 0.25 + k * 0.4; g.fillStyle = '#000'; g.beginPath(); g.ellipse(x, FLOOR + 4, 30 + k * 40, 8, 0, 0, Math.PI * 2); g.fill(); g.restore();
+    if (!fx.fired || fx.t < 1.6) {
+      g.save(); g.translate(x, y); g.fillStyle = '#4a4f63';
+      g.beginPath(); g.moveTo(-70, -34); g.lineTo(54, -34); g.quadraticCurveTo(84, -32, 92, -14); g.lineTo(28, -12); g.lineTo(22, 6); g.lineTo(-24, 6); g.lineTo(-30, -12); g.lineTo(-62, -14); g.closePath(); g.fill();
+      g.fillRect(-40, 6, 74, 22); g.fillStyle = '#6b7189'; g.fillRect(-70, -34, 124, 6);
+      g.font = '400 12px "Press Start 2P", monospace'; g.textAlign = 'center'; g.fillStyle = '#F3F4F8'; g.fillText('1000 KG', -4, 22); g.restore();
+    }
+  }
+  if (fx.style === 'laser') {
     const l = 1 - F.plan.rounds[F.i].winner, x = F.x[l];
     if (fx.t < 1.15) {
       const k = Math.min(1, fx.t / 1.1), r = 90 - k * 50;
@@ -863,10 +932,10 @@ function drawFx(fx, t) {
 
 // ---------- drawing ----------
 function draw(t) {
-  drawBackdrop(t, F.fx);
+  drawBackdrop(t, F.fx && { kind: F.fx.style === 'meteor' ? 'meteor' : F.fx.style === 'laser' ? 'laser' : null, t: F.fx.t });
   for (const k of [0, 1]) {
     g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(F.x[k], FLOOR + 6, 46, 9, 0, 0, Math.PI * 2); g.fill();
-    drawBot(g, F.x[k], FLOOR, k === 0 ? 1 : -1, F.looks[k], F.pose[k], t + k, F.flash[k], F.fx ? { kind: F.fx.kind === 'tie' ? 'mg' : F.fx.kind, muzzle: F.fx.muzzle[k] } : null);
+    drawBot(g, F.x[k], FLOOR, k === 0 ? 1 : -1, F.looks[k], F.pose[k], t + k, F.flash[k], F.fx ? { kind: F.fx.gear || F.fx.kind, muzzle: F.fx.muzzle[k] } : null);
   }
   drawSmoke();
   drawFx(F.fx, t);
@@ -1008,6 +1077,8 @@ function showResult() {
     }),
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? h('span', null, R.tie === 'margin' ? 'tie (margin)' : 'tie', h('span', { class: 't' }, grazeText(R))) : `−${R.dmg} HP`))));
   $('share').textContent = F.daily ? dailyText(p, rec) : shareText();
+  $('skippedNote').hidden = !p.skipped.length;
+  $('skippedNote').textContent = p.skipped.length ? `Left out: ${p.skipped.map((r) => r.name).join(', ')}. These two have no benchmark in common there, so the fight skipped ${p.skipped.length === 1 ? 'it' : 'them'} instead of playing empty rounds.` : '';
   $('backToBracket').hidden = !fromBracket;
   $('result').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
 }
@@ -1193,7 +1264,8 @@ function rStartFx(R) {
   F.pose[L] = 'summon';
   const real = R.hits.filter((x) => x.dmg > 0).map((x) => x.weapon), top = ['laser', 'meteor', 'rocket', 'mg'].find((w) => real.includes(w));
   F.fx.kind = top || null;
-  F.fx.title = top ? `${weaponName(top)}${real.filter((w) => w === top).length > 1 ? ` ×${real.filter((w) => w === top).length}` : ''}` : 'ALL DODGE!';
+  const topHits = R.hits.filter((x) => x.dmg > 0 && x.weapon === top), styles = [...new Set(topHits.map((x) => STYLE_NAMES[x.style] || weaponName(top)))];
+  F.fx.title = top ? `${styles.join(' + ')}${styles.length === 1 && topHits.length > 1 ? ` ×${topHits.length}` : ''}` : 'ALL DODGE!';
   F.fx.titleC = F.colors[L];
   if (top === 'meteor') sfx.rumble();
   if (top === 'laser') sfx.lock();
@@ -1228,14 +1300,29 @@ function rFire(R, hit) {
       land: () => rLand(R, hit, true, 'big') }) });
     return;
   }
-  const w = hit.weapon;
-  if (w === 'mg') {
-    for (let b = 0; b < 4; b++) F.shots.push({ kind: 'bullet', delay: b * 0.07, x: o.x, y: o.y, tx: c.x, ty: c.y + (Math.random() - 0.5) * 20, v: 1700, onLand: () => rLand(R, hit, b === 3, 'small') });
-    sfx.shot(); setTimeout(() => sfx.shot(), 90); sfx.casing();
-  } else if (w === 'rocket') {
-    F.shots.push({ kind: 'rocket', x0: o.x, y0: o.y, x1: c.x, y1: c.y, t: 0, dur: 0.6, onLand: () => rLand(R, hit, true, 'mid') });
-    sfx.launch();
-  } else if (w === 'meteor') {
+  const st = hit.style || hit.weapon;
+  if (st === 'mg' || st === 'pistol') {
+    const gun = GUNS[st], n = st === 'pistol' ? 3 : 4;
+    for (let b = 0; b < n; b++) F.shots.push({ kind: 'bullet', gun, delay: b * (st === 'pistol' ? 0.12 : 0.07), x: o.x, y: o.y, tx: c.x, ty: c.y + (Math.random() - 0.5) * 20, v: gun.speed, onLand: () => rLand(R, hit, b === n - 1, 'small') });
+    gun.sound();
+  } else if (st === 'shotgun') {
+    for (let b = 0; b < 2; b++) for (let p = 0; p < 4; p++) F.shots.push({ kind: 'bullet', gun: GUNS.shotgun, delay: b * 0.3, x: o.x, y: o.y, tx: c.x, ty: c.y + (p - 1.5) * 14, v: 1500, onLand: () => rLand(R, hit, b === 1 && p === 3, 'small') });
+    GUNS.shotgun.sound(); setTimeout(() => GUNS.shotgun.sound(), 300);
+  } else if (st === 'plasma') {
+    F.shots.push({ kind: 'plasma', x: o.x, y: o.y, tx: c.x, ty: c.y, v: 900, onLand: () => rLand(R, hit, true, 'mid') });
+    tone(220, { to: 900, dur: 0.3, type: 'sawtooth', vol: 0.18 });
+  } else if (st === 'rocket' || st === 'grenade') {
+    F.shots.push({ kind: 'rocket', style: st, x0: o.x, y0: o.y, x1: c.x, y1: c.y, t: 0, dur: st === 'grenade' ? 0.8 : 0.6, arc: st === 'grenade' ? 140 : 80, onLand: () => rLand(R, hit, true, 'mid') });
+    if (st === 'grenade') sfx.whistle(); else sfx.launch();
+  } else if (st === 'lightning') {
+    for (let b = 0; b < 3; b++) { const tx = c.x + (Math.random() - 0.5) * 30, ty = c.y + (Math.random() - 0.5) * 30; F.shots.push({ kind: 'bolt', delay: b * 0.18, t: 0, tx, ty, pts: Array.from({ length: 8 }, (_, i) => [tx + (i === 7 ? 0 : (Math.random() - 0.5) * 36), (ty * i) / 7]), onLand: () => { rLand(R, hit, b === 2, b === 2 ? 'big' : 'mid'); noise({ dur: 0.2, vol: 1.2, freq: 6000, to: 400 }); } }); }
+  } else if (st === 'swarm') {
+    for (let b = 0; b < 3; b++) F.shots.push({ kind: 'rocket', style: 'mini', delay: b * 0.12, x0: o.x, y0: o.y, x1: c.x + (Math.random() - 0.5) * 30, y1: c.y + (Math.random() - 0.5) * 30, t: 0, dur: 0.7, arc: 170, onLand: () => rLand(R, hit, b === 2, b === 2 ? 'big' : 'mid') });
+    tone(600, { to: 1500, dur: 0.25, type: 'sawtooth', vol: 0.1 });
+  } else if (st === 'anvil') {
+    F.shots.push({ kind: 'anvil', x: c.x, y: -60, tx: c.x, ty: FLOOR - 30 * F.s, v: 1100, onLand: () => { rLand(R, hit, true, 'big'); tone(70, { to: 30, dur: 0.4, type: 'square', vol: 0.4 }); } });
+    sfx.whistle();
+  } else if (st === 'meteor') {
     for (let b = 0; b < 3; b++) { const tx = c.x + (Math.random() - 0.5) * 40, ty = c.y + (Math.random() - 0.5) * 30; F.shots.push({ kind: 'meteor', delay: b * 0.16, x: tx - 160 + Math.random() * 320, y: -30, tx, ty, v: 950, r: 9 + Math.random() * 7, onLand: () => rLand(R, hit, b === 2, b === 2 ? 'big' : 'mid') }); }
     sfx.whistle();
   } else {
@@ -1251,14 +1338,15 @@ function stepRoyale(dt) {
   for (const s of F.shots) {
     if (s.delay > 0) { s.delay -= dt; continue; }
     if (s.kind === 'move') { if (updateMove(s.sp, dt)) s.done = true; continue; }
-    if (s.kind === 'bullet' || s.kind === 'meteor') {
+    if (s.kind === 'bolt') { s.t += dt; if (!s.hit) { s.hit = true; s.onLand(); } if (s.t > 0.22) s.done = true; continue; }
+    if (s.kind === 'bullet' || s.kind === 'meteor' || s.kind === 'plasma' || s.kind === 'anvil') {
       const dx = s.tx - s.x, dy = s.ty - s.y, d = Math.hypot(dx, dy), st = s.v * dt;
       if (s.kind === 'meteor' && !reduced) F.sparks.push({ kind: 'fire', x: s.x, y: s.y, vx: 0, vy: -20, r: s.r * 0.8, life: 0.22, c: Math.random() < 0.5 ? '#FFA94D' : '#FF6B6B' });
       s.a = Math.atan2(dy, dx);
       if (d <= st) { s.done = true; s.onLand(); } else { s.x += dx / d * st; s.y += dy / d * st; }
     } else if (s.kind === 'rocket') {
       s.t += dt; const k = Math.min(1, s.t / s.dur);
-      s.x = s.x0 + (s.x1 - s.x0) * k; s.y = s.y0 + (s.y1 - s.y0) * k - Math.sin(k * Math.PI) * 80;
+      s.x = s.x0 + (s.x1 - s.x0) * k; s.y = s.y0 + (s.y1 - s.y0) * k - Math.sin(k * Math.PI) * (s.arc ?? 80);
       if (!reduced) F.sparks.push({ kind: 'smoke', x: s.x, y: s.y, vx: 0, vy: -10, r: 5, life: 0.5, c: '#5a5f73' });
       if (k >= 1) { s.done = true; s.onLand(); }
     } else if (s.kind === 'beam') {
@@ -1345,8 +1433,12 @@ function drawRoyale(t) {
   drawSmoke();
   for (const s of F.shots) {
     if (s.delay > 0) continue;
-    if (s.kind === 'bullet') { g.save(); g.shadowColor = '#FFE066'; g.shadowBlur = 10; g.strokeStyle = '#FFF3B0'; g.lineWidth = 3; g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(s.x - Math.cos(s.a || 0) * 22, s.y - Math.sin(s.a || 0) * 22); g.stroke(); g.restore(); }
-    else if (s.kind === 'rocket') { g.save(); g.translate(s.x, s.y); g.fillStyle = '#d9dde8'; roundRect(g, -12, -5, 24, 10, 4); g.fill(); g.fillStyle = '#FF6B6B'; g.beginPath(); g.arc(12, 0, 5, 0, Math.PI * 2); g.fill(); g.restore(); }
+    if (s.kind === 'bullet') { const gun = s.gun || GUNS.mg; g.save(); g.shadowColor = gun.glow; g.shadowBlur = 10; g.strokeStyle = gun.c; g.lineWidth = gun.width; g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(s.x - Math.cos(s.a || 0) * Math.min(30, gun.len), s.y - Math.sin(s.a || 0) * Math.min(30, gun.len)); g.stroke(); g.restore(); }
+    else if (s.kind === 'plasma') { g.save(); g.shadowColor = '#B79CF2'; g.shadowBlur = 24; g.fillStyle = '#E4D8FF'; g.beginPath(); g.arc(s.x, s.y, 11, 0, Math.PI * 2); g.fill(); g.restore(); }
+    else if (s.kind === 'bolt') { g.save(); g.globalAlpha = 1 - s.t / 0.22; g.shadowColor = '#7FD3F0'; g.shadowBlur = 16; g.strokeStyle = '#F3FBFF'; g.lineWidth = 4; g.beginPath(); s.pts.forEach(([px, py], i) => (i ? g.lineTo(px, py) : g.moveTo(px, py))); g.stroke(); g.restore(); }
+    else if (s.kind === 'anvil') { g.save(); g.translate(s.x, s.y); g.scale(F.s, F.s); g.fillStyle = '#4a4f63'; g.beginPath(); g.moveTo(-50, -26); g.lineTo(40, -26); g.quadraticCurveTo(62, -24, 68, -10); g.lineTo(20, -9); g.lineTo(16, 4); g.lineTo(-18, 4); g.lineTo(-22, -9); g.lineTo(-44, -10); g.closePath(); g.fill(); g.fillRect(-28, 4, 54, 16); g.restore(); }
+    else if (s.kind === 'rocket' && s.style === 'grenade') { g.save(); g.translate(s.x, s.y); g.rotate(s.t * 14); g.fillStyle = '#4b5a2a'; g.beginPath(); g.ellipse(0, 0, 8, 10, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = '#9aa3b8'; g.fillRect(-3, -14, 6, 4); g.restore(); }
+    else if (s.kind === 'rocket') { g.save(); g.translate(s.x, s.y); if (s.style === 'mini') g.scale(0.6, 0.6); g.fillStyle = '#d9dde8'; roundRect(g, -12, -5, 24, 10, 4); g.fill(); g.fillStyle = '#FF6B6B'; g.beginPath(); g.arc(12, 0, 5, 0, Math.PI * 2); g.fill(); g.restore(); }
     else if (s.kind === 'meteor') { g.save(); g.shadowColor = '#FF8A3D'; g.shadowBlur = 20; g.fillStyle = '#7a3b22'; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); g.fillStyle = '#FFB36B'; g.beginPath(); g.arc(s.x - s.r * 0.3, s.y - s.r * 0.3, s.r * 0.45, 0, Math.PI * 2); g.fill(); g.restore(); }
     else if (s.kind === 'move') drawMove(s.sp, g, t);
     else if (s.kind === 'beam') { const k = s.t / 0.6, wd = 44 * (1 - k * 0.6); g.save(); g.globalAlpha = 1 - k * 0.8; const gr = g.createLinearGradient(s.x - wd, 0, s.x + wd, 0); gr.addColorStop(0, 'rgba(127,211,240,0)'); gr.addColorStop(0.5, '#7FD3F0'); gr.addColorStop(1, 'rgba(127,211,240,0)'); g.fillStyle = gr; g.fillRect(s.x - wd, 0, wd * 2, FLOOR + 10); g.fillStyle = '#fff'; g.fillRect(s.x - wd * 0.18, 0, wd * 0.36, FLOOR + 10); g.restore(); }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { judgeRound, planFight, weaponFor, START_HP } from '../src/fight.ts';
+import { judgeRound, planFight, START_HP, stylePicker, STYLES, weaponFor } from '../src/fight.ts';
 import { brawlNumber, dailyBrawl, featuredFight, inClass, newChallengers, PRESETS, runTournament } from '../src/league.ts';
 import type { BrawlData, Model, Score } from '../src/types.ts';
 
@@ -23,6 +23,22 @@ const data = (models: Model[]): BrawlData => ({
 const s = (v: number, se: number | null = null): Score => ({ v, se, setting: 'max' });
 const model = (id: string, scores: Record<string, Score>, extra: Partial<Model> = {}): Model =>
   ({ id, name: id, org: 'Lab', released: '2026-09-01', open: false, eci: 150, price: null, scores, ...extra });
+
+describe('empty rounds and weapon styles', () => {
+  it('leaves out rounds with no shared benchmark instead of playing them empty', () => {
+    const a = model('a', { b1: s(80) }), b = model('b', { b1: s(70) });
+    const p = planFight(data([a, b]), a, b, ['r1', 'r2', 'r1']);
+    expect(p.rounds.map((R) => R.round.id)).toEqual(['r1', 'r1']);
+    expect(p.skipped.map((r) => r.id)).toEqual(['r2']);
+  });
+  it('a fighter switches weapon styles and never repeats one twice in a row', () => {
+    const pick = stylePicker();
+    const mine = ['mg', 'mg', 'mg', 'mg', 'rocket', 'rocket'].map((w) => pick(0, w as 'mg'));
+    expect(mine.slice(0, 3)).toEqual(STYLES.mg);
+    for (let i = 1; i < mine.length; i++) expect(mine[i]).not.toBe(mine[i - 1]);
+    expect(pick(1, 'mg')).toBe('mg'); // the other fighter has its own list
+  });
+});
 
 describe('ties and decisions', () => {
   it('a tie grazes both fighters for the same small amount', () => {

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
+import { planFight } from '../src/fight.ts';
 import type { BrawlData } from '../src/types.ts';
 
 const URL = `file://${resolve('_site/index.html')}`;
@@ -34,7 +35,7 @@ test('a fight ends with a sourced scorecard and a share link', async ({ page }) 
   await expect(page.locator('#arena')).toBeVisible();
   await page.click('#skip');
   await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
-  await expect(page.locator('#rows tr')).toHaveCount(5);
+  await expect(page.locator('#rows tr')).toHaveCount(planFight(data, first, second, ['coding', 'math', 'science', 'facts', 'puzzles']).rounds.length);
   await expect(page.locator('#rows a').first()).toHaveAttribute('href', /^https:/);
   await expect(page.locator('#share')).toContainText(`#a=${first.id}&b=${second.id}`);
   expect(errors).toEqual([]);

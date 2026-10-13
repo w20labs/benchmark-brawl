@@ -4,7 +4,7 @@
  * is within the margin of error (it dodges). At 0 HP a model is out. Last one standing, or the
  * most HP after the last round, wins.
  */
-import { compareOn, hasBench, START_HP, type RoundResult, type WeaponId } from './fight.ts';
+import { compareOn, hasBench, START_HP, stylePicker, type RoundResult, type WeaponId } from './fight.ts';
 import type { Benchmark, BrawlData, Model, Round } from './types.ts';
 
 export const ROYALE_MIN = 3, ROYALE_MAX = 8;
@@ -18,6 +18,8 @@ export type RoyaleHit = {
   points: number;
   dmg: number;
   weapon: WeaponId;
+  /** Which style of the weapon to show: the leader switches weapons rather than repeating one. */
+  style: string;
 };
 
 export type RoyaleRound = {
@@ -64,13 +66,15 @@ export function planRoyale(data: BrawlData, fighters: Model[], roundIds: string[
   const hp = fighters.map(() => START_HP);
   const outIn: (number | null)[] = fighters.map(() => null);
   const rounds: RoyaleRound[] = [];
+  const pick = stylePicker();
   for (const id of roundIds) {
     if (hp.filter((x) => x > 0).length < 2) break;
     const round = data.rounds.find((r) => r.id === id);
     if (!round) continue;
     const standing = fighters.map((_, i) => i).filter((i) => hp[i] > 0);
     const bench = benchFor(data, round, standing.map((i) => fighters[i]));
-    const inRound = bench ? standing.filter((i) => hasBench(bench, fighters[i])) : [];
+    if (!bench) continue; // nobody shares a benchmark for this round: leave it out rather than play it empty
+    const inRound = standing.filter((i) => hasBench(bench, fighters[i]));
     const values = fighters.map((m, i) => (bench && inRound.includes(i) ? (bench.kind === 'price' ? m.price!.blended : m.scores[bench.id].v) : null));
     const better = (i: number, j: number) => (bench!.kind === 'price' ? values[i]! < values[j]! : values[i]! > values[j]!);
     const leader = inRound.length ? inRound.reduce((a, b) => (better(b, a) ? b : a)) : null;
@@ -79,7 +83,7 @@ export function planRoyale(data: BrawlData, fighters: Model[], roundIds: string[
     for (const i of inRound) {
       if (i === leader) continue;
       const c = compareOn(bench, fighters[leader!], fighters[i]);
-      hits.push({ target: i, tie: c.tie, margin: c.margin, points: c.points, dmg: c.dmg, weapon: c.weapon });
+      hits.push({ target: i, tie: c.tie, margin: c.margin, points: c.points, dmg: c.dmg, weapon: c.weapon, style: pick(leader!, c.weapon) });
       hp[i] = Math.max(0, hp[i] - c.dmg);
     }
     const out = standing.filter((i) => hp[i] === 0);

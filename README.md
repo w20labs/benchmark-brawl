@@ -97,7 +97,8 @@ Flagships (Opus, Pro, Max…) are bigger and fast models (Flash, Haiku, Mini…)
 | Damage | 2 × the score gap in percentage points |
 | Ties | A gap inside the combined 95% margin of error is a tie: the crossfire grazes **both** fighters for 3 HP. A graze never knocks anyone out (it stops at 1 HP) |
 | Price | Blended list price, (3 × input + output) / 4 per million tokens. Cheaper wins; within 15% is a tie |
-| Weapons | Gap 1–4 machine gun · 5–9 rocket launcher · 10–15 meteor shower · 16+ orbital laser |
+| Weapons | The size shows the gap: 1–4 machine gun, shotgun or laser pistol · 5–9 rocket launcher, grenade or plasma ball · 10–15 meteor shower, lightning storm or missile swarm · 16+ orbital laser or space anvil. Within a fight each fighter switches styles and never uses the same one twice in a row |
+| Empty rounds | A round where the two have no benchmark in common is left out, not played empty: two full rounds beat five half-empty ones. The scorecard lists what was skipped |
 | Winner | K.O. at 0 HP. Otherwise the most HP wins **by decision**: *unanimous* if it also won more rounds, *split* if it won fewer or the same (its wins were bigger) |
 | Battle royale | Each round uses the round's benchmark most fighters have. The best result fires at everyone: 2 × their gap to it, a dodge inside the margin. A fighter without that result sits the round out. 0 HP is out; the last one standing, or the most HP, wins |
 | Tournament | Top 8 by Epoch Capabilities Index; 1 v 8, 4 v 5, 2 v 7, 3 v 6; a draw goes to the higher seed |
