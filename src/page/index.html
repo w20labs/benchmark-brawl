@@ -103,6 +103,22 @@ select.sort { min-height: 36px; padding: 6px 10px; border-radius: 9px; border: 1
 .note { font: 500 11px var(--mono); color: var(--muted); }
 .controls { display: flex; gap: 6px; }
 
+/* battle royale */
+.board { display: none; }
+.arena.royale .hud .side, .arena.royale .rs { visibility: hidden; }
+.arena.royale .roundbar { grid-template-columns: 0 1fr 0; }
+.arena.royale .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 12px; padding: 10px 14px; background: var(--sunken); border-top: 1px solid var(--line); }
+.bf { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; font: 600 12.5px var(--ui); color: var(--c); min-width: 0; }
+.bf .bn { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bf .bv { font: 700 11.5px var(--mono); color: var(--text); }
+.bf .bhp { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: #2a0f14; overflow: hidden; display: block; }
+.bf .bhp b { display: block; height: 100%; background: var(--amber); transition: width .45s; }
+.bf.lead .bn::before { content: '👑 '; }
+.bf.out { color: #5d6680; text-decoration: line-through; }
+.tablewrap { overflow-x: auto; border-radius: 12px; }
+.tablewrap table { min-width: 560px; }
+th .t { display: block; text-transform: none; letter-spacing: 0; font-weight: 500; }
+
 /* results */
 .verdict { font: 400 clamp(14px, 2.6vw, 20px)/1.4 var(--arcade); }
 .verdict b { font-weight: 400; color: var(--c); }
@@ -166,7 +182,7 @@ footer { display: grid; gap: 6px; }
 
   <section class="box" id="select" aria-label="Choose fighters">
     <div class="toolbar">
-      <h2>2 · Choose two fighters <span style="color:var(--text)">· click, or ← → and Enter</span></h2>
+      <h2><span id="selectTitle">2 · Choose two fighters</span> <span style="color:var(--text)">· click, or ← → and Enter</span></h2>
       <div class="chips">
         <input class="search" id="search" type="search" placeholder="Search models or labs" aria-label="Search fighters">
         <select class="sort" id="sort" aria-label="Sort fighters">
@@ -176,6 +192,7 @@ footer { display: grid; gap: 6px; }
         </select>
       </div>
     </div>
+    <div class="chips" id="modeChips" aria-label="Mode"></div>
     <div class="chips" id="classChips" aria-label="Weight class"></div>
     <div class="roster" id="roster"></div>
     <p class="fine" id="rosterEmpty" hidden>No fighters match. Clear the search or pick another weight class.</p>
@@ -203,8 +220,9 @@ footer { display: grid; gap: 6px; }
       <div class="rmid"><div class="rname" id="rname"></div><div class="rtest" id="rtest"></div><div class="rres" id="rres"></div></div>
       <div class="rs r" id="rs2"><b id="sc2">–</b><span id="sl2"></span></div>
     </div>
+    <div class="board" id="board"></div>
     <div class="arena-foot">
-      <span class="note">Damage = 2 × score gap · bigger gap, bigger weapon · within the margin of error = tie</span>
+      <span class="note" id="arenaNote">Damage = 2 × score gap · bigger gap, bigger weapon · within the margin of error = tie</span>
       <div class="controls">
         <button class="btn small" id="soundBtn" aria-pressed="true">♪ On</button>
         <button class="btn small" id="skip">Skip ⏭</button>
@@ -227,6 +245,21 @@ footer { display: grid; gap: 6px; }
       <button class="btn" id="again">Pick new fighters</button>
     </div>
     <p class="fine" id="clipHelp">The clip is recorded in your browser as you watch, with sound if it's on. Nothing is uploaded.</p>
+  </section>
+
+  <section class="box" id="royaleResult" hidden aria-label="Battle royale result">
+    <div class="verdict" id="rverdict"></div>
+    <div class="tablewrap"><table>
+      <thead><tr id="rhead"></tr></thead>
+      <tbody id="rrows"></tbody>
+    </table></div>
+    <pre class="share" id="rshare"></pre>
+    <div class="acts">
+      <button class="btn go" id="rrematch">REMATCH</button>
+      <button class="btn" id="rcopy">Copy result + link</button>
+      <button class="btn" id="ragain">Pick new fighters</button>
+    </div>
+    <p class="fine">Each round, the best result on the round's benchmark fires at everyone else: 2 × their gap in damage, bigger gap, bigger weapon. Inside the margin of error is a dodge. A fighter without a result for that benchmark sits the round out. At 0 HP it's out.</p>
   </section>
 
   <section class="box" id="tourney" hidden aria-label="Tournament">

@@ -56,31 +56,38 @@ const benchById = (data: BrawlData, id: string) => data.benchmarks.find((b) => b
 export function pickBench(data: BrawlData, round: Round, a: Model, b: Model): Benchmark | null {
   for (const id of round.benches) {
     const bench = benchById(data, id);
-    if (bench.kind === 'price' ? a.price && b.price : a.scores[id] && b.scores[id]) return bench;
+    if (hasBench(bench, a) && hasBench(bench, b)) return bench;
   }
   return null;
 }
 
 export function judgeRound(data: BrawlData, round: Round, a: Model, b: Model): Omit<RoundResult, 'hpBefore' | 'hpAfter'> {
-  const bench = pickBench(data, round, a, b);
-  const none = { round, bench, values: [null, null] as [null, null], winner: null, tie: null, margin: null, points: 0, dmg: 0, weapon: 'tie' as const };
+  return { round, ...compareOn(pickBench(data, round, a, b), a, b) };
+}
+
+/** Compares two models on one benchmark (which both must have). Shared by fights and royales. */
+export function compareOn(bench: Benchmark | null, a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter'> {
+  const none = { bench, values: [null, null] as [null, null], winner: null, tie: null, margin: null, points: 0, dmg: 0, weapon: 'tie' as const };
   if (!bench) return none;
   if (bench.kind === 'price') {
     const pa = a.price!.blended, pb = b.price!.blended;
     const ratio = Math.max(pa, pb) / Math.min(pa, pb);
     const values: [number, number] = [pa, pb];
-    if (ratio < PRICE_TIE_RATIO) return { ...none, bench, values, winner: -1, tie: 'price' };
+    if (ratio < PRICE_TIE_RATIO) return { ...none, values, winner: -1, tie: 'price' };
     const points = Math.round(Math.log2(ratio) * PRICE_POINTS_PER_DOUBLING * 10) / 10;
-    return { ...none, bench, values, winner: pa < pb ? 0 : 1, points, dmg: Math.round(points * DAMAGE_PER_POINT), weapon: weaponFor(points) };
+    return { ...none, values, winner: pa < pb ? 0 : 1, points, dmg: Math.round(points * DAMAGE_PER_POINT), weapon: weaponFor(points) };
   }
   const sa = a.scores[bench.id], sb = b.scores[bench.id];
   const values: [number, number] = [sa.v, sb.v];
   const gap = Math.round(Math.abs(sa.v - sb.v) * 10) / 10;
   const margin = sa.se != null && sb.se != null ? Math.round(TIE_Z * Math.hypot(sa.se, sb.se) * 10) / 10 : null;
-  if (gap < 0.5) return { ...none, bench, values, winner: -1, tie: 'exact', margin };
-  if (margin != null && gap <= margin) return { ...none, bench, values, winner: -1, tie: 'margin', margin };
-  return { ...none, bench, values, winner: sa.v > sb.v ? 0 : 1, margin, points: gap, dmg: Math.round(gap * DAMAGE_PER_POINT), weapon: weaponFor(gap) };
+  if (gap < 0.5) return { ...none, values, winner: -1, tie: 'exact', margin };
+  if (margin != null && gap <= margin) return { ...none, values, winner: -1, tie: 'margin', margin };
+  return { ...none, values, winner: sa.v > sb.v ? 0 : 1, margin, points: gap, dmg: Math.round(gap * DAMAGE_PER_POINT), weapon: weaponFor(gap) };
 }
+
+/** True when the model has a result for this benchmark. */
+export const hasBench = (bench: Benchmark, m: Model) => (bench.kind === 'price' ? !!m.price : !!m.scores[bench.id]);
 
 /** Plays every round in order; stops early on a K.O. */
 export function planFight(data: BrawlData, a: Model, b: Model, roundIds: string[]): FightResult {

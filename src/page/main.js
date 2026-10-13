@@ -1,5 +1,6 @@
 // Benchmark Brawl page. The rules live in ../fight.ts and ../league.ts; this file draws and plays them.
 import { formatValue, planFight, weaponName } from '../fight.ts';
+import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
 import { CLASSES, featuredFight, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 
 /** @type {import('../types.ts').BrawlData} */
@@ -150,6 +151,7 @@ function roundRect(g, x, y, w, hgt, r) { g.beginPath(); g.moveTo(x + r, y); g.ar
 let rounds = [...DATA.defaultRounds];
 let classId = 'all', query = '', sortBy = 'eci';
 let picks = [], cursor = 0;
+let mode = '1v1'; // or 'royale': 3 to 8 fighters at once
 let F = null; // the fight being shown
 let bracket = null, fromBracket = false, wantTourney = false;
 
@@ -164,7 +166,7 @@ function renderFeatured() {
     h('div', null, h('div', { class: 'tag' }, 'NEW CHALLENGER'), h('div', { class: 'nm', style: `color:${ca}` }, a.name), h('div', { class: 'sub' }, `${a.org} · released ${fmtDate(a.released)}`)),
     h('div', { class: 'vs' }, 'VS'),
     h('div', { class: 'r' }, h('div', { class: 'tag' }, champ ? 'CHAMPION' : 'TOP CONTENDER'), h('div', { class: 'nm', style: `color:${cb}` }, b.name), h('div', { class: 'sub' }, `${b.org} · highest capability index`)),
-    h('button', { type: 'button', class: 'btn go', onclick: () => { picks = [a.id, b.id]; renderRoster(); startFight(); } }, 'FIGHT OF THE WEEK')));
+    h('button', { type: 'button', class: 'btn go', onclick: () => { mode = '1v1'; picks = [a.id, b.id]; renderAll(); startFight(); } }, 'FIGHT OF THE WEEK')));
 }
 $('credits').replaceChildren(
   'Scores: ', h('a', { href: 'https://epoch.ai/benchmarks', target: '_blank', rel: 'noopener' }, 'Epoch AI Benchmarking Hub'), ' (CC BY 4.0), including ',
@@ -230,11 +232,19 @@ function renderRoster() {
   }));
   const [a, b] = picks.map((id) => byId.get(id));
   const nm = (m) => h('b', { style: `color:${colorOf(m)}` }, m.name);
-  $('vsLine').replaceChildren(...(a && b ? [nm(a), ' VS ', nm(b)] : a ? [nm(a), ' VS ? · pick player 2'] : ['Pick player 1']));
-  $('fight').disabled = picks.length < 2;
+  if (mode === 'royale') {
+    const ms = picks.map((id) => byId.get(id));
+    $('vsLine').replaceChildren(...(ms.length ? [`👑 ${ms.length}/${ROYALE_MAX}: `, ...ms.flatMap((m, i) => [i ? ' · ' : '', nm(m)])] : [`👑 Pick ${ROYALE_MIN} to ${ROYALE_MAX} fighters`]),
+      ms.length && ms.length < ROYALE_MIN ? ` · ${ROYALE_MIN - ms.length} more` : '');
+    $('fight').disabled = picks.length < ROYALE_MIN;
+  } else {
+    $('vsLine').replaceChildren(...(a && b ? [nm(a), ' VS ', nm(b)] : a ? [nm(a), ' VS ? · pick player 2'] : ['Pick player 1']));
+    $('fight').disabled = picks.length < 2;
+  }
 }
 function pick(id) {
   if (picks.includes(id)) picks = picks.filter((p) => p !== id);
+  else if (mode === 'royale') { if (picks.length >= ROYALE_MAX) return toast(`A royale has at most ${ROYALE_MAX} fighters`); picks = [...picks, id]; }
   else picks = picks.length >= 2 ? [picks[0], id] : [...picks, id];
   sfx.blip(picks.includes(id));
   renderRoster();
@@ -249,18 +259,27 @@ addEventListener('keydown', (e) => {
   if (!n) return;
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') cursor = (cursor + 1) % n;
   else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') cursor = (cursor + n - 1) % n;
-  else if ((e.key === 'Enter' || e.key === ' ') && picks.length === 2 && picks.includes(list[cursor].id)) { e.preventDefault(); return startFight(); }
+  else if ((e.key === 'Enter' || e.key === ' ') && mode === '1v1' && picks.length === 2 && picks.includes(list[cursor].id)) { e.preventDefault(); return startFight(); }
   else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); return pick(list[cursor].id); }
   else return;
   e.preventDefault(); renderRoster();
   document.querySelectorAll('.fighter')[cursor]?.focus({ preventScroll: false });
 });
-function renderAll() { renderBuilder(); renderClassChips(); renderRoster(); writeHash(); }
+function renderMode() {
+  $('selectTitle').textContent = mode === 'royale' ? `2 · Choose ${ROYALE_MIN} to ${ROYALE_MAX} fighters` : '2 · Choose two fighters';
+  $('modeChips').replaceChildren(h('span', { class: 'fine' }, 'Mode:'),
+    ...[['1v1', '🥊 1 v 1'], ['royale', `👑 Battle royale (${ROYALE_MIN}–${ROYALE_MAX})`]].map(([id, label]) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(mode === id),
+      onclick: () => { if (mode === id) return; mode = id; if (mode === '1v1') picks = picks.slice(0, 2); renderAll(); sfx.blip(true); } }, label)),
+    mode === 'royale' ? h('button', { type: 'button', class: 'btn small', id: 'fillTop', title: 'The 8 most capable in this weight class, by Epoch Capabilities Index',
+      onclick: () => { picks = DATA.models.filter((m) => inClass(m, classId)).sort((a, b) => (b.eci ?? -1) - (a.eci ?? -1)).slice(0, ROYALE_MAX).map((m) => m.id); renderAll(); sfx.blip(true); } }, 'Fill with the top 8') : null);
+}
+function renderAll() { renderBuilder(); renderMode(); renderClassChips(); renderRoster(); writeHash(); }
 
 // ---------- links: #a=<id>&b=<id>&r=coding,math ----------
+function royaleHash(ids, rs) { return `#m=royale&f=${ids.map(encodeURIComponent).join(',')}&r=${rs.join(',')}`; }
 function hashFor(a, b, rs) { return `#a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}&r=${rs.join(',')}`; }
 const classPart = () => (classId === 'all' ? '' : `&c=${classId}`);
-function writeHash() { const h2 = picks.length === 2 ? hashFor(picks[0], picks[1], rounds) + classPart() : `#r=${rounds.join(',')}${classPart()}`; history.replaceState(null, '', h2); }
+function writeHash() { const h2 = mode === 'royale' ? royaleHash(picks, rounds) + classPart() : picks.length === 2 ? hashFor(picks[0], picks[1], rounds) + classPart() : `#r=${rounds.join(',')}${classPart()}`; history.replaceState(null, '', h2); }
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
   const rs = (p.get('r') || '').split(',').filter((r) => roundById.has(r));
@@ -268,6 +287,11 @@ function readHash() {
   const c = p.get('c');
   if (c && CLASSES.some((x) => x.id === c)) classId = c;
   if (p.get('t') === '1') wantTourney = true;
+  if (p.get('m') === 'royale') {
+    mode = 'royale';
+    picks = [...new Set((p.get('f') || '').split(',').filter((id) => byId.has(id)))].slice(0, ROYALE_MAX);
+    return picks.length >= ROYALE_MIN;
+  }
   const a = p.get('a'), b = p.get('b');
   if (a && b && byId.has(a) && byId.has(b) && a !== b) { picks = [a, b]; return true; }
   return false;
@@ -285,8 +309,10 @@ function startFight(opts = {}) {
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, rounds);
   F = { plan, colors: fightColors(a, b), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null };
-  for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured']) $(id).hidden = true;
+  for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
   $('arena').hidden = false;
+  $('arena').classList.remove('royale');
+  $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · within the margin of error = tie';
   $('rec').hidden = !F.recording;
   $('arena').classList.toggle('recording', F.recording);
   for (const k of [0, 1]) {
@@ -380,11 +406,11 @@ function finish() {
 }
 function frame(now) {
   const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
-  if (F && !$('arena').hidden) { step(dt); draw(now / 1000); }
+  if (F && !$('arena').hidden) { if (F.royale) { stepRoyale(dt); drawRoyale(now / 1000); } else { step(dt); draw(now / 1000); } }
   raf = requestAnimationFrame(frame);
 }
-function step(dt) {
-  F.t += dt;
+/** Sparks, smoke, explosions and floating numbers, for both fights and royales. */
+function stepParticles(dt) {
   F.flash = F.flash.map((v) => Math.max(0, v - dt));
   F.shake = Math.max(0, F.shake - dt * 30);
   F.white = Math.max(0, F.white - dt * 3);
@@ -398,6 +424,10 @@ function step(dt) {
   F.booms = F.booms.filter((b) => b.t < 0.7);
   for (const f of F.floats) { f.y -= 50 * dt; f.life -= dt; }
   F.floats = F.floats.filter((f) => f.life > 0);
+}
+function step(dt) {
+  F.t += dt;
+  stepParticles(dt);
   if (F.over) { if (F.t > (F.recording ? 4.2 : 2.6)) endFight(); return; }
   const R = F.plan.rounds[F.i];
   const [name, len] = phasesOf(R)[F.phase];
@@ -568,6 +598,18 @@ function drawFx(fx, t) {
 
 // ---------- drawing ----------
 function draw(t) {
+  drawBackdrop(t, F.fx);
+  for (const k of [0, 1]) {
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(F.x[k], FLOOR + 6, 46, 9, 0, 0, Math.PI * 2); g.fill();
+    drawBot(g, F.x[k], FLOOR, k === 0 ? 1 : -1, F.colors[k], F.pose[k], t + k, F.flash[k], F.fx ? { kind: F.fx.kind === 'tie' ? 'mg' : F.fx.kind, muzzle: F.fx.muzzle[k] } : null);
+  }
+  drawSmoke();
+  drawFx(F.fx, t);
+  drawParticles();
+  if (F.recording) drawClipOverlay(t);
+}
+/** Sky, city, floor; darkened for meteors and laser lock-ons. Leaves the screen-shake transform on. */
+function drawBackdrop(t, fx) {
   const sx = F.shake ? (Math.random() - 0.5) * F.shake : 0, sy = F.shake ? (Math.random() - 0.5) * F.shake : 0;
   g.setTransform(1, 0, 0, 1, 0, 0);
   const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#0d1022'); sky.addColorStop(1, '#170d1a');
@@ -583,18 +625,18 @@ function draw(t) {
     }
   }
   g.fillStyle = 'rgba(10,12,20,.55)'; g.fillRect(0, 0, W, H);
-  if (F.fx?.kind === 'meteor') { g.fillStyle = `rgba(120,30,20,${Math.min(0.45, F.fx.t * 0.6)})`; g.fillRect(0, 0, W, FLOOR); }
-  if (F.fx?.kind === 'laser' && F.fx.t < 1.15) { g.fillStyle = `rgba(0,0,0,${Math.min(0.45, F.fx.t * 0.5)})`; g.fillRect(0, 0, W, H); }
+  if (fx?.kind === 'meteor') { g.fillStyle = `rgba(120,30,20,${Math.min(0.45, fx.t * 0.6)})`; g.fillRect(0, 0, W, FLOOR); }
+  if (fx?.kind === 'laser' && fx.t < 1.15) { g.fillStyle = `rgba(0,0,0,${Math.min(0.45, F.fx.t * 0.5)})`; g.fillRect(0, 0, W, H); }
   const fl = g.createLinearGradient(0, FLOOR, 0, H); fl.addColorStop(0, '#2a2140'); fl.addColorStop(1, '#0a0c14');
   g.fillStyle = fl; g.fillRect(0, FLOOR, W, H - FLOOR);
   g.fillStyle = '#FF6B6B'; g.fillRect(0, FLOOR, W, 3);
-  for (const k of [0, 1]) {
-    g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(F.x[k], FLOOR + 6, 46, 9, 0, 0, Math.PI * 2); g.fill();
-    drawBot(g, F.x[k], FLOOR, k === 0 ? 1 : -1, F.colors[k], F.pose[k], t + k, F.flash[k], F.fx ? { kind: F.fx.kind === 'tie' ? 'mg' : F.fx.kind, muzzle: F.fx.muzzle[k] } : null);
-  }
+}
+function drawSmoke() {
   for (const s of F.sparks) if (s.kind === 'smoke') { g.globalAlpha = Math.max(0, Math.min(0.5, s.life * 0.5)); g.fillStyle = s.c; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); }
   g.globalAlpha = 1;
-  drawFx(F.fx, t);
+}
+/** Explosions, sparks and floating numbers, then the white flash. Resets the transform. */
+function drawParticles() {
   for (const b of F.booms) {
     const k = b.t / 0.7, r = b.size * (0.3 + k * 0.9);
     g.save(); g.globalAlpha = 1 - k;
@@ -616,7 +658,6 @@ function draw(t) {
   g.globalAlpha = 1;
   g.setTransform(1, 0, 0, 1, 0, 0);
   if (F.white > 0) { g.fillStyle = `rgba(255,255,255,${Math.min(0.85, F.white)})`; g.fillRect(0, 0, W, H); }
-  if (F.recording) drawClipOverlay(t);
 }
 
 /** The DOM HUD isn't in the video, so a recorded clip draws its own: names, HP, round, result and the link. */
@@ -690,7 +731,7 @@ function showResult() {
 }
 function backHome() {
   cancelAnimationFrame(raf);
-  for (const id of ['arena', 'result', 'tourney']) $(id).hidden = true;
+  for (const id of ['arena', 'result', 'tourney', 'royaleResult']) $(id).hidden = true;
   for (const id of ['builder', 'select', 'ready', 'featured']) $(id).hidden = false;
   fromBracket = false;
   renderAll();
@@ -707,11 +748,12 @@ async function copyText(text, done) {
   catch { toast('Copy failed: select the text and copy it yourself'); }
 }
 
-$('fight').addEventListener('click', () => startFight());
+$('fight').addEventListener('click', () => (mode === 'royale' ? startRoyale() : startFight()));
 $('rematch').addEventListener('click', () => startFight());
 $('again').addEventListener('click', backHome);
 $('copy').addEventListener('click', () => { track('share'); copyText(shareText(), 'Copied result and link'); });
 $('skip').addEventListener('click', () => {
+  if (F?.royale) return skipRoyale();
   if (!F || F.over) return endFight();
   F.i = F.plan.rounds.length - 1; F.fx = null; F.white = 0;
   [...$('pips').children].forEach((pip, i) => { const R = F.plan.rounds[i]; const c = R.winner === 0 || R.winner === 1 ? F.colors[R.winner] : '#F3F4F8'; pip.style.background = R.winner === 0 || R.winner === 1 ? c : ''; pip.style.borderColor = c; });
@@ -789,12 +831,266 @@ function tournamentText() {
 $('watchFinal').addEventListener('click', () => { const f = bracket.rounds.at(-1)[0]; picks = [f.a.id, f.b.id]; fromBracket = true; startFight(); });
 $('tcopy').addEventListener('click', () => { track('share-bracket'); copyText(tournamentText(), 'Copied bracket and link'); });
 
+// ---------- battle royale ----------
+const R_PHASES = [['banner', 1.2], ['reveal', 1.0], ['attack', 0], ['after', 1.0]];
+const R_NO_DATA = [['banner', 1.0], ['after', 0.6]];
+/** Distinct colours for up to 8 fighters: lab colour first, the next free one if taken. */
+function royaleColors(ms) {
+  const used = new Set();
+  return ms.map((m) => { let c = colorOf(m), i = PALETTE.indexOf(c); while (used.has(c)) c = PALETTE[++i % PALETTE.length]; used.add(c); return c; });
+}
+function startRoyale() {
+  const ms = picks.map((id) => byId.get(id)).filter(Boolean);
+  if (ms.length < ROYALE_MIN) return;
+  const plan = planRoyale(DATA, ms, rounds), n = ms.length;
+  const gap = (W - 80) / n;
+  F = { royale: true, plan, n, colors: royaleColors(ms), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
+    pose: ms.map(() => 'idle'), flash: ms.map(() => 0), dodge: ms.map(() => 0), hp: ms.map(() => 100), shown: ms.map(() => null),
+    i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false };
+  for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
+  $('arena').hidden = false; $('arena').classList.add('royale'); $('rec').hidden = true;
+  $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
+  $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
+  writeHash();
+  track(`royale/${n}`);
+  renderBoard();
+  $('arena').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  rEnter();
+  cancelAnimationFrame(raf); last = performance.now(); raf = requestAnimationFrame(frame);
+}
+const rPhases = (R) => (R.bench ? R_PHASES : R_NO_DATA);
+const shortName = (m) => m.name.replace(/\s*\(.*\)$/, '');
+function rResult(R) {
+  const ms = F.plan.fighters;
+  if (!R.bench) return 'No benchmark that two or more fighters share. No damage.';
+  if (R.leader == null) return '';
+  const dodged = R.hits.filter((x) => x.dmg === 0).length, sat = F.n - R.inRound.length - R.hpBefore.filter((x) => x === 0).length;
+  const lead = R.bench.kind === 'price' ? `${shortName(ms[R.leader])} is cheapest` : `${shortName(ms[R.leader])} tops it with ${R.values[R.leader].toFixed(1)}`;
+  return [lead, dodged ? `${dodged} dodge${dodged === 1 ? 's' : ''} inside the margin` : '', sat > 0 ? `${sat} sit${sat === 1 ? 's' : ''} out (no result)` : ''].filter(Boolean).join(' · ');
+}
+function rEnter() {
+  const R = F.plan.rounds[F.i], name = rPhases(R)[F.phase][0];
+  F.t = 0;
+  if (name === 'banner') {
+    $('roundNo').textContent = `ROUND ${F.i + 1}/${F.plan.rounds.length}`;
+    banner(`ROUND ${F.i + 1}`, `${R.round.name}${R.bench ? ` · ${R.bench.name}` : ''}`);
+    $('rname').textContent = `ROUND ${F.i + 1}: ${R.round.name.toUpperCase()}`;
+    $('rtest').textContent = R.bench ? `${R.bench.name}: ${R.bench.what}` : 'Round skipped';
+    $('rres').textContent = R.bench ? '' : rResult(R);
+    F.shown = F.shown.map(() => null); F.pose = F.pose.map((p, k) => (F.hp[k] === 0 ? 'down' : 'idle'));
+    renderBoard(); sfx.bell();
+  } else if (name === 'reveal') banner('', '');
+  else if (name === 'attack') { F.shown = [...R.values]; $('rres').textContent = rResult(R); renderBoard(); rStartFx(R); }
+  else if (name === 'after') {
+    banner(...(R.out.length ? [R.out.length > 1 ? `${R.out.length}× K.O.!` : 'K.O.!', R.out.map((k) => shortName(F.plan.fighters[k])).join(', '), 'ko'] : ['', '']));
+    if (R.out.length) sfx.ko();
+    const pip = $('pips').children[F.i];
+    if (R.leader != null) { pip.style.background = F.colors[R.leader]; pip.style.borderColor = F.colors[R.leader]; } else pip.style.borderColor = '#3a4364';
+  }
+}
+/** The leader fires at each fighter in turn, with the weapon its gap earns. */
+function rStartFx(R) {
+  const L = R.leader;
+  F.fx = { t: 0, queue: R.hits.map((hit, j) => ({ hit, at: 0.45 + j * 0.28, fired: false })), len: 0.45 + R.hits.length * 0.28 + 1.3, kind: null };
+  if (L == null) return;
+  F.pose[L] = 'summon';
+  const real = R.hits.filter((x) => x.dmg > 0).map((x) => x.weapon), top = ['laser', 'meteor', 'rocket', 'mg'].find((w) => real.includes(w));
+  F.fx.kind = top || null;
+  F.fx.title = top ? `${weaponName(top)}${real.filter((w) => w === top).length > 1 ? ` ×${real.filter((w) => w === top).length}` : ''}` : 'ALL DODGE!';
+  F.fx.titleC = F.colors[L];
+  if (top === 'meteor') sfx.rumble();
+  if (top === 'laser') sfx.lock();
+}
+const orbOf = (k) => ({ x: F.x[k] + (F.x[k] < W / 2 ? 1 : -1) * 24 * F.s, y: FLOOR - 24 * F.s - 176 * F.s });
+const chestOf = (k) => ({ x: F.x[k], y: FLOOR - 90 * F.s });
+function rLand(R, hit, last, size) {
+  const k = hit.target;
+  if (!last) { burstSparks(chestOf(k).x, chestOf(k).y, 4, '#FFE066'); return; }
+  F.hp[k] = R.hpAfter[k];
+  F.flash[k] = 0.15; F.pose[k] = F.hp[k] === 0 ? 'down' : 'hurt';
+  F.shake = reduced ? 0 : Math.max(F.shake, size === 'big' ? 14 : size === 'mid' ? 8 : 4);
+  if (size !== 'small') explode(chestOf(k).x, chestOf(k).y, size === 'big', size === 'big' ? 0.25 : 0);
+  else burstSparks(chestOf(k).x, chestOf(k).y, 8, '#FFE066');
+  F.floats.push({ x: F.x[k], y: FLOOR - 200 * F.s - 30, text: `−${hit.dmg}`, c: '#FF6B6B', life: 1.3, size: 18 });
+  renderBoard();
+}
+function rFire(R, hit) {
+  const L = R.leader, k = hit.target, o = orbOf(L), c = chestOf(k);
+  if (hit.dmg === 0) {
+    F.dodge[k] = 0.5;
+    F.shots.push({ kind: 'bullet', x: o.x, y: o.y, tx: c.x, ty: c.y - 70 * F.s, v: 1500, onLand: () => {} });
+    F.floats.push({ x: F.x[k], y: FLOOR - 200 * F.s - 30, text: 'DODGE', c: '#7FD3F0', life: 1.1, size: 13 });
+    sfx.shot(); sfx.ricochet();
+    return;
+  }
+  const w = hit.weapon;
+  if (w === 'mg') {
+    for (let b = 0; b < 4; b++) F.shots.push({ kind: 'bullet', delay: b * 0.07, x: o.x, y: o.y, tx: c.x, ty: c.y + (Math.random() - 0.5) * 20, v: 1700, onLand: () => rLand(R, hit, b === 3, 'small') });
+    sfx.shot(); setTimeout(() => sfx.shot(), 90); sfx.casing();
+  } else if (w === 'rocket') {
+    F.shots.push({ kind: 'rocket', x0: o.x, y0: o.y, x1: c.x, y1: c.y, t: 0, dur: 0.6, onLand: () => rLand(R, hit, true, 'mid') });
+    sfx.launch();
+  } else if (w === 'meteor') {
+    for (let b = 0; b < 3; b++) { const tx = c.x + (Math.random() - 0.5) * 40, ty = c.y + (Math.random() - 0.5) * 30; F.shots.push({ kind: 'meteor', delay: b * 0.16, x: tx - 160 + Math.random() * 320, y: -30, tx, ty, v: 950, r: 9 + Math.random() * 7, onLand: () => rLand(R, hit, b === 2, b === 2 ? 'big' : 'mid') }); }
+    sfx.whistle();
+  } else {
+    F.shots.push({ kind: 'beam', x: c.x, t: 0, onLand: () => rLand(R, hit, true, 'big') });
+    sfx.zap();
+  }
+}
+function stepRoyale(dt) {
+  F.t += dt;
+  stepParticles(dt);
+  F.dodge = F.dodge.map((v) => Math.max(0, v - dt));
+  for (const s of F.shots) {
+    if (s.delay > 0) { s.delay -= dt; continue; }
+    if (s.kind === 'bullet' || s.kind === 'meteor') {
+      const dx = s.tx - s.x, dy = s.ty - s.y, d = Math.hypot(dx, dy), st = s.v * dt;
+      if (s.kind === 'meteor' && !reduced) F.sparks.push({ kind: 'fire', x: s.x, y: s.y, vx: 0, vy: -20, r: s.r * 0.8, life: 0.22, c: Math.random() < 0.5 ? '#FFA94D' : '#FF6B6B' });
+      s.a = Math.atan2(dy, dx);
+      if (d <= st) { s.done = true; s.onLand(); } else { s.x += dx / d * st; s.y += dy / d * st; }
+    } else if (s.kind === 'rocket') {
+      s.t += dt; const k = Math.min(1, s.t / s.dur);
+      s.x = s.x0 + (s.x1 - s.x0) * k; s.y = s.y0 + (s.y1 - s.y0) * k - Math.sin(k * Math.PI) * 80;
+      if (!reduced) F.sparks.push({ kind: 'smoke', x: s.x, y: s.y, vx: 0, vy: -10, r: 5, life: 0.5, c: '#5a5f73' });
+      if (k >= 1) { s.done = true; s.onLand(); }
+    } else if (s.kind === 'beam') {
+      s.t += dt; if (!s.hit && s.t > 0.12) { s.hit = true; s.onLand(); } if (s.t > 0.6) s.done = true;
+    }
+  }
+  F.shots = F.shots.filter((s) => !s.done);
+  if (F.over) { if (F.t > 2.8) rEnd(); return; }
+  const R = F.plan.rounds[F.i];
+  const [name, len] = rPhases(R)[F.phase];
+  if (name === 'reveal') {
+    const k = Math.min(1, F.t / 0.8);
+    F.shown = R.values.map((v) => (v == null ? null : v * k));
+    if (Math.round(F.t * 30) % 3 === 0) sfx.tick();
+  }
+  if (name === 'attack' && F.fx) {
+    F.fx.t += dt;
+    for (const q of F.fx.queue) if (!q.fired && F.fx.t >= q.at) { q.fired = true; rFire(R, q.hit); }
+    if (F.fx.t >= F.fx.len && !F.shots.length) return rNext();
+    return;
+  }
+  if (name === 'after') { F.fx = null; F.pose = F.pose.map((p, k) => (F.hp[k] === 0 ? 'down' : 'idle')); }
+  if (F.t >= len) rNext();
+}
+function rNext() {
+  F.phase++;
+  if (F.phase >= rPhases(F.plan.rounds[F.i]).length) { F.phase = 0; F.i++; if (F.i >= F.plan.rounds.length) return rFinish(); }
+  rEnter();
+}
+function rFinish() {
+  const p = F.plan;
+  F.over = true; F.t = 0; F.fx = null; F.shots = [];
+  F.hp = [...p.hp];
+  F.pose = p.fighters.map((_, k) => (p.hp[k] === 0 ? 'down' : k === p.winner ? 'win' : 'idle'));
+  F.shown = F.shown.map(() => null);
+  renderBoard();
+  const alive = p.hp.filter((x) => x > 0).length;
+  if (p.winner < 0) banner('SHARED CROWN', 'The top two finish level on HP');
+  else banner(`${shortName(p.fighters[p.winner]).toUpperCase()} WINS`, alive === 1 ? 'Last one standing' : `Most HP after the last round · ${alive} still standing`);
+  sfx.win();
+}
+function skipRoyale() {
+  if (F.over) return rEnd();
+  [...$('pips').children].forEach((pip, i) => { const L = F.plan.rounds[i].leader; if (L != null) { pip.style.background = F.colors[L]; pip.style.borderColor = F.colors[L]; } });
+  F.i = F.plan.rounds.length - 1; rFinish(); F.t = 2.8;
+}
+function rEnd() { if (F.done) return; F.done = true; showRoyaleResult(); }
+
+/** The phone-readable board under the canvas: every fighter, its HP and this round's result. */
+function renderBoard() {
+  const p = F.plan, R = p.rounds[Math.min(F.i, p.rounds.length - 1)];
+  $('board').replaceChildren(...p.fighters.map((m, k) => {
+    const v = F.shown[k], out = F.hp[k] === 0;
+    return h('div', { class: `bf ${out ? 'out' : ''} ${!F.over && R?.leader === k && F.shown.some((x) => x != null) ? 'lead' : ''}`, style: `--c:${F.colors[k]}` },
+      h('span', { class: 'bn' }, shortName(m)), h('i', { class: 'bhp' }, h('b', { style: `width:${F.hp[k]}%` })),
+      h('span', { class: 'bv' }, out ? 'K.O.' : v != null && R?.bench ? formatValue(R.bench, v) : `${F.hp[k]} HP`));
+  }));
+}
+function drawRoyale(t) {
+  drawBackdrop(t, F.fx?.kind && F.plan.rounds[F.i] ? { kind: F.fx.kind, t: F.fx.t } : null);
+  const R = F.plan.rounds[Math.min(F.i, F.plan.rounds.length - 1)];
+  for (let k = 0; k < F.n; k++) {
+    const x = F.x[k], dir = x < W / 2 ? 1 : -1, lead = !F.over && F.fx && R.leader === k;
+    const dy = lead ? -24 * F.s : F.dodge[k] > 0 ? -Math.sin((F.dodge[k] / 0.5) * Math.PI) * 50 * F.s : 0;
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(x, FLOOR + 5, 40 * F.s, 8 * F.s, 0, 0, Math.PI * 2); g.fill();
+    if (lead) { g.save(); g.globalAlpha = 0.35 + Math.sin(t * 8) * 0.15; g.strokeStyle = F.colors[k]; g.lineWidth = 4; g.beginPath(); g.ellipse(x, FLOOR + 5, 56 * F.s, 12 * F.s, 0, 0, Math.PI * 2); g.stroke(); g.restore(); }
+    g.save(); g.translate(x, FLOOR + dy); g.scale(F.s, F.s);
+    drawBot(g, 0, 0, dir, F.colors[k], F.pose[k], t + k, F.flash[k]);
+    g.restore();
+    // HP bar and value above, name below
+    const bw = Math.min(96, F.gap - 16), top = FLOOR - 196 * F.s - 16;
+    if (F.pose[k] !== 'down') {
+      g.fillStyle = '#2a0f14'; g.fillRect(x - bw / 2, top, bw, 7);
+      g.fillStyle = F.hp[k] > 30 ? '#F2B544' : '#FF6B6B'; g.fillRect(x - bw / 2, top, bw * F.hp[k] / 100, 7);
+      g.strokeStyle = 'rgba(243,244,248,.8)'; g.lineWidth = 1.5; g.strokeRect(x - bw / 2, top, bw, 7);
+    }
+    const v = F.shown[k];
+    if (v != null && R.bench) { g.font = '400 13px "Press Start 2P", monospace'; g.textAlign = 'center'; g.fillStyle = '#000'; g.fillText(formatValue(R.bench, v), x + 2, top - 8); g.fillStyle = R.leader === k && F.phase >= 2 ? F.colors[k] : '#F3F4F8'; g.fillText(formatValue(R.bench, v), x, top - 10); }
+    g.font = '600 13px Inter, sans-serif'; g.textAlign = 'center'; g.fillStyle = F.hp[k] === 0 ? '#5d6680' : F.colors[k];
+    let nm = shortName(F.plan.fighters[k]);
+    while (g.measureText(nm).width > F.gap - 8 && nm.length > 4) nm = nm.slice(0, -2) + '…';
+    g.fillText(nm, x, FLOOR + 46);
+  }
+  drawSmoke();
+  for (const s of F.shots) {
+    if (s.delay > 0) continue;
+    if (s.kind === 'bullet') { g.save(); g.shadowColor = '#FFE066'; g.shadowBlur = 10; g.strokeStyle = '#FFF3B0'; g.lineWidth = 3; g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(s.x - Math.cos(s.a || 0) * 22, s.y - Math.sin(s.a || 0) * 22); g.stroke(); g.restore(); }
+    else if (s.kind === 'rocket') { g.save(); g.translate(s.x, s.y); g.fillStyle = '#d9dde8'; roundRect(g, -12, -5, 24, 10, 4); g.fill(); g.fillStyle = '#FF6B6B'; g.beginPath(); g.arc(12, 0, 5, 0, Math.PI * 2); g.fill(); g.restore(); }
+    else if (s.kind === 'meteor') { g.save(); g.shadowColor = '#FF8A3D'; g.shadowBlur = 20; g.fillStyle = '#7a3b22'; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); g.fillStyle = '#FFB36B'; g.beginPath(); g.arc(s.x - s.r * 0.3, s.y - s.r * 0.3, s.r * 0.45, 0, Math.PI * 2); g.fill(); g.restore(); }
+    else if (s.kind === 'beam') { const k = s.t / 0.6, wd = 44 * (1 - k * 0.6); g.save(); g.globalAlpha = 1 - k * 0.8; const gr = g.createLinearGradient(s.x - wd, 0, s.x + wd, 0); gr.addColorStop(0, 'rgba(127,211,240,0)'); gr.addColorStop(0.5, '#7FD3F0'); gr.addColorStop(1, 'rgba(127,211,240,0)'); g.fillStyle = gr; g.fillRect(s.x - wd, 0, wd * 2, FLOOR + 10); g.fillStyle = '#fff'; g.fillRect(s.x - wd * 0.18, 0, wd * 0.36, FLOOR + 10); g.restore(); }
+  }
+  if (F.fx?.title && F.fx.t < 1.2) {
+    const a = Math.min(1, F.fx.t * 6) * Math.min(1, (1.2 - F.fx.t) * 3);
+    g.save(); g.globalAlpha = a; g.font = '400 26px "Press Start 2P", monospace'; g.textAlign = 'center';
+    g.fillStyle = '#000'; g.fillText(F.fx.title, W / 2 + 4, 74); g.fillStyle = F.fx.titleC; g.fillText(F.fx.title, W / 2, 70); g.restore();
+  }
+  drawParticles();
+}
+
+// ---------- royale result ----------
+const MEDALS = ['🥇', '🥈', '🥉'];
+function royaleText() {
+  const p = F.plan, ko = p.hp.filter((x) => x === 0).length;
+  return [`👑 Benchmark Brawl battle royale · ${F.n} models`, ...p.placing.slice(0, 3).map((k, i) => `${MEDALS[i]} ${shortName(p.fighters[k])} (${p.hp[k]} HP)`),
+    ko ? `💀 ${ko} knocked out` : '🛡️ Nobody knocked out', `${SITE_URL}${royaleHash(p.fighters.map((m) => m.id), rounds)}`].join('\n');
+}
+function showRoyaleResult() {
+  const p = F.plan;
+  cancelAnimationFrame(raf);
+  $('arena').hidden = true; $('royaleResult').hidden = false;
+  const w = p.winner >= 0 ? p.fighters[p.winner] : null;
+  $('rverdict').style.setProperty('--c', w ? F.colors[p.winner] : '#F3F4F8');
+  $('rverdict').replaceChildren(...(w ? ['👑 ', h('b', null, w.name), ' wins the royale'] : ['👑 A shared crown']));
+  $('rhead').replaceChildren(h('th', null, '#'), h('th', null, 'Fighter'), ...p.rounds.map((R) => h('th', null, R.round.name, R.bench ? h('span', { class: 't' }, h('a', { href: R.bench.source.url, target: '_blank', rel: 'noopener' }, R.bench.name)) : h('span', { class: 't' }, 'skipped'))), h('th', null, 'HP'));
+  $('rrows').replaceChildren(...p.placing.map((k, place) => h('tr', null,
+    h('td', { class: 'num' }, MEDALS[place] || `${place + 1}`),
+    h('td', { style: `color:${F.colors[k]};font-weight:700` }, shortName(p.fighters[k]), h('span', { class: 't' }, p.fighters[k].org)),
+    ...p.rounds.map((R) => {
+      const v = R.values[k], hit = R.hits.find((x) => x.target === k);
+      const note = R.hpBefore[k] === 0 ? 'out' : v == null ? 'sat out' : R.leader === k ? '👑 fired' : hit.dmg ? `−${hit.dmg}` : 'dodged';
+      return h('td', { class: `num ${R.leader === k ? 'win' : ''}`, style: `--c:${F.colors[k]}` }, R.hpBefore[k] === 0 ? '' : formatValue(R.bench, v), h('span', { class: 't' }, note));
+    }),
+    h('td', { class: 'num' }, p.hp[k] === 0 ? `K.O. (R${p.outIn[k] + 1})` : p.hp[k]))));
+  $('rshare').textContent = royaleText();
+  $('royaleResult').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+$('rrematch').addEventListener('click', startRoyale);
+$('rcopy').addEventListener('click', () => { track('share-royale'); copyText(royaleText(), 'Copied royale and link'); });
+$('ragain').addEventListener('click', backHome);
+
 // ---------- start ----------
 const shared = readHash();
 renderFeatured();
 renderAll();
 if (wantTourney) openTournament();
-else if (shared) {
+else if (shared && mode === 'royale') {
+  toast(`Shared battle royale: ${picks.length} fighters. Press FIGHT!`);
+  $('ready').scrollIntoView({ block: 'end' });
+} else if (shared) {
   const [a, b] = picks.map((id) => byId.get(id));
   toast(`Shared fight: ${a.name} vs ${b.name}. Press FIGHT!`);
   $('ready').scrollIntoView({ block: 'end' });

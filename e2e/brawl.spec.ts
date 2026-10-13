@@ -58,3 +58,18 @@ test('a tournament crowns a champion and can replay the final', async ({ page })
   await expect(page.locator('#tourney')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('a battle royale ranks every fighter and shares a replay link', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto(URL);
+  await page.getByRole('button', { name: /Battle royale/ }).click();
+  await page.click('#fillTop');
+  await expect(page.locator('#vsLine')).toContainText('8/8');
+  await page.click('#fight');
+  await expect(page.locator('#board .bf')).toHaveCount(8);
+  await page.click('#skip');
+  await expect(page.locator('#royaleResult')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#rrows tr')).toHaveCount(8);
+  await expect(page.locator('#rshare')).toContainText('#m=royale&f=');
+  expect(errors).toEqual([]);
+});
