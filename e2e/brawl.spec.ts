@@ -246,7 +246,8 @@ function pageWithLiveData(change: (d: BrawlData) => void, name: string) {
   writeFileSync(file, html.replace(json, () => JSON.stringify(d).replace(/</g, '\\u003c')));
   return { url: `file://${file}`, daily: d.daily ?? [] };
 }
-const snapshotWinner = (e: NonNullable<BrawlData['daily']>[number]) => { const p = planFight(data, e.fighters![0], e.fighters![1], e.rounds); return p.winner < 0 ? null : p.fighters[p.winner].name; };
+type Entry = NonNullable<BrawlData['daily']>[number];
+const snapshotWinner = (e: Entry) => { const p = planFight(data, e.fighters![0], e.fighters![1], e.rounds); return p.winner === -1 ? null : p.fighters[p.winner].name; };
 
 test('an older brawl\'s link replays that brawl, shares that brawl, and rematches it', async ({ page }, info) => {
   const errors = watchErrors(page);
