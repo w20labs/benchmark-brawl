@@ -14,7 +14,7 @@
 
 | | |
 |---|---|
-| **Today** | Brawl #N: one official fight a day, the same for everyone. Each day's fight is decided once and saved with a snapshot of both fighters' scores, so later refreshes can't change its result, and a share link (`#today=12`) always replays that exact brawl. Call the winner, watch, share, keep your streak (saved only in your browser) |
+| **Today** | Brawl #N: one official fight a day, the same for everyone. Each day's fight is decided once and saved with a snapshot of both fighters' scores, so later refreshes can't change its result, and a share link (`#today=12`) replays that brawl from its saved scores for 30 days (under the game's current rules). Call the winner, watch, share, keep your streak (saved only in your browser) |
 | **Free play** | Any two of ~70 models released in the last year, with real scores from Epoch AI |
 | **Build your arena** | Pick 3–7 rounds (Coding, Math, Science, Facts, Puzzles, Chess, Price) or a preset like *I write code* or *On a budget*. The fight answers "which model wins *for me*?" |
 | **Price round** | The cheaper model wins; every halving of price is worth a 10-point hit |

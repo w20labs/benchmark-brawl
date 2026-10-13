@@ -53,17 +53,15 @@ describe('data build checks', () => {
   });
 });
 
+// These check rules that hold for any day's data, so a legitimate refresh never fails them. Specific behaviours
+// (snapshot-safe prices, source precision, raw-best settings) are tested on fixed synthetic sources in build.test.ts.
 describe('the built data', () => {
-  it('does not give an older model a newer snapshot\'s price', () => {
-    expect(data.models.find((m) => m.name === 'DeepSeek-V4-Pro')?.price ?? null).toBeNull();
-    expect(data.models.find((m) => m.name === 'DeepSeek V4 Pro 0813')?.price?.blended).toBeCloseTo(0.99);
+  it('prices are each a consistent 3:1 blend of their input and output price', () => {
+    for (const m of data.models) if (m.price) expect(m.price.blended).toBeCloseTo((3 * m.price.input + m.price.output) / 4, 5);
   });
-  it('keeps prices at source precision', () => {
-    expect(data.models.find((m) => m.name === 'Qwen3.7 Flash')?.price?.blended).toBeCloseTo(0.055, 6);
-  });
-  it('keeps the setting and error of the raw best result', () => {
-    const astra = data.models.find((m) => m.name === 'GPT-6 Astra')!.scores['frontiermath-t4'];
-    expect([astra.setting, astra.se]).toEqual(['high', 2.4]);
+  it('no two fighters share one listing\'s price', () => {
+    const listings = data.models.flatMap((m) => (m.price ? [`${m.price.provider}/${m.price.modelsDevId}`] : []));
+    expect(new Set(listings).size).toBe(listings.length);
   });
   it('only uses claims that are web-sourced and match our benchmark version', () => {
     for (const c of data.claims) {
