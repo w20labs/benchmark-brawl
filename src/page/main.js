@@ -2,7 +2,7 @@
 import { formatValue, planFight, weaponName } from '../fight.ts';
 import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
 import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
-import { CLASSES, featuredFight, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
+import { CLASSES, dailyBrawl, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 
 /** @type {import('../types.ts').BrawlData} */
 const DATA = JSON.parse(document.getElementById('brawl-data').textContent);
@@ -244,19 +244,8 @@ let mode = '1v1'; // or 'royale': 3 to 8 fighters at once
 let F = null; // the fight being shown
 let bracket = null, fromBracket = false, wantTourney = false;
 
-// ---------- header, featured fight, credits ----------
+// ---------- header, credits ----------
 $('updated').textContent = `Scores updated ${fmtDate(DATA.generatedAt.slice(0, 10))}`;
-function renderFeatured() {
-  const pair = featuredFight(DATA.models, NOW);
-  if (!pair) { $('featured').replaceChildren(); return; }
-  const [a, b] = pair, [ca, cb] = fightColors(a, b);
-  const champ = DATA.models.indexOf(b) === 0;
-  $('featured').replaceChildren(h('div', { class: 'featured' },
-    h('div', null, h('div', { class: 'tag' }, 'NEW CHALLENGER'), h('div', { class: 'nm', style: `color:${ca}` }, a.name), h('div', { class: 'sub' }, `${a.org} · released ${fmtDate(a.released)}`)),
-    h('div', { class: 'vs' }, 'VS'),
-    h('div', { class: 'r' }, h('div', { class: 'tag' }, champ ? 'CHAMPION' : 'TOP CONTENDER'), h('div', { class: 'nm', style: `color:${cb}` }, b.name), h('div', { class: 'sub' }, `${b.org} · highest capability index`)),
-    h('button', { type: 'button', class: 'btn go', onclick: () => { mode = '1v1'; picks = [a.id, b.id]; renderAll(); startFight(); } }, 'FIGHT OF THE WEEK')));
-}
 $('credits').replaceChildren(
   'Scores: Epoch AI, ', h('a', { href: 'https://epoch.ai/benchmarks', target: '_blank', rel: 'noopener' }, '“Capabilities & benchmarking”'), ', licensed ',
   h('a', { href: 'https://creativecommons.org/licenses/by/4.0/', target: '_blank', rel: 'noopener' }, 'CC BY 4.0'),
@@ -279,6 +268,8 @@ function renderBuilder() {
         renderAll(); sfx.blip(!on);
       } }, `${on ? rounds.indexOf(r.id) + 1 + ' · ' : ''}${r.name}`);
   }));
+  const preset = PRESETS.find(same);
+  $('builderSummary').textContent = `Rounds: ${preset ? preset.name : 'Custom'} · ${rounds.map((id) => roundById.get(id).name).join(', ')}`;
   $('roundHelp').textContent = rounds.map((id) => { const r = roundById.get(id); return `${r.name}: ${r.benches.map((b) => benchById.get(b).name).join(' → ')}`; }).join(' · ');
 }
 
@@ -291,16 +282,11 @@ function visibleModels() {
   return list;
 }
 const fresh = new Set(newChallengers(DATA.models, NOW).map((m) => m.id));
-/** The value shown on a card for a round: the first benchmark in the round this model has. */
-function cardValue(m, roundId) {
-  const r = roundById.get(roundId);
-  for (const id of r.benches) {
-    const b = benchById.get(id);
-    if (b.kind === 'price') { if (m.price) return { label: r.name, text: `$${m.price.blended.toFixed(2)}`, pct: Math.max(4, 100 - Math.log2(m.price.blended / 0.05) * 11) }; }
-    else if (m.scores[id]) return { label: r.name, text: m.scores[id].v.toFixed(0), pct: m.scores[id].v };
-  }
-  return { label: r.name, text: '–', pct: 0 };
-}
+/** One "power" bar per card: the Epoch Capabilities Index, scaled across the roster. */
+const ECIS = DATA.models.map((m) => m.eci).filter((x) => x != null);
+const ECI_LO = Math.min(...ECIS), ECI_HI = Math.max(...ECIS);
+const powerOf = (m) => (m.eci == null ? 0 : 8 + (92 * (m.eci - ECI_LO)) / Math.max(1, ECI_HI - ECI_LO));
+const botCanvas = (m, w, hgt, pose) => { const c = h('canvas', { width: w * 2, height: hgt * 2, 'aria-hidden': 'true' }); const g2 = c.getContext('2d'); g2.scale(w / 110, w / 110); drawBot(g2, 100, 236, 1, lookOf(m), pose, 0); return c; };
 function renderClassChips() {
   $('classChips').replaceChildren(h('span', { class: 'fine' }, 'Weight class:'), ...CLASSES.map((c) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(c.id === classId), onclick: () => { classId = c.id; renderAll(); } },
     `${c.name} (${DATA.models.filter((m) => inClass(m, c.id)).length})`)));
@@ -311,15 +297,14 @@ function renderRoster() {
   $('rosterEmpty').hidden = list.length > 0;
   $('roster').replaceChildren(...list.map((m, i) => {
     const slot = picks.indexOf(m.id), c = colorOf(m);
-    const cv2 = h('canvas', { width: 88, height: 104, 'aria-hidden': 'true' });
     const card = h('button', { type: 'button', class: `fighter ${i === cursor ? 'cursor' : ''}`, style: `--c:${c}`, 'data-id': m.id, 'data-slot': slot >= 0 ? `P${slot + 1}` : null, 'aria-pressed': String(slot >= 0), onclick: () => { cursor = i; pick(m.id); } },
-      h('div', { class: 'top' }, cv2, h('div', null, h('div', { class: 'nm' }, m.name), h('div', { class: 'meta' }, `${m.org} · ${fmtDate(m.released)}`))),
-      h('div', { class: 'badges' }, fresh.has(m.id) ? h('span', { class: 'badge new' }, 'NEW') : null, m.open ? h('span', { class: 'badge open' }, 'OPEN WEIGHTS') : null,
-        m.price ? h('span', { class: 'badge' }, `$${m.price.blended.toFixed(2)}/M`) : null, m.eci ? h('span', { class: 'badge', title: 'Epoch Capabilities Index' }, `ECI ${m.eci.toFixed(0)}`) : null),
-      h('div', { class: 'bars' }, rounds.map((rid) => { const v = cardValue(m, rid); return h('div', null, h('span', null, v.label), h('i', null, h('b', { style: `width:${v.pct}%` })), h('span', null, v.text)); })));
-    const g = cv2.getContext('2d'); g.scale(0.42, 0.42); drawBot(g, 100, 236, 1, lookOf(m), slot >= 0 ? 'win' : 'idle', 0);
+      h('div', { class: 'top' }, botCanvas(m, 54, 64, slot >= 0 ? 'win' : 'idle'), h('div', null, h('div', { class: 'nm' }, m.name), h('div', { class: 'meta' }, m.org))),
+      h('div', { class: 'power', title: 'Epoch Capabilities Index' }, h('i', null, h('b', { style: `width:${powerOf(m)}%` })), m.eci != null ? `ECI ${m.eci.toFixed(0)}` : 'ECI –'),
+      h('div', { class: 'badges' }, fresh.has(m.id) ? h('span', { class: 'badge new' }, 'NEW') : null, m.open ? h('span', { class: 'badge open' }, 'OPEN') : null,
+        m.price ? h('span', { class: 'badge' }, `$${m.price.blended.toFixed(2)}/M`) : null));
     return card;
   }));
+  renderSlots();
   const [a, b] = picks.map((id) => byId.get(id));
   const nm = (m) => h('b', { style: `color:${colorOf(m)}` }, m.name);
   if (mode === 'royale') {
@@ -332,6 +317,17 @@ function renderRoster() {
     $('fight').disabled = picks.length < 2;
   }
 }
+/** The picked fighters, shown big above the roster. */
+function renderSlots() {
+  const slot = (m, label) => h('div', { class: `slot ${m ? 'on' : ''}`, style: m ? `--c:${colorOf(m)}` : null },
+    m ? botCanvas(m, 66, 78, 'win') : null,
+    h('div', { style: 'min-width:0' }, h('div', { class: 'tag' }, label), h('div', { class: 'nm' }, m ? m.name : 'Pick a fighter'), m ? h('div', { class: 'meta' }, `${m.org} · ECI ${m.eci != null ? m.eci.toFixed(0) : '–'}${m.price ? ` · $${m.price.blended.toFixed(2)}/M` : ''}`) : null));
+  const ms = picks.map((id) => byId.get(id));
+  $('slots').className = `slots ${mode === 'royale' ? 'royale' : ''}`;
+  $('slots').replaceChildren(...(mode === 'royale'
+    ? (ms.length ? ms.map((m, i) => slot(m, `#${i + 1}`)) : [slot(null, `Pick ${ROYALE_MIN}–${ROYALE_MAX}`)])
+    : [slot(ms[0], 'PLAYER 1'), h('span', { class: 'vs' }, 'VS'), slot(ms[1], 'PLAYER 2')]));
+}
 function pick(id) {
   if (picks.includes(id)) picks = picks.filter((p) => p !== id);
   else if (mode === 'royale') { if (picks.length >= ROYALE_MAX) return toast(`A royale has at most ${ROYALE_MAX} fighters`); picks = [...picks, id]; }
@@ -343,7 +339,7 @@ function pick(id) {
 $('search').addEventListener('input', (e) => { query = e.target.value; cursor = 0; renderRoster(); });
 $('sort').addEventListener('change', (e) => { sortBy = e.target.value; renderRoster(); });
 addEventListener('keydown', (e) => {
-  if (!$('arena').hidden || !$('tourney').hidden || !$('claims').hidden || e.target.closest?.('input, select, textarea')) return;
+  if (!['play', 'royale'].includes(document.body.dataset.view) || e.target.closest?.('input, select, textarea')) return;
   if (e.target.closest?.('button, a') && !e.target.closest('.fighter')) return;
   const list = visibleModels(), n = list.length;
   if (!n) return;
@@ -356,14 +352,12 @@ addEventListener('keydown', (e) => {
   document.querySelectorAll('.fighter')[cursor]?.focus({ preventScroll: false });
 });
 function renderMode() {
-  $('selectTitle').textContent = mode === 'royale' ? `2 · Choose ${ROYALE_MIN} to ${ROYALE_MAX} fighters` : '2 · Choose two fighters';
-  $('modeChips').replaceChildren(...[h('span', { class: 'fine' }, 'Mode:'),
-    ...[['1v1', '🥊 1 v 1'], ['royale', `👑 Battle royale (${ROYALE_MIN}–${ROYALE_MAX})`]].map(([id, label]) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(mode === id),
-      onclick: () => { if (mode === id) return; mode = id; if (mode === '1v1') picks = picks.slice(0, 2); renderAll(); sfx.blip(true); } }, label)),
+  $('selectTitle').textContent = mode === 'royale' ? `Choose ${ROYALE_MIN} to ${ROYALE_MAX} fighters` : 'Choose two fighters';
+  $('modeChips').replaceChildren(...[
     mode === 'royale' ? h('button', { type: 'button', class: 'btn small', id: 'fillTop', title: 'The 8 most capable in this weight class, by Epoch Capabilities Index',
       onclick: () => { picks = DATA.models.filter((m) => inClass(m, classId)).sort((a, b) => (b.eci ?? -1) - (a.eci ?? -1)).slice(0, ROYALE_MAX).map((m) => m.id); renderAll(); sfx.blip(true); } }, 'Fill with the top 8') : null].filter(Boolean)); // replaceChildren would print null
 }
-function renderAll() { renderBuilder(); renderMode(); renderClassChips(); renderRoster(); writeHash(); }
+function renderAll() { renderBuilder(); renderMode(); renderClassChips(); renderRoster(); if (tab === 'play' || tab === 'royale') writeHash(); }
 
 // ---------- links: #a=<id>&b=<id>&r=coding,math ----------
 function royaleHash(ids, rs) { return `#m=royale&f=${ids.map(encodeURIComponent).join(',')}&r=${rs.join(',')}`; }
@@ -397,10 +391,9 @@ const NO_DATA_PHASES = [['banner', 1.0], ['after', 0.9]];
 function startFight(opts = {}) {
   const [a, b] = picks.map((id) => byId.get(id));
   if (!a || !b) return;
-  const plan = planFight(DATA, a, b, rounds);
-  F = { plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
-  for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
-  $('arena').hidden = false;
+  const plan = planFight(DATA, a, b, opts.rounds || rounds);
+  F = { daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
+  setView('arena');
   $('arena').classList.remove('royale');
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · within the margin of error = tie';
   $('rec').hidden = !F.recording;
@@ -413,8 +406,8 @@ function startFight(opts = {}) {
   }
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
   setHp(true);
-  writeHashFight();
-  if (!F.recording) track(`fight/${a.id}-vs-${b.id}`);
+  if (F.daily) history.replaceState(null, '', '#today'); else writeHashFight();
+  if (!F.recording) track(F.daily ? `today/${F.daily.no}` : `fight/${a.id}-vs-${b.id}`);
   $('arena').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   enterPhase();
   cancelAnimationFrame(raf);
@@ -422,6 +415,7 @@ function startFight(opts = {}) {
   raf = requestAnimationFrame(frame);
 }
 function writeHashFight() { history.replaceState(null, '', hashFor(F.plan.fighters[0].id, F.plan.fighters[1].id, rounds)); }
+$('quit').addEventListener('click', () => { cancelAnimationFrame(raf); if (F) F.done = true; openTab(tab); });
 const phasesOf = (R) => (R.winner == null ? NO_DATA_PHASES : PHASES);
 function setHp(instant) {
   for (const k of [0, 1]) {
@@ -721,24 +715,32 @@ function draw(t) {
 function drawBackdrop(t, fx) {
   const sx = F.shake ? (Math.random() - 0.5) * F.shake : 0, sy = F.shake ? (Math.random() - 0.5) * F.shake : 0;
   g.setTransform(1, 0, 0, 1, 0, 0);
-  const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#0d1022'); sky.addColorStop(1, '#170d1a');
-  g.fillStyle = sky; g.fillRect(0, 0, W, H);
-  g.translate(sx, sy);
-  for (let i = 0; i < 12; i++) {
-    const x = i * 84 - 10, top = 120 + (i % 3) * 16;
-    g.fillStyle = '#12162a'; g.fillRect(x, top, 64, FLOOR - top);
+  drawCity(g, W, H, FLOOR, t, () => {
+    g.translate(sx, sy);
+  }, () => {
+    if (fx?.kind === 'meteor') { g.fillStyle = `rgba(120,30,20,${Math.min(0.45, fx.t * 0.6)})`; g.fillRect(0, 0, W, FLOOR); }
+    if (fx?.kind === 'laser' && fx.t < 1.15) { g.fillStyle = `rgba(0,0,0,${Math.min(0.45, fx.t * 0.5)})`; g.fillRect(0, 0, W, H); }
+  });
+}
+/** Sky, city and floor on any canvas. `afterSky` runs before the buildings, `beforeFloor` before the floor. */
+function drawCity(c, w, hgt, floor, t, afterSky, beforeFloor) {
+  const sky = c.createLinearGradient(0, 0, 0, hgt); sky.addColorStop(0, '#0d1022'); sky.addColorStop(1, '#170d1a');
+  c.fillStyle = sky; c.fillRect(0, 0, w, hgt);
+  afterSky?.();
+  for (let i = 0; i < Math.ceil(w / 84) + 1; i++) {
+    const x = i * 84 - 10, top = floor - 260 + (i % 3) * 16;
+    c.fillStyle = '#12162a'; c.fillRect(x, top, 64, floor - top);
     for (let j = 0; j < 9; j++) {
       const on = (Math.sin(t * (1.3 + (i * 7 + j) % 5) + i * j) > 0.2) && !reduced || (i + j) % 3 === 0;
-      g.fillStyle = on ? ((i + j) % 4 === 0 ? '#D4F25C' : '#7FD3F0') : '#1d2440';
-      g.fillRect(x + 8 + (j % 3) * 18, top + 14 + Math.floor(j / 3) * 26, 8, 4);
+      c.fillStyle = on ? ((i + j) % 4 === 0 ? '#D4F25C' : '#7FD3F0') : '#1d2440';
+      c.fillRect(x + 8 + (j % 3) * 18, top + 14 + Math.floor(j / 3) * 26, 8, 4);
     }
   }
-  g.fillStyle = 'rgba(10,12,20,.55)'; g.fillRect(0, 0, W, H);
-  if (fx?.kind === 'meteor') { g.fillStyle = `rgba(120,30,20,${Math.min(0.45, fx.t * 0.6)})`; g.fillRect(0, 0, W, FLOOR); }
-  if (fx?.kind === 'laser' && fx.t < 1.15) { g.fillStyle = `rgba(0,0,0,${Math.min(0.45, F.fx.t * 0.5)})`; g.fillRect(0, 0, W, H); }
-  const fl = g.createLinearGradient(0, FLOOR, 0, H); fl.addColorStop(0, '#2a2140'); fl.addColorStop(1, '#0a0c14');
-  g.fillStyle = fl; g.fillRect(0, FLOOR, W, H - FLOOR);
-  g.fillStyle = '#FF6B6B'; g.fillRect(0, FLOOR, W, 3);
+  c.fillStyle = 'rgba(10,12,20,.55)'; c.fillRect(0, 0, w, hgt);
+  beforeFloor?.();
+  const fl = c.createLinearGradient(0, floor, 0, hgt); fl.addColorStop(0, '#2a2140'); fl.addColorStop(1, '#0a0c14');
+  c.fillStyle = fl; c.fillRect(0, floor, w, hgt - floor);
+  c.fillStyle = '#FF6B6B'; c.fillRect(0, floor, w, 3);
 }
 function drawSmoke() {
   for (const s of F.sparks) if (s.kind === 'smoke') { g.globalAlpha = Math.max(0, Math.min(0.5, s.life * 0.5)); g.fillStyle = s.c; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); }
@@ -816,12 +818,19 @@ function shareText(plan = F.plan) {
 }
 function showResult() {
   const p = F.plan, [a, b] = p.fighters;
-  for (const id of ['arena', 'tourney']) $(id).hidden = true;
-  $('result').hidden = false;
-  $('verdict').style.setProperty('--c', p.winner >= 0 ? F.colors[p.winner] : '#F3F4F8');
-  const upset = p.winner >= 0 && p.roundsWon[p.winner] < p.roundsWon[1 - p.winner];
-  $('verdict').replaceChildren(...(p.winner >= 0 ? [h('b', null, p.fighters[p.winner].name), ` wins ${p.ko ? 'by K.O.' : 'on points'}`] : ['A draw']),
-    upset ? h('div', { class: 'fine', style: 'margin-top:8px;font-family:var(--ui)' }, `Upset: it won fewer rounds (${p.roundsWon[p.winner]} to ${p.roundsWon[1 - p.winner]}) but by much bigger margins.`) : '');
+  if (F.daily && !F.replay) recordDaily(p);
+  setView('result');
+  const w = p.winner >= 0 ? p.fighters[p.winner] : null;
+  $('verdict').style.setProperty('--c', w ? F.colors[p.winner] : '#F3F4F8');
+  $('verdict').textContent = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
+  const upset = w && p.roundsWon[p.winner] < p.roundsWon[1 - p.winner];
+  $('verdictSub').textContent = !w ? `Same HP after the last round` : `${p.ko ? 'by K.O.' : 'on points'} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${upset ? ' · an upset: fewer rounds, bigger wins' : ''}`;
+  drawVictory($('winCv'), p, F.looks);
+  const rec = F.daily ? daily.days[F.daily.no] : null;
+  $('yourCall').hidden = !F.daily;
+  if (F.daily) $('yourCall').replaceChildren(...callBadge(rec));
+  $('rematch').textContent = F.daily ? '▶ WATCH AGAIN' : 'REMATCH';
+  $('copy').textContent = F.daily ? 'Share' : 'Share result';
   $('th1').textContent = a.name; $('th1').style.color = F.colors[0];
   $('th2').textContent = b.name; $('th2').style.color = F.colors[1];
   $('rows').replaceChildren(...p.rounds.map((R) => h('tr', null,
@@ -837,17 +846,32 @@ function showResult() {
           : s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
     }),
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? (R.tie === 'margin' ? 'tie (margin)' : 'tie') : `−${R.dmg} HP`))));
-  $('share').textContent = shareText();
+  $('share').textContent = F.daily ? dailyText(p, rec) : shareText();
   $('backToBracket').hidden = !fromBracket;
   $('result').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
 }
+/** "Your call" for a daily brawl: right, wrong, or watched without a call. */
+function callBadge(rec) {
+  const st = dailyStats();
+  if (!rec?.pick) return [h('span', { class: 'pill meh' }, 'Watched without a call'), h('span', null, `🔥 Streak ${st.streak}`)];
+  return [h('span', { class: `pill ${rec.correct ? 'ok' : 'no'}` }, rec.correct ? '✅ You called it' : '❌ Not this time'),
+    h('span', null, `🔥 Streak ${st.streak}`), h('span', { class: 'fine' }, `You've called ${st.right} of ${st.called}`)];
+}
+/** The winner posing, the loser down, on the city backdrop. */
+function drawVictory(cv, p, looks) {
+  const phone = matchMedia('(max-width: 760px)').matches, [w, hgt] = phone ? [780, 520] : [1200, 400];
+  if (cv.width !== w) { cv.width = w; cv.height = hgt; }
+  const c = cv.getContext('2d'), floor = hgt - 50, s = phone ? 1.05 : 1.1;
+  drawCity(c, w, hgt, floor, 1);
+  p.fighters.forEach((m, k) => {
+    const pose = p.winner === k ? 'win' : p.winner < 0 ? 'idle' : p.ko ? 'down' : 'hurt';
+    c.save(); c.translate(w * (k ? 0.68 : 0.32), floor); c.scale(s, s); drawBot(c, 0, 0, k ? -1 : 1, looks[k], pose, k); c.restore();
+  });
+}
 function backHome() {
   cancelAnimationFrame(raf);
-  for (const id of ['arena', 'result', 'tourney', 'royaleResult', 'claims']) $(id).hidden = true;
-  for (const id of ['builder', 'select', 'ready', 'featured']) $(id).hidden = false;
   fromBracket = false;
-  renderAll();
-  $('select').scrollIntoView({ block: 'start' });
+  openTab(tab);
 }
 
 /** Anonymous GoatCounter event (published site only; a no-op locally or when blocked). */
@@ -861,9 +885,10 @@ async function copyText(text, done) {
 }
 
 $('fight').addEventListener('click', () => (mode === 'royale' ? startRoyale() : startFight()));
-$('rematch').addEventListener('click', () => startFight());
-$('again').addEventListener('click', backHome);
-$('copy').addEventListener('click', () => { track('share'); copyText(shareText(), 'Copied result and link'); });
+$('rematch').addEventListener('click', () => startFight(F?.daily ? { daily: F.daily, rounds: F.daily.rounds, replay: true } : {}));
+$('again').addEventListener('click', () => { cancelAnimationFrame(raf); fromBracket = false; openTab('play'); });
+$('copy').addEventListener('click', () => { track(F.daily ? 'share-today' : 'share'); shareOrCopy($('share').textContent, 'Copied result and link'); });
+$('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily ? daily.days[F.daily.no] : null, F.daily); });
 $('skip').addEventListener('click', () => {
   if (F?.royale) return skipRoyale();
   if (!F || F.over) return endFight();
@@ -907,8 +932,7 @@ async function recordClip() {
 }
 
 // ---------- tournament ----------
-$('tourneyBtn').addEventListener('click', openTournament);
-$('tourneyClose').addEventListener('click', backHome);
+$('tourneyClose').addEventListener('click', () => openTab('today'));
 $('backToBracket').addEventListener('click', () => { $('result').hidden = true; showBracket(); });
 function openTournament() {
   const pool = DATA.models.filter((m) => inClass(m, classId));
@@ -920,8 +944,8 @@ function openTournament() {
 }
 function showBracket() {
   const cls = CLASSES.find((c) => c.id === classId).name;
-  for (const id of ['builder', 'select', 'ready', 'featured', 'arena', 'result']) $(id).hidden = true;
-  $('tourney').hidden = false;
+  tab = 'tournament';
+  setView('tournament');
   $('tourneyTitle').textContent = `Tournament · ${cls} · ${rounds.map((r) => roundById.get(r).name).join(', ')}`;
   const champ = bracket.champion;
   $('champ').style.setProperty('--c', colorOf(champ));
@@ -959,8 +983,8 @@ function startRoyale() {
     i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false, moveTitle: null,
     // per fighter, its biggest hit as leader: where its signature move plays
     special: ms.map((_, k) => { let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
-  for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
-  $('arena').hidden = false; $('arena').classList.add('royale'); $('rec').hidden = true;
+  setView('arena');
+  $('arena').classList.add('royale'); $('rec').hidden = true;
   $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
   writeHash();
@@ -1181,7 +1205,7 @@ function royaleText() {
 function showRoyaleResult() {
   const p = F.plan;
   cancelAnimationFrame(raf);
-  $('arena').hidden = true; $('royaleResult').hidden = false;
+  setView('royaleResult');
   const w = p.winner >= 0 ? p.fighters[p.winner] : null;
   $('rverdict').style.setProperty('--c', w ? F.colors[p.winner] : '#F3F4F8');
   $('rverdict').replaceChildren(...(w ? ['👑 ', h('b', null, w.name), ' wins the royale'] : ['👑 A shared crown']));
@@ -1211,8 +1235,8 @@ function verdictOf(c) {
 let claimLab = 'all';
 function openClaims(lab = 'all') {
   claimLab = lab;
-  for (const id of ['builder', 'select', 'ready', 'featured', 'arena', 'result', 'royaleResult', 'tourney']) $(id).hidden = true;
-  $('claims').hidden = false;
+  tab = 'claims';
+  setView('claims');
   history.replaceState(null, '', `#claims${lab === 'all' ? '' : `=${encodeURIComponent(lab)}`}`);
   track('claims');
   renderClaims();
@@ -1240,23 +1264,166 @@ function claimText(n, total) {
   return [`🔎 Benchmark Brawl claim check${claimLab === 'all' ? '' : ` · ${claimLab}`}`, `${total} lab claims vs independent tests`,
     `✅ ${n.match} match · 🔺 ${n.lab} lab higher · 🔻 ${n.ind} independent higher`, `${SITE_URL}#claims${claimLab === 'all' ? '' : `=${encodeURIComponent(claimLab)}`}`].join('\n');
 }
-$('claimsBtn').addEventListener('click', () => openClaims());
-$('claimsClose').addEventListener('click', backHome);
+$('claimsClose').addEventListener('click', () => openTab('today'));
 $('claimLab').addEventListener('change', (e) => openClaims(e.target.value));
 $('claimCopy').addEventListener('click', () => { track('share-claims'); copyText($('claimShare').textContent, 'Copied claim check and link'); });
+
+// ---------- views and tabs ----------
+const SECTIONS = ['today', 'builder', 'select', 'ready', 'arena', 'result', 'royaleResult', 'tourney', 'claims'];
+const VIEW_SECTIONS = { today: ['today'], play: ['builder', 'select', 'ready'], royale: ['builder', 'select', 'ready'], tournament: ['tourney'], claims: ['claims'], arena: ['arena'], result: ['result'], royaleResult: ['royaleResult'] };
+let tab = 'today';
+function setView(view) {
+  for (const id of SECTIONS) $(id).hidden = !VIEW_SECTIONS[view].includes(id);
+  document.body.dataset.view = view;
+  for (const b of document.querySelectorAll('#tabs button')) b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false');
+  if (view === 'today') startToday(); else stopToday();
+}
+function openTab(t) {
+  tab = t;
+  cancelAnimationFrame(raf);
+  if (t === 'today') { history.replaceState(null, '', location.pathname + location.search); setView('today'); renderToday(); }
+  else if (t === 'play' || t === 'royale') { mode = t === 'royale' ? 'royale' : '1v1'; if (mode === '1v1') picks = picks.slice(0, 2); setView(t); renderAll(); }
+  else if (t === 'tournament') { if (!bracket) openTournament(); else showBracket(); }
+  else if (t === 'claims') openClaims(claimLab);
+  scrollTo({ top: 0 });
+}
+for (const b of document.querySelectorAll('#tabs button')) b.addEventListener('click', () => openTab(b.dataset.tab));
+
+// ---------- today: the daily brawl ----------
+const DAILY = dailyBrawl(DATA, NOW);
+const DAILY_KEY = 'brawl-daily-v1';
+let daily = { days: {} };
+try { daily = JSON.parse(localStorage.getItem(DAILY_KEY)) || daily; } catch { /* a private window: nothing saved */ }
+const saveDaily = () => { try { localStorage.setItem(DAILY_KEY, JSON.stringify(daily)); } catch { /* fine */ } };
+/** Played, called, called right, current streak (consecutive brawls called right) and best streak. */
+function dailyStats() {
+  const recs = Object.entries(daily.days).map(([no, r]) => ({ no: Number(no), ...r })).filter((r) => r.winner).sort((x, y) => x.no - y.no);
+  let streak = 0;
+  for (let n = DAILY?.no ?? 0; n > 0; n--) { const r = daily.days[n]; if (r?.correct) streak++; else if (n === DAILY?.no && !r?.winner) continue; else break; }
+  let best = 0, run = 0, prev = -1;
+  for (const r of recs) { run = r.correct ? (prev === r.no - 1 && run > 0 ? run + 1 : 1) : 0; prev = r.no; best = Math.max(best, run); }
+  const called = recs.filter((r) => r.pick);
+  return { played: recs.length, called: called.length, right: called.filter((r) => r.correct).length, streak, best };
+}
+function recordDaily(p) {
+  const r = (daily.days[DAILY.no] ??= { a: DAILY.a.id, b: DAILY.b.id, pick: null });
+  if (r.winner) return; // the first watch counts
+  r.winner = p.winner >= 0 ? p.fighters[p.winner].id : 'draw';
+  r.correct = r.pick ? r.pick === r.winner : null;
+  saveDaily();
+}
+function dailyText(p, rec) {
+  const [a, b] = p.fighters, st = dailyStats();
+  const row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
+  return [`Benchmark Brawl #${DAILY.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today`].join('\n');
+}
+function renderToday() {
+  if (!DAILY) { $('callBox').hidden = true; $('doneBox').hidden = true; $('brawlNo').textContent = 'NO BRAWL TODAY'; return; }
+  const looks = looksFor([DAILY.a, DAILY.b]), rec = daily.days[DAILY.no], st = dailyStats();
+  $('brawlNo').textContent = `BRAWL #${DAILY.no}`;
+  $('streakChip').textContent = st.streak ? `🔥 ${st.streak}-day streak` : '🔥 Start a streak';
+  [[DAILY.a, 'A', 0], [DAILY.b, 'B', 1]].forEach(([m, k, i]) => {
+    $(`tag${k}`).textContent = DAILY.featured ? (i ? 'TOP CONTENDER' : 'NEW CHALLENGER') : (i ? 'BLUE CORNER' : 'RED CORNER');
+    $(`tag${k}`).style.color = i ? 'var(--sky)' : 'var(--red)';
+    $(`nm${k}`).textContent = m.name; $(`nm${k}`).style.color = looks[i].ui;
+    $(`sub${k}`).textContent = `${m.org}${m.eci != null ? ` · ECI ${m.eci.toFixed(0)}` : ''}`;
+    const btn = $(`call${k}`);
+    btn.textContent = m.name; btn.style.setProperty('--c', looks[i].ui); btn.setAttribute('aria-pressed', String(rec?.pick === m.id));
+  });
+  $('roundsToday').textContent = `Today's rounds: ${DAILY.rounds.map((id) => roundById.get(id).name).join(' · ')}`;
+  $('todayFight').disabled = !rec?.pick;
+  $('todayFight').textContent = rec?.pick ? 'FIGHT!' : 'PICK A WINNER';
+  const done = !!rec?.winner;
+  $('callBox').hidden = done; $('doneBox').hidden = !done;
+  if (done) {
+    const w = byId.get(rec.winner);
+    $('doneLine').textContent = w ? `${w.name.toUpperCase()} WON` : 'IT WAS A DRAW';
+    $('doneLine').style.color = w ? colorOf(w) : '';
+    $('doneCall').replaceChildren(...callBadge(rec));
+  }
+  $('stats').replaceChildren(...[[st.played, 'Played'], [st.called ? `${Math.round((100 * st.right) / st.called)}%` : '–', 'Called right'], [st.streak, 'Streak'], [st.best, 'Best']]
+    .map(([v, l]) => h('div', null, h('b', null, String(v)), h('span', null, l))));
+}
+function callToday(k) {
+  const m = k ? DAILY.b : DAILY.a, r = (daily.days[DAILY.no] ??= { a: DAILY.a.id, b: DAILY.b.id, pick: null });
+  if (r.winner) return;
+  r.pick = m.id; saveDaily(); sfx.blip(true); renderToday();
+}
+function fightToday(replay = false) { picks = [DAILY.a.id, DAILY.b.id]; startFight({ daily: DAILY, rounds: DAILY.rounds, replay }); }
+$('callA').addEventListener('click', () => callToday(0));
+$('callB').addEventListener('click', () => callToday(1));
+$('todayFight').addEventListener('click', () => fightToday());
+$('justWatch').addEventListener('click', () => { const r = (daily.days[DAILY.no] ??= { a: DAILY.a.id, b: DAILY.b.id, pick: null }); r.pick = null; saveDaily(); fightToday(); });
+$('doneWatch').addEventListener('click', () => fightToday(true));
+$('doneShare').addEventListener('click', () => { track('share-today'); shareOrCopy(dailyText(planFight(DATA, DAILY.a, DAILY.b, DAILY.rounds), daily.days[DAILY.no]), 'Copied your brawl'); });
+$('doneCard').addEventListener('click', () => { track('card'); shareCard(planFight(DATA, DAILY.a, DAILY.b, DAILY.rounds), looksFor([DAILY.a, DAILY.b]), daily.days[DAILY.no], DAILY); });
+// the stage: the two fighters idling under the city lights, and the countdown to the next brawl
+let todayRaf = 0, todayTick = 0;
+function startToday() {
+  stopToday();
+  if (!DAILY) return;
+  const cv2 = $('todayCv'), phone = matchMedia('(max-width: 760px)').matches, [w, hgt] = phone ? [780, 600] : [1200, 460];
+  if (cv2.width !== w) { cv2.width = w; cv2.height = hgt; }
+  const c = cv2.getContext('2d'), floor = hgt - (phone ? 150 : 100), s = phone ? 1.25 : 1.3, looks = looksFor([DAILY.a, DAILY.b]);
+  const loop = (now) => {
+    const t = now / 1000;
+    drawCity(c, w, hgt, floor, t);
+    [DAILY.a, DAILY.b].forEach((m, k) => { c.save(); c.translate(w * (k ? 0.72 : 0.28), floor); c.scale(s, s); drawBot(c, 0, 0, k ? -1 : 1, looks[k], 'idle', t + k); c.restore(); });
+    c.font = `400 ${phone ? 40 : 48}px "Press Start 2P", monospace`; c.textAlign = 'center';
+    c.fillStyle = '#000'; c.fillText('VS', w / 2 + 5, floor - 120 + 5); c.fillStyle = '#F2B544'; c.fillText('VS', w / 2, floor - 120);
+    if (!reduced) todayRaf = requestAnimationFrame(loop);
+  };
+  todayRaf = requestAnimationFrame(loop);
+  const tick = () => { const ms = Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), NOW.getUTCDate() + 1) - Date.now(); const s2 = Math.max(0, Math.floor(ms / 1000));
+    $('nextBrawl').textContent = ms > 0 ? `Next brawl in ${String(Math.floor(s2 / 3600)).padStart(2, '0')}:${String(Math.floor(s2 / 60) % 60).padStart(2, '0')}:${String(s2 % 60).padStart(2, '0')}` : 'A new brawl is ready: reload'; };
+  tick(); todayTick = setInterval(tick, 1000);
+}
+function stopToday() { cancelAnimationFrame(todayRaf); clearInterval(todayTick); }
+
+// ---------- sharing ----------
+/** The phone share sheet when there is one, else the clipboard. */
+async function shareOrCopy(text, done) {
+  if (navigator.share && matchMedia('(pointer: coarse)').matches) { try { await navigator.share({ text }); return; } catch { /* cancelled: fall through */ } }
+  copyText(text, done);
+}
+/** A 4:5 share card (1080×1350), sized for Instagram and X. */
+async function shareCard(p, looks, rec, brawl) {
+  const cv2 = document.createElement('canvas'); cv2.width = 1080; cv2.height = 1350;
+  const c = cv2.getContext('2d'), floor = 760;
+  drawCity(c, 1080, 1350, floor, 2);
+  c.fillStyle = '#0A0C14'; c.fillRect(0, floor + 3, 1080, 1350 - floor);
+  p.fighters.forEach((m, k) => { const pose = p.winner === k ? 'win' : p.winner < 0 ? 'idle' : p.ko ? 'down' : 'hurt'; c.save(); c.translate(k ? 740 : 340, floor); c.scale(1.9, 1.9); drawBot(c, 0, 0, k ? -1 : 1, looks[k], pose, k); c.restore(); });
+  const txt2 = (t, x, y, px, col, font = 'arcade') => { c.font = font === 'arcade' ? `400 ${px}px "Press Start 2P", monospace` : `700 ${px}px Inter, sans-serif`; c.textAlign = 'center'; c.fillStyle = '#000'; c.fillText(t, x + 5, y + 5); c.fillStyle = col; c.fillText(t, x, y); };
+  const fit = (t, px) => { c.font = `400 ${px}px "Press Start 2P", monospace`; while (c.measureText(t).width > 980 && px > 20) { px -= 2; c.font = `400 ${px}px "Press Start 2P", monospace`; } return px; };
+  txt2('BENCHMARK BRAWL', 540, 96, 40, '#FF6B6B');
+  if (brawl) txt2(`#${brawl.no}`, 540, 160, 32, '#F2B544');
+  const w = p.winner >= 0 ? p.fighters[p.winner] : null, title = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
+  txt2(title, 540, 880, fit(title, 52), w ? looks[p.winner].ui : '#F3F4F8');
+  txt2(`${p.fighters[0].name}  vs  ${p.fighters[1].name}`, 540, 950, 34, '#C9CFDC', 'ui');
+  const sq = 70, gap = 16, n = p.rounds.length, x0 = 540 - (n * sq + (n - 1) * gap) / 2;
+  p.rounds.forEach((R, i) => { c.fillStyle = R.winner == null ? '#2a2f45' : R.winner < 0 ? '#C9A23A' : looks[R.winner].ui; c.beginPath(); c.roundRect?.(x0 + i * (sq + gap), 1010, sq, sq, 12); c.fill(); });
+  if (rec?.pick) txt2(rec.correct ? 'MY CALL: RIGHT' : 'MY CALL: WRONG', 540, 1170, 30, rec.correct ? '#2EC4A6' : '#FF6B6B');
+  txt2('Real models · real benchmark scores', 540, 1240, 30, '#9AA3B8', 'ui');
+  txt2(SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''), 540, 1295, 28, '#F3F4F8', 'ui');
+  const blob = await new Promise((r) => cv2.toBlob(r, 'image/png'));
+  const file = new File([blob], `benchmark-brawl${brawl ? `-${brawl.no}` : ''}.png`, { type: 'image/png' });
+  if (navigator.canShare?.({ files: [file] }) && matchMedia('(pointer: coarse)').matches) { try { await navigator.share({ files: [file] }); return; } catch { /* fall back to download */ } }
+  const url = URL.createObjectURL(file); h('a', { href: url, download: file.name }).click(); setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  toast(`Saved ${file.name}`);
+}
 
 // ---------- start ----------
 const claimsHash = location.hash.match(/^#claims(?:=(.+))?$/);
 const shared = claimsHash ? false : readHash();
-renderFeatured();
+const tabHash = location.hash.match(/^#(today|play|royale|tournament)$/)?.[1];
 renderAll();
-if (claimsHash) openClaims(claimsHash[1] ? decodeURIComponent(claimsHash[1]) : 'all');
-else if (wantTourney) openTournament();
+if (claimsHash) { claimLab = claimsHash[1] ? decodeURIComponent(claimsHash[1]) : 'all'; openTab('claims'); }
+else if (wantTourney) openTab('tournament');
 else if (shared && mode === 'royale') {
+  openTab('royale');
   toast(`Shared battle royale: ${picks.length} fighters. Press FIGHT!`);
-  $('ready').scrollIntoView({ block: 'end' });
 } else if (shared) {
+  openTab('play');
   const [a, b] = picks.map((id) => byId.get(id));
   toast(`Shared fight: ${a.name} vs ${b.name}. Press FIGHT!`);
-  $('ready').scrollIntoView({ block: 'end' });
-}
+} else openTab(tabHash ?? 'today');

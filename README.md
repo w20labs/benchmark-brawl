@@ -14,15 +14,16 @@
 
 | | |
 |---|---|
-| **Fight** | Any two of ~70 models released in the last year, with real scores from Epoch AI |
+| **Today** | Brawl #N: one official fight a day, the same for everyone. Call the winner, watch, share your result, keep your streak (saved only in your browser) |
+| **Free play** | Any two of ~70 models released in the last year, with real scores from Epoch AI |
 | **Build your arena** | Pick 3–7 rounds (Coding, Math, Science, Facts, Puzzles, Chess, Price) or a preset like *I write code* or *On a budget*. The fight answers "which model wins *for me*?" |
 | **Price round** | The cheaper model wins; every halving of price is worth a 10-point hit |
 | **Weight classes** | Closed vs open weights, and budget / mid / premium by price |
 | **Battle royale** | 3 to 8 models in one arena. Each round the best result fires at everyone else; last one standing wins |
 | **Tournament** | The top 8 of a weight class, seeded by Epoch Capabilities Index, fought out as a bracket |
-| **New challenger** | The newest model (last 30 days) against the champion, on the front page |
+| **New challenger** | Every third daily brawl puts the newest model (last 30 days) against the best model from another lab |
 | **Claim check** | What each lab published about its own model, next to an independent test of the same benchmark: matches, lab higher, or independent higher |
-| **Share** | A Wordle-style result line with a link that replays the same fight, and a **fight clip** (MP4) recorded in your browser |
+| **Share** | A Wordle-style result line, a 4:5 **share card** image, and a **fight clip** (MP4) recorded in your browser |
 
 <table>
   <tr>

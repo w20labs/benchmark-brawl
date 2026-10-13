@@ -14,9 +14,10 @@ function watchErrors(page: Page) {
   return errors;
 }
 
-test('home shows the arena builder, weight classes and the roster', async ({ page }) => {
+test('free play shows the arena builder, weight classes and the roster', async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto(URL);
+  await page.click('#tabs [data-tab="play"]');
   await expect(page.locator('.fighter')).toHaveCount(data.models.length);
   await expect(page.locator('#roundChips .chip[aria-pressed="true"]')).toHaveCount(data.defaultRounds.length);
   await expect(page.locator('body')).not.toContainText(/\bnull\b|\bundefined\b/);
@@ -41,6 +42,8 @@ test('a fight ends with a sourced scorecard and a share link', async ({ page }) 
 
 test('an arena keeps at least three rounds', async ({ page }) => {
   await page.goto(`${URL}#r=coding,math,science`);
+  await page.click('#tabs [data-tab="play"]');
+  await page.click('#builderSummary');
   await page.locator('#roundChips .chip[aria-pressed="true"]').first().click();
   await expect(page.locator('#toast')).toContainText('at least 3');
   await expect(page.locator('#roundChips .chip[aria-pressed="true"]')).toHaveCount(3);
@@ -49,7 +52,7 @@ test('an arena keeps at least three rounds', async ({ page }) => {
 test('a tournament crowns a champion and can replay the final', async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto(URL);
-  await page.click('#tourneyBtn');
+  await page.click('#tabs [data-tab="tournament"]');
   await expect(page.locator('#champ')).toContainText('Champion:');
   await expect(page.locator('.match')).toHaveCount(7);
   await page.click('#watchFinal');
@@ -63,7 +66,7 @@ test('a tournament crowns a champion and can replay the final', async ({ page })
 test('a battle royale ranks every fighter and shares a replay link', async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto(URL);
-  await page.getByRole('button', { name: /Battle royale/ }).click();
+  await page.click('#tabs [data-tab="royale"]');
   await page.click('#fillTop');
   await expect(page.locator('#vsLine')).toContainText('8/8');
   await expect(page.locator('body')).not.toContainText(/\bnull\b|\bundefined\b/);
@@ -80,12 +83,34 @@ test('a battle royale ranks every fighter and shares a replay link', async ({ pa
 test('claim check lists lab claims next to independent results, with sources', async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto(URL);
-  await page.click('#claimsBtn');
+  await page.click('#tabs [data-tab="claims"]');
   await expect(page.locator('#claimRows tr')).toHaveCount(data.claims.length);
   await expect(page.locator('#claimRows a').first()).toHaveAttribute('href', /^https:/);
   await expect(page.locator('#claims')).not.toContainText(/\bnull\b|\bundefined\b|NaN/);
   await page.selectOption('#claimLab', 'Anthropic');
   await expect(page).toHaveURL(/#claims=Anthropic$/);
   await expect(page.locator('#claimShare')).toContainText('#claims=Anthropic');
+  expect(errors).toEqual([]);
+});
+
+test('the daily brawl: make a call, watch, get a verdict, share, and come back to it', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto(URL);
+  await expect(page.locator('#brawlNo')).toContainText('BRAWL #');
+  await expect(page.locator('#todayFight')).toBeDisabled();
+  await page.click('#callA');
+  await expect(page.locator('#callA')).toHaveAttribute('aria-pressed', 'true');
+  await page.click('#todayFight');
+  await expect(page.locator('#arena')).toBeVisible();
+  await page.click('#skip');
+  await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#yourCall')).toContainText(/You called it|Not this time/);
+  await expect(page.locator('#share')).toContainText(/Benchmark Brawl #\d+/);
+  await expect(page.locator('#share')).toContainText('#today');
+  await page.click('#tabs [data-tab="today"]');
+  await expect(page.locator('#doneBox')).toBeVisible();
+  await expect(page.locator('#callBox')).toBeHidden();
+  await expect(page.locator('#stats')).toContainText('1Played');
+  await expect(page.locator('body')).not.toContainText(/\bnull\b|\bundefined\b|NaN/);
   expect(errors).toEqual([]);
 });

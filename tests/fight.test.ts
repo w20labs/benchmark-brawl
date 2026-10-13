@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { judgeRound, planFight, weaponFor, START_HP } from '../src/fight.ts';
-import { featuredFight, inClass, newChallengers, PRESETS, runTournament } from '../src/league.ts';
+import { brawlNumber, dailyBrawl, featuredFight, inClass, newChallengers, PRESETS, runTournament } from '../src/league.ts';
 import type { BrawlData, Model, Score } from '../src/types.ts';
 
 const src = { name: 'test', url: 'https://example.com', license: 'test' };
@@ -120,6 +120,23 @@ describe('league', () => {
     const fresh = model('fresh', {}, { released: '2026-10-01', eci: 150 });
     expect(newChallengers([old, fresh], new Date('2026-10-12'))).toEqual([fresh]);
     expect(featuredFight([old, fresh], new Date('2026-10-12'))?.map((m) => m.id)).toEqual(['fresh', 'old']);
+  });
+  it('features the newest model against the best of another lab', () => {
+    const top = model('top', {}, { org: 'A', eci: 160 }), second = model('second', {}, { org: 'B', eci: 150 });
+    const fresh = model('fresh', {}, { org: 'A', eci: 140, released: '2026-10-10' });
+    expect(featuredFight([top, second, fresh], new Date('2026-10-12'))?.map((m) => m.id)).toEqual(['fresh', 'second']);
+  });
+  it('numbers the daily brawl by UTC day and gives everyone the same fight', () => {
+    expect(brawlNumber(new Date('2026-10-13T00:00:00Z'))).toBe(1);
+    expect(brawlNumber(new Date('2026-10-13T23:59:59Z'))).toBe(1);
+    expect(brawlNumber(new Date('2026-10-24T08:00:00Z'))).toBe(12);
+    const ms = Array.from({ length: 12 }, (_, i) => model(`m${i}`, { b1: s(40 + i * 4), b2: s(30 + i * 5) }, { org: `Lab${i % 4}`, eci: 100 + i }));
+    const d = { ...data(ms), defaultRounds: ['r1', 'r1', 'r2'] };
+    const morning = dailyBrawl(d, new Date('2026-10-15T01:00:00Z'))!, evening = dailyBrawl(d, new Date('2026-10-15T22:00:00Z'))!;
+    expect([morning.a.id, morning.b.id]).toEqual([evening.a.id, evening.b.id]);
+    expect(morning.a.org).not.toBe(morning.b.org);
+    const days = new Set(Array.from({ length: 10 }, (_, i) => { const x = dailyBrawl(d, new Date(Date.UTC(2026, 9, 14 + i)))!; return `${x.a.id}-${x.b.id}`; }));
+    expect(days.size).toBeGreaterThan(3);
   });
   it('sorts fighters into weight classes', () => {
     const cheap = model('c', {}, { open: true, price: { input: 0.1, output: 0.4, blended: 0.18, provider: 'x', modelsDevId: 'x' } });
