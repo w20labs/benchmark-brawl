@@ -11,8 +11,8 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { unzipSync, strFromU8 } from 'fflate';
 import { parseCsv } from '../src/csv.ts';
 import type { Benchmark, BrawlData, Claim, DailyEntry, Model, Price, Round, Score } from '../src/types.ts';
-import { dailyBrawl, FIRST_BRAWL_DAY } from '../src/league.ts';
-import { checkCoverage, checkModelsDev, daysApart, isWebUrl, num, requireColumns, sameVersion } from './validate.ts';
+import { dailyBrawl, FIRST_BRAWL_DAY, snapshotFighters } from '../src/league.ts';
+import { checkCoverage, checkModelsDev, daysApart, isWebUrl, num, priceNum, requireColumns, sameVersion, strictNum } from './validate.ts';
 
 const EPOCH_ZIP = 'https://epoch.ai/data/benchmark_data.zip';
 const MODELS_DEV = 'https://models.dev/api.json';
@@ -102,9 +102,9 @@ async function main() {
   for (const spec of SPECS) {
     const rows = csv(spec.file);
     requireColumns(rows, ['Model version', spec.scoreCol, ...(spec.seFrom ? SE_COLUMNS[spec.seFrom] : [])], spec.file);
-    for (const row of rows) {
-      const version = row['Model version'];
-      const raw = num(row[spec.scoreCol]);
+    for (const [i, row] of rows.entries()) {
+      const version = row['Model version'], where = `${spec.file} row ${i + 2}`;
+      const raw = strictNum(row[spec.scoreCol], `${where}, ${spec.scoreCol}`, 0, 1.0001);
       if (!version || raw == null) continue; // a blank score is missing, not 0%
       const name = groupOf(version, row);
       const m = meta.get(version) ?? meta.get(version.replace(SETTING, ''));
@@ -113,7 +113,9 @@ async function main() {
       if (!g.access && m?.accessibility) g.access = m.accessibility;
       groups.set(name, g);
       const v = Math.round(raw * 1000) / 10;
-      const stderr = num(row['stderr']), half = num(row['95% CI half-width']), lo = num(row['Score 95% CI low']), hi = num(row['Score 95% CI high']);
+      const err = (col: string) => (spec.seFrom && SE_COLUMNS[spec.seFrom].includes(col) ? strictNum(row[col], `${where}, ${col}`, 0, 1) : num(row[col]));
+      const stderr = err('stderr'), half = err('95% CI half-width'), lo = err('Score 95% CI low'), hi = err('Score 95% CI high');
+      if (lo != null && hi != null && hi < lo) throw new Error(`${where}: the 95% CI is reversed (${lo} > ${hi})`);
       const se = spec.seFrom === 'stderr' && stderr != null ? stderr * 100
         : spec.seFrom === 'ci95' && half != null ? (half * 100) / 1.96
         : spec.seFrom === 'ciBounds' && lo != null && hi != null ? ((hi - lo) * 100) / 2 / 1.96 : null;
@@ -141,11 +143,13 @@ async function main() {
     const models = md[provider]?.models ?? {};
     for (const [id, m] of Object.entries(models)) {
       if (alias ? id !== alias : norm(m.name ?? '') !== norm(name) && norm(id.split('/').pop()!) !== norm(name)) continue;
-      // a name match must be the same snapshot: not a listing reserved for another model, and released around the same time
-      if (!alias && (aliased.has(`${provider}/${id}`) || (m.release_date && released && daysApart(m.release_date, released) > 60))) continue;
-      const input = m.cost?.input, output = m.cost?.output;
-      if (!(input! > 0 && output! > 0)) continue;
-      return { input: exact(input!), output: exact(output!), blended: exact((3 * input! + output!) / 4), provider, modelsDevId: id };
+      // it must be the same release: a name match can't take a listing reserved for another model, and any listing
+      // (aliases included) must be released around the same time, so a rolling alias that moves on stops matching
+      if (!alias && aliased.has(`${provider}/${id}`)) continue;
+      if (m.release_date && released && daysApart(m.release_date, released) > 60) { if (alias) console.warn(`  price alias ${provider}/${id} now lists a ${m.release_date} release; ${name} left unpriced`); continue; }
+      const input = priceNum(m.cost?.input), output = priceNum(m.cost?.output); // both checked numbers before any arithmetic
+      if (input == null || output == null || !(input > 0 && output > 0)) continue;
+      return { input: exact(input), output: exact(output), blended: exact((3 * input + output) / 4), provider, modelsDevId: id };
     }
     return null;
   };
@@ -195,9 +199,8 @@ async function main() {
   };
   const prev: BrawlData | null = existsSync('data/brawl.json') ? JSON.parse(readFileSync('data/brawl.json', 'utf8')) : null;
   if (!process.env.BRAWL_ALLOW_DROP) checkCoverage(data, prev, DEFAULT_ROUNDS);
-  // the schedule saved by the deploy workflow (on the daily-schedule branch) wins over the one in the committed data
-  const saved: DailyEntry[] | null = existsSync('data/daily-state.json') ? JSON.parse(readFileSync('data/daily-state.json', 'utf8')) : null;
-  data.daily = schedule(data, [...(prev?.daily ?? []), ...(saved ?? [])], now);
+  // prev is the last good data: the deploy workflow puts its saved copy (from the data-state branch) in data/brawl.json
+  data.daily = schedule(data, prev?.daily ?? [], now);
   mkdirSync('data', { recursive: true });
   writeFileSync('data/brawl.json.tmp', `${JSON.stringify(data, null, 1)}\n`);
   renameSync('data/brawl.json.tmp', 'data/brawl.json'); // all or nothing
@@ -236,7 +239,12 @@ function schedule(data: BrawlData, previous: DailyEntry[], now: Date): DailyEntr
     const d = new Date(now.getTime() + i * 864e5);
     if (out.has(day(d)) || day(d) < FIRST_BRAWL_DAY) continue;
     const b = dailyBrawl(data, d);
-    if (b) out.set(b.day, { no: b.no, day: b.day, a: b.a.id, b: b.b.id, rounds: b.rounds, featured: b.featured });
+    if (b) out.set(b.day, { no: b.no, day: b.day, a: b.a.id, b: b.b.id, rounds: b.rounds, featured: b.featured, fighters: snapshotFighters(data, b.a, b.b, b.rounds) });
+  }
+  // entries saved before snapshots existed get one now, once (they're never changed after that)
+  for (const [k, e] of out) if (!e.fighters) {
+    const a = data.models.find((m) => m.id === e.a), b = data.models.find((m) => m.id === e.b);
+    if (a && b) out.set(k, { ...e, fighters: snapshotFighters(data, a, b, e.rounds) });
   }
   return [...out.values()].sort((x, y) => x.day.localeCompare(y.day));
 }

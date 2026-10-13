@@ -3,7 +3,7 @@ import { formatValue, planFight, STYLE_NAMES, weaponName } from '../fight.ts';
 import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
 import { judgeClaim } from '../claims.ts';
 import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
-import { CLASSES, dailyBrawl, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
+import { CLASSES, dailyBrawl, dailyFromEntry, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 
 /** @type {import('../types.ts').BrawlData} */
 const DATA = JSON.parse(document.getElementById('brawl-data').textContent);
@@ -540,7 +540,7 @@ const PHASES = [['banner', 1.2], ['reveal', 1.2], ['attack', 1.1], ['after', 0.8
 const NO_DATA_PHASES = [['banner', 1.0], ['after', 0.9]];
 
 function startFight(opts = {}) {
-  const [a, b] = picks.map((id) => byId.get(id));
+  const [a, b] = opts.fighters || picks.map((id) => byId.get(id));
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, opts.rounds || rounds);
   if (!plan.rounds.length) return toast(`${a.name} and ${b.name} have no benchmark in common in these rounds. Try other rounds.`);
@@ -899,7 +899,7 @@ function startFx(R) {
   const fx = { kind, style, gear: style === 'rocket' ? 'rocket' : kind === 'meteor' || kind === 'laser' ? kind : 'mg', t: 0, shots: [], rockets: [], meteors: [], hits: 0, landed: 0, fired: 0, nextShot: 0.25, muzzle: [0, 0],
     title: kind === 'tie' ? R.tieStyles.map((x) => STYLE_NAMES[x]).join(' vs ') : STYLE_NAMES[style] || weaponName(kind), titleC: w >= 0 ? F.colors[w] : '#F3F4F8' };
   if (kind === 'tie') return startItems(fx, R);
-  if (F.special[w] === F.i) {
+  if (F.special[w] === F.i && !reduced) {
     const l = 1 - w, m = F.plan.fighters[w];
     F.pose[w] = 'summon';
     Object.assign(fx, { kind: 'special', hits: 1, title: moveNameFor(m.org) });
@@ -991,7 +991,7 @@ function updateFx(fx, R, dt) {
   fx.t += dt;
   fx.muzzle = fx.muzzle.map((m) => Math.max(0, m - dt));
   const w = R.winner, l = 1 - w;
-  if (fx.kind === 'special') { updateMove(fx.sp, dt); return; }
+  if (fx.kind === 'special') { updateMove(fx.sp, reduced ? fx.sp.len : dt); return; } // reduced motion: land it now
   if (fx.mode === 'items') {
     for (const it of fx.items) if (it.t < 0 && it.t + dt >= 0) itemLaunch(it.style);
     fx.items = fx.items.filter((it) => !stepItem(it, dt));
@@ -1050,7 +1050,7 @@ function updateFx(fx, R, dt) {
 function drawFx(fx, t) {
   if (!fx) return;
   if (fx.t < 1.1) drawTitle(fx.title, fx.titleC, Math.min(1, fx.t * 6) * Math.min(1, (1.1 - fx.t) * 3), 1 + Math.max(0, 0.25 - fx.t) * 2);
-  if (fx.kind === 'special') drawMove(fx.sp, g, t);
+  if (fx.kind === 'special' && !reduced) drawMove(fx.sp, g, t);
   if (fx.mode === 'items') for (const it of fx.items) drawItem(g, it, t);
   for (const b of fx.shots) {
     const gun = b.gun || GUNS.mg, a = Math.atan2(b.vy, Math.abs(b.vx));
@@ -1258,6 +1258,7 @@ const FLOORS = {
 };
 /** Paints an arena: sky and scenery, a dark veil so fighters stand out, then the floor. */
 function drawArena(id, c, w, hgt, floor, t, afterSky, beforeFloor) {
+  if (reduced) t = 0; // still scenery: no swaying lanterns, drifting snow or bubbles
   const scenery = (SCENES[id] || SCENES.city)(c, w, hgt, floor, t);
   afterSky?.();
   scenery();
@@ -1420,7 +1421,7 @@ async function copyText(text, done) {
 }
 
 $('fight').addEventListener('click', () => (mode === 'royale' ? startRoyale() : startFight()));
-$('rematch').addEventListener('click', () => startFight(F?.daily ? { daily: F.daily, rounds: F.daily.rounds, replay: true } : {}));
+$('rematch').addEventListener('click', () => startFight(F?.daily ? { daily: F.daily, fighters: [F.daily.a, F.daily.b], rounds: F.daily.rounds, replay: true } : {}));
 $('again').addEventListener('click', () => { cancelAnimationFrame(raf); fromBracket = false; openTab('play'); });
 $('copy').addEventListener('click', () => { track(F.daily ? 'share-today' : 'share'); shareOrCopy($('share').textContent, 'Copied result and link'); });
 $('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily ? todayRec() : null, F.daily); });
@@ -1450,7 +1451,7 @@ async function recordClip() {
   rec.start(250);
   const finished = F; // record the fight that was just watched, not whatever the builder now says
   picks = finished.plan.fighters.map((m) => m.id);
-  startFight({ recording: true, rounds: finished.roundIds, daily: finished.daily, replay: true, onDone: () => rec.state !== 'inactive' && rec.stop() });
+  startFight({ recording: true, fighters: finished.plan.fighters, rounds: finished.roundIds, daily: finished.daily, replay: true, onDone: () => rec.state !== 'inactive' && rec.stop() });
   try { await done; } finally {
     for (const tr of stream.getTracks()) tr.stop();
     if (recDest) { try { master?.disconnect(recDest); } catch { /* fine */ } recDest = null; }
@@ -1604,7 +1605,7 @@ function rFire(R, hit) {
     return;
   }
   const sp = F.special[L];
-  if (sp && sp.i === F.i && sp.target === k) {
+  if (sp && sp.i === F.i && sp.target === k && !reduced) {
     const m = F.plan.fighters[L];
     F.moveTitle = { text: moveNameFor(m.org), c: F.colors[L], t: 0 };
     F.shots.push({ kind: 'move', sp: startMove(m.org, { ...moveKit(), ax: o.x, ay: o.y, x: F.x[L], tx: c.x, ty: c.y, floor: FLOOR, s: F.s, dir: Math.sign(c.x - F.x[L]) || 1, color: F.colors[L], look: F.looks[L], ko: R.hpAfter[k] === 0,
@@ -1642,7 +1643,7 @@ function stepRoyale(dt) {
   if (F.moveTitle) F.moveTitle.t += dt;
   for (const s of F.shots) {
     if (s.delay > 0) { s.delay -= dt; continue; }
-    if (s.kind === 'move') { if (updateMove(s.sp, dt)) s.done = true; continue; }
+    if (s.kind === 'move') { if (updateMove(s.sp, reduced ? s.sp.len : dt)) s.done = true; continue; }
     if (s.kind === 'item') { if (s.it.t < 0 && s.it.t + dt >= 0) itemLaunch(s.it.style); if (stepItem(s.it, dt)) s.done = true; continue; }
     if (s.kind === 'bolt') { s.t += dt; if (!s.hit) { s.hit = true; s.onLand(); } if (s.t > 0.22) s.done = true; continue; }
     if (s.kind === 'bullet' || s.kind === 'meteor' || s.kind === 'plasma' || s.kind === 'anvil') {
@@ -1747,7 +1748,7 @@ function drawRoyale(t) {
     else if (s.kind === 'rocket' && s.style === 'grenade') { g.save(); g.translate(s.x, s.y); g.rotate(s.t * 14); g.fillStyle = '#4b5a2a'; g.beginPath(); g.ellipse(0, 0, 8, 10, 0, 0, Math.PI * 2); g.fill(); g.fillStyle = '#9aa3b8'; g.fillRect(-3, -14, 6, 4); g.restore(); }
     else if (s.kind === 'rocket') { g.save(); g.translate(s.x, s.y); if (s.style === 'mini') g.scale(0.6, 0.6); g.fillStyle = '#d9dde8'; roundRect(g, -12, -5, 24, 10, 4); g.fill(); g.fillStyle = '#FF6B6B'; g.beginPath(); g.arc(12, 0, 5, 0, Math.PI * 2); g.fill(); g.restore(); }
     else if (s.kind === 'meteor') { g.save(); g.shadowColor = '#FF8A3D'; g.shadowBlur = 20; g.fillStyle = '#7a3b22'; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); g.fillStyle = '#FFB36B'; g.beginPath(); g.arc(s.x - s.r * 0.3, s.y - s.r * 0.3, s.r * 0.45, 0, Math.PI * 2); g.fill(); g.restore(); }
-    else if (s.kind === 'move') drawMove(s.sp, g, t);
+    else if (s.kind === 'move') { if (!reduced) drawMove(s.sp, g, t); }
     else if (s.kind === 'beam') { const k = s.t / 0.6, wd = 44 * (1 - k * 0.6); g.save(); g.globalAlpha = 1 - k * 0.8; const gr = g.createLinearGradient(s.x - wd, 0, s.x + wd, 0); gr.addColorStop(0, 'rgba(127,211,240,0)'); gr.addColorStop(0.5, '#7FD3F0'); gr.addColorStop(1, 'rgba(127,211,240,0)'); g.fillStyle = gr; g.fillRect(s.x - wd, 0, wd * 2, FLOOR + 10); g.fillStyle = '#fff'; g.fillRect(s.x - wd * 0.18, 0, wd * 0.36, FLOOR + 10); g.restore(); }
   }
   if (F.moveTitle && F.moveTitle.t < 1.5) drawTitle(F.moveTitle.text, F.moveTitle.c, Math.min(1, F.moveTitle.t * 6) * Math.min(1, (1.5 - F.moveTitle.t) * 3), 1, 70);
@@ -1848,10 +1849,10 @@ function openTab(t) {
 for (const b of document.querySelectorAll('#tabs button')) b.addEventListener('click', () => openTab(b.dataset.tab));
 
 // ---------- today: the daily brawl ----------
-/** A scheduled brawl, with its fighters looked up; null if a fighter has since left the roster. */
+/** A scheduled brawl, played from the fighters' saved snapshot, so later score refreshes can't change it. */
 function brawlFromEntry(e) {
-  const a = e && byId.get(e.a), b = e && byId.get(e.b);
-  return a && b ? { no: e.no, day: e.day, a, b, rounds: e.rounds.filter((id) => roundById.has(id)), featured: e.featured } : null;
+  const d = e && dailyFromEntry(e, byId);
+  return d ? { ...d, rounds: d.rounds.filter((id) => roundById.has(id)) } : null;
 }
 // today's fight comes from the published schedule, so it never changes during the day; computed only as a fallback
 const DAILY = brawlFromEntry(DATA.daily?.find((e) => e.day === NOW.toISOString().slice(0, 10))) ?? dailyBrawl(DATA, NOW);
@@ -1868,10 +1869,18 @@ function todayRec(create = false) {
   return (daily.days[DAILY.no] = { a: DAILY.a.id, b: DAILY.b.id, pick: null });
 }
 /** Played, called, called right, current streak (consecutive brawls called right) and best streak. */
+/**
+ * A saved record counts only if it's for the fight scheduled that day (records from a different pairing, e.g. saved
+ * before the schedule existed, are ignored). Days older than the published schedule are trusted as saved.
+ */
+function validRec(no, r) {
+  const e = no === DAILY?.no ? { a: DAILY.a.id, b: DAILY.b.id } : DATA.daily?.find((x) => x.no === no);
+  return !!r && (!e || (r.a === e.a && r.b === e.b));
+}
 function dailyStats() {
-  const recs = Object.entries(daily.days).map(([no, r]) => ({ no: Number(no), ...r })).filter((r) => r.winner).sort((x, y) => x.no - y.no);
+  const recs = Object.entries(daily.days).map(([no, r]) => ({ no: Number(no), ...r })).filter((r) => r.winner && validRec(r.no, r)).sort((x, y) => x.no - y.no);
   let streak = 0;
-  for (let n = DAILY?.no ?? 0; n > 0; n--) { const r = daily.days[n]; if (r?.correct) streak++; else if (n === DAILY?.no && !r?.winner) continue; else break; }
+  for (let n = DAILY?.no ?? 0; n > 0; n--) { const r = validRec(n, daily.days[n]) ? daily.days[n] : null; if (r?.correct) streak++; else if (n === DAILY?.no && !r?.winner) continue; else break; }
   let best = 0, run = 0, prev = -1;
   for (const r of recs) { run = r.correct ? (prev === r.no - 1 && run > 0 ? run + 1 : 1) : 0; prev = r.no; best = Math.max(best, run); }
   const called = recs.filter((r) => r.pick);
@@ -1921,7 +1930,7 @@ function callToday(k) {
   if (r.winner) return;
   r.pick = m.id; saveDaily(); sfx.blip(true); renderToday();
 }
-function fightToday(replay = false) { picks = [DAILY.a.id, DAILY.b.id]; startFight({ daily: DAILY, rounds: DAILY.rounds, replay }); }
+function fightToday(replay = false) { picks = [DAILY.a.id, DAILY.b.id]; startFight({ daily: DAILY, fighters: [DAILY.a, DAILY.b], rounds: DAILY.rounds, replay }); }
 $('callA').addEventListener('click', () => callToday(0));
 $('callB').addEventListener('click', () => callToday(1));
 $('todayFight').addEventListener('click', () => fightToday());
@@ -2008,6 +2017,6 @@ else if (shared && mode === 'royale') {
 } else if (pastBrawl && pastBrawl !== DAILY?.no) {
   // a link to an earlier daily brawl replays that exact fight
   const old = brawlFromEntry(DATA.daily?.find((e) => e.no === pastBrawl));
-  if (old) { picks = [old.a.id, old.b.id]; rounds = old.rounds.length >= MIN_ROUNDS ? old.rounds : rounds; openTab('play'); toast(`Brawl #${old.no}: ${old.a.name} vs ${old.b.name}. Press FIGHT to replay it.`); }
+  if (old) { openTab('today'); toast(`Replaying Brawl #${old.no}: ${old.a.name} vs ${old.b.name}`); startFight({ fighters: [old.a, old.b], rounds: old.rounds, replay: true }); }
   else { openTab('today'); toast(`Brawl #${pastBrawl} is too old to replay. Here's today's.`); }
 } else openTab(tabHash ?? 'today');

@@ -1,6 +1,6 @@
 /** Weight classes, new challengers and tournaments: everything above a single fight. */
 import { planFight, type FightResult } from './fight.ts';
-import type { BrawlData, Model } from './types.ts';
+import type { BrawlData, DailyEntry, Model } from './types.ts';
 
 // ---------- weight classes ----------
 export type ClassId = 'all' | 'closed' | 'open' | 'budget' | 'mid' | 'premium';
@@ -54,6 +54,18 @@ function seeded(seed: string) {
   return () => { x = (x + 0x6d2b79f5) | 0; let t = Math.imul(x ^ (x >>> 15), 1 | x); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
 }
 export type DailyBrawl = { no: number; day: string; a: Model; b: Model; rounds: string[]; featured: boolean };
+
+/** Both fighters as they were, keeping only the scores the brawl's rounds can use. */
+export function snapshotFighters(data: BrawlData, a: Model, b: Model, rounds: string[]): [Model, Model] {
+  const benches = new Set(rounds.flatMap((id) => data.rounds.find((r) => r.id === id)?.benches ?? []));
+  const keep = (m: Model): Model => ({ ...m, scores: Object.fromEntries(Object.entries(m.scores).filter(([id]) => benches.has(id))) });
+  return [keep(a), keep(b)];
+}
+/** A scheduled brawl, played from its saved snapshot (the live roster is only a fallback for old entries without one). */
+export function dailyFromEntry(e: DailyEntry, live: Map<string, Model>): DailyBrawl | null {
+  const [a, b] = e.fighters ?? [live.get(e.a), live.get(e.b)];
+  return a && b ? { no: e.no, day: e.day, a, b, rounds: e.rounds, featured: e.featured } : null;
+}
 /**
  * Today's official fight, the same for everyone. Every third brawl features the newest challenger (when there is
  * one); otherwise two close rivals from different labs among the top 30. Only pairs with at least 3 rounds that

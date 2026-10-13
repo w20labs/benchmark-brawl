@@ -14,7 +14,7 @@
 
 | | |
 |---|---|
-| **Today** | Brawl #N: one official fight a day, the same for everyone. Each day's fight is decided once and saved, so it never changes during the day, and a share link (`#today=12`) always replays that brawl. Call the winner, watch, share, keep your streak (saved only in your browser) |
+| **Today** | Brawl #N: one official fight a day, the same for everyone. Each day's fight is decided once and saved with a snapshot of both fighters' scores, so later refreshes can't change its result, and a share link (`#today=12`) always replays that exact brawl. Call the winner, watch, share, keep your streak (saved only in your browser) |
 | **Free play** | Any two of ~70 models released in the last year, with real scores from Epoch AI |
 | **Build your arena** | Pick 3–7 rounds (Coding, Math, Science, Facts, Puzzles, Chess, Price) or a preset like *I write code* or *On a budget*. The fight answers "which model wins *for me*?" |
 | **Price round** | The cheaper model wins; every halving of price is worth a 10-point hit |
@@ -118,7 +118,7 @@ The rules live in [`src/fight.ts`](src/fight.ts) and [`src/league.ts`](src/leagu
 
 **Changes we make to Epoch's data:** scores are shown as percentages, each model shows its best reasoning setting, and Coding averages the benchmarks two models share. Third-party hosts' prices are left out on purpose: they often undercut the lab for open-weight models.
 
-The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Before publishing, it checks every file's columns and the shape of the price list, treats blank cells as missing (never 0%), and refuses data where a round, the prices or the claims suddenly collapse; the site then keeps yesterday's data. Scores and prices are never edited by hand; the only hand-entered numbers are Claim check's lab claims, each linked to its source. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
+The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Before publishing, it checks every file's columns and the shape of the price list, treats blank cells as missing (never 0%), and refuses data where a round, the prices or the claims suddenly collapse; the site then keeps the last good data, which the deploy workflow saves (with the daily schedule) on the `data-state` branch. Malformed numbers (a score that isn't a number, a reversed confidence interval, a price given as text) are rejected or read correctly, never guessed. Scores and prices are never edited by hand; the only hand-entered numbers are Claim check's lab claims, each linked to its source. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
 
 **Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). We don't use FrontierCode (its publisher's terms don't allow republishing) or Terminal-Bench (Epoch's copy is the older 2.0 version and stops in March 2026). There is no speed round: we found no free, independent speed data whose terms allow reuse.
 

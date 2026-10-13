@@ -4,11 +4,30 @@
  */
 import type { BrawlData } from '../src/types.ts';
 
-/** A number from a CSV cell, or null for a blank or non-numeric cell (never a silent 0). */
+/** A number from a CSV cell, or null for a blank or non-numeric cell (never a silent 0). For optional columns only. */
 export function num(cell: string | undefined): number | null {
   if (cell == null || cell.trim() === '') return null;
   const n = Number(cell);
   return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * A number from a CSV cell we rely on: null only when the cell is blank (missing). A non-blank cell that isn't a
+ * number, or is outside [min, max], fails the build: it means the source changed format, and guessing would publish
+ * wrong scores or drop error margins without anyone noticing.
+ */
+export function strictNum(cell: string | undefined, where: string, min = -Infinity, max = Infinity): number | null {
+  if (cell == null || cell.trim() === '') return null;
+  const n = Number(cell);
+  if (!Number.isFinite(n)) throw new Error(`${where}: "${cell}" is not a number`);
+  if (n < min || n > max) throw new Error(`${where}: ${n} is outside ${min}..${max}`);
+  return n;
+}
+
+/** A price from models.dev: a finite, non-negative number (numeric strings are accepted), else null. */
+export function priceNum(v: unknown): number | null {
+  const n = typeof v === 'number' ? v : typeof v === 'string' && v.trim() !== '' ? Number(v) : NaN;
+  return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
 /** Throws unless every column is present in the file's header. */

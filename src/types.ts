@@ -78,8 +78,11 @@ export type Claim = {
   indep: { v: number; se: number | null; setting: string; sameSetting: boolean };
 };
 
-/** One day's official fight. Written once and never changed, so everyone that day plays the same thing. */
-export type DailyEntry = { no: number; day: string; a: string; b: string; rounds: string[]; featured: boolean };
+/**
+ * One day's official fight. Written once and never changed. It keeps a snapshot of both fighters (their scores at
+ * the time), so a later score refresh can't change that day's result, and it still plays if a fighter leaves the roster.
+ */
+export type DailyEntry = { no: number; day: string; a: string; b: string; rounds: string[]; featured: boolean; fighters?: [Model, Model] };
 
 export type BrawlData = {
   generatedAt: string;

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-13T07:40:04.919Z",
+ "generatedAt": "2026-10-13T08:17:01.518Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -4978,7 +4978,139 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudefable5",
+     "name": "Claude Fable 5",
+     "org": "Anthropic",
+     "released": "2026-06-09",
+     "open": false,
+     "eci": 162.06,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 69.9,
+       "se": 1.66,
+       "setting": "xhigh"
+      },
+      "mirrorcode": {
+       "v": 63.9,
+       "se": 10.4,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 15.5,
+       "se": 1.05,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 90.2,
+       "se": 4.6,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FReDAtJGGfRtrEGGWf4Zbsd.eval"
+      },
+      "frontiermath": {
+       "v": 87,
+       "se": 1.99,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FE28uZiJvrPgKtawbJpoZQ8.eval"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhwrnvtEbDAocFtjcsHqsQh.eval"
+      },
+      "gpqa": {
+       "v": 85.9,
+       "se": 2.48,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FS5pm7ctk9zgPfbyHrbD9AV.eval"
+      },
+      "simpleqa": {
+       "v": 70.7,
+       "se": 1.44,
+       "setting": "xhigh"
+      },
+      "mystery": {
+       "v": 52,
+       "se": 5.02,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt56sol",
+     "name": "GPT-5.6 Sol",
+     "org": "OpenAI",
+     "released": "2026-07-09",
+     "open": false,
+     "eci": 161.66,
+     "price": {
+      "input": 4,
+      "output": 20,
+      "blended": 8,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.6-sol"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 72.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "mirrorcode": {
+       "v": 20,
+       "se": 9.23,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 15,
+       "se": 0.72,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 82.9,
+       "se": 5.95,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQJ5rJMVypB4PMxPcBGftc8.eval"
+      },
+      "frontiermath": {
+       "v": 89.1,
+       "se": 1.85,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVBpT2WWYKBZtUxG9Z3svGh.eval"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 93.5,
+       "se": 1.57,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 69.7,
+       "se": 1.45,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 58,
+       "se": 4.96,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 2,
@@ -4992,7 +5124,97 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "musespark13",
+     "name": "Muse Spark 1.3",
+     "org": "Meta AI",
+     "released": "2026-09-02",
+     "open": false,
+     "eci": 156.75,
+     "price": null,
+     "scores": {
+      "weirdml": {
+       "v": 6.9,
+       "se": 0.71,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 74.4,
+       "se": 2.59,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 99.2,
+       "se": 0.62,
+       "setting": "xhigh"
+      },
+      "mystery": {
+       "v": 25,
+       "se": 4.46,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt6luna",
+     "name": "GPT-6 Luna",
+     "org": "OpenAI",
+     "released": "2026-09-22",
+     "open": false,
+     "eci": 156.28,
+     "price": {
+      "input": 0.1,
+      "output": 0.5,
+      "blended": 0.2,
+      "provider": "openai",
+      "modelsDevId": "gpt-6-luna"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 7.9,
+       "se": 0.52,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 56.1,
+       "se": 7.85,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 78.9,
+       "se": 2.42,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 98.9,
+       "se": 0.67,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.5,
+       "se": 1.85,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41.4,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 7,
+       "se": 2.56,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 3,
@@ -5006,7 +5228,112 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "deepseekv4pro0813",
+     "name": "DeepSeek V4 Pro 0813",
+     "org": "DeepSeek",
+     "released": "2026-08-13",
+     "open": true,
+     "eci": 155.31,
+     "price": {
+      "input": 0.66,
+      "output": 1.98,
+      "blended": 0.99,
+      "provider": "deepseek",
+      "modelsDevId": "deepseek-v4-pro"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 26.8,
+       "se": 7.01,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fa4uV8HMMBAcHXLVSmZfBgX.eval"
+      },
+      "frontiermath": {
+       "v": 64.6,
+       "se": 2.84,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fb6yWmeFgsWeEiG9Qzs3NSf.eval"
+      },
+      "aime": {
+       "v": 98.6,
+       "se": 0.99,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91.7,
+       "se": 1.52,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 52.9,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2xfFf6KZAp2gUWYhHGkFgs.eval"
+      },
+      "mystery": {
+       "v": 43,
+       "se": 4.98,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "glm53",
+     "name": "GLM-5.3",
+     "org": "Z.ai (Zhipu AI)",
+     "released": "2026-08-14",
+     "open": false,
+     "eci": 155.61,
+     "price": {
+      "input": 1.4,
+      "output": 4.4,
+      "blended": 2.15,
+      "provider": "zai",
+      "modelsDevId": "glm-5.3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 69,
+       "se": 1.54,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 29.3,
+       "se": 7.19,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 68.8,
+       "se": 2.75,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 91.1,
+       "se": 3.45,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.9,
+       "se": 1.59,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41,
+       "se": 1.56,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTY8R8FV7zCwByEipkqyg2P.eval"
+      },
+      "mystery": {
+       "v": 33,
+       "se": 4.73,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 4,
@@ -5020,7 +5347,112 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gemini31pro",
+     "name": "Gemini 3.1 Pro",
+     "org": "Google DeepMind",
+     "released": "2026-02-19",
+     "open": false,
+     "eci": 154.77,
+     "price": {
+      "input": 2,
+      "output": 12,
+      "blended": 4.5,
+      "provider": "google",
+      "modelsDevId": "gemini-3.1-pro-preview"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 11.7,
+       "se": 0.76,
+       "setting": "high"
+      },
+      "swebench": {
+       "v": 75.6,
+       "se": 1.95,
+       "setting": "default",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F8QQQWDgmmEsmQVUJWcxx4P.eval"
+      },
+      "mirrorcode": {
+       "v": 8.9,
+       "se": 4.56,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 26.8,
+       "se": 7.01,
+       "setting": "default",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeXVWr3RBeSsWy5DAU8ed46.eval"
+      },
+      "frontiermath": {
+       "v": 59.6,
+       "se": 2.91,
+       "setting": "default",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhVifTUdQZrFEYabgCRu8Qq.eval"
+      },
+      "aime": {
+       "v": 95.6,
+       "se": 3.1,
+       "setting": "default",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbXgZZgzRE3wXoSRUgrbsVf.eval"
+      },
+      "gpqa": {
+       "v": 94.4,
+       "se": 1.63,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBgmrBFsbsaD8rNpebv49Da.eval"
+      },
+      "simpleqa": {
+       "v": 73.5,
+       "se": 1.4,
+       "setting": "high"
+      },
+      "mystery": {
+       "v": 34,
+       "se": 4.76,
+       "setting": "high"
+      }
+     }
+    },
+    {
+     "id": "qwen38max0902",
+     "name": "Qwen3.8 Max (0902)",
+     "org": "Alibaba",
+     "released": "2026-09-01",
+     "open": false,
+     "eci": 155.05,
+     "price": null,
+     "scores": {
+      "frontiermath-t4": {
+       "v": 34.1,
+       "se": 7.5,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 65.6,
+       "se": 2.82,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 92.3,
+       "se": 1.72,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 47.3,
+       "se": 1.58,
+       "setting": "xhigh"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 5,
@@ -5034,7 +5466,122 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "qwen38max",
+     "name": "Qwen 3.8 Max",
+     "org": "Alibaba",
+     "released": "2026-08-02",
+     "open": false,
+     "eci": 156.41,
+     "price": {
+      "input": 2,
+      "output": 6,
+      "blended": 3,
+      "provider": "alibaba",
+      "modelsDevId": "qwen3.8-max"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 57.5,
+       "se": 1.36,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
+      },
+      "frontiermath": {
+       "v": 74.7,
+       "se": 2.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 92.7,
+       "se": 1.69,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 45.8,
+       "se": 1.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
+      },
+      "mystery": {
+       "v": 38,
+       "se": 4.88,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "claudeopus46",
+     "name": "Claude Opus 4.6",
+     "org": "Anthropic",
+     "released": "2026-02-05",
+     "open": false,
+     "eci": 155.24,
+     "price": {
+      "input": 5,
+      "output": 25,
+      "blended": 10,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-4-6"
+     },
+     "scores": {
+      "swebench": {
+       "v": 78.7,
+       "se": 1.86,
+       "setting": "default",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2hH2GAPUFaJR7pfVKhhicg.eval"
+      },
+      "frontiermath-t4": {
+       "v": 26.8,
+       "se": 7.01,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2hbbp8z6PhB7c2T33os9q5.eval"
+      },
+      "frontiermath": {
+       "v": 66,
+       "se": 2.81,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FkgJ2d6XbKj3dZutDcBYSKU.eval"
+      },
+      "aime": {
+       "v": 94.4,
+       "se": 2.82,
+       "setting": "64K",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTUPC8VdX4jApFa4MGfNP4t.eval"
+      },
+      "gpqa": {
+       "v": 90.5,
+       "se": 1.69,
+       "setting": "32K",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDiXCMhdfhcjaCUSzYWgACy.eval"
+      },
+      "simpleqa": {
+       "v": 47,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F85fhMxLaebWtLoi6oLpTbi.eval"
+      },
+      "mystery": {
+       "v": 25,
+       "se": 4.35,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 6,
@@ -5048,7 +5595,115 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "deepseekv41flash",
+     "name": "DeepSeek V4.1 Flash",
+     "org": "DeepSeek",
+     "released": "2026-09-09",
+     "open": true,
+     "eci": 154.9,
+     "price": {
+      "input": 0.15,
+      "output": 0.6,
+      "blended": 0.2625,
+      "provider": "deepseek",
+      "modelsDevId": "deepseek-flash"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 5.9,
+       "se": 0.95,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 26.8,
+       "se": 7.01,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 67.4,
+       "se": 2.78,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 0.64,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 89.8,
+       "se": 1.73,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 43,
+       "se": 4.98,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt56luna",
+     "name": "GPT-5.6 Luna",
+     "org": "OpenAI",
+     "released": "2026-07-09",
+     "open": false,
+     "eci": 156.39,
+     "price": {
+      "input": 0.2,
+      "output": 1.2,
+      "blended": 0.45,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.6-luna"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 67.2,
+       "se": 2.04,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 5.2,
+       "se": 0.74,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 61,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNLiiJJSyA9wmg2FHENFpAq.eval"
+      },
+      "frontiermath": {
+       "v": 82.1,
+       "se": 2.27,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYLAk5J3Wd8EruVXee8bAQb.eval"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 1.17,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91.6,
+       "se": 1.73,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 21,
+       "se": 4.09,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 7,
@@ -5062,7 +5717,128 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudeopus48",
+     "name": "Claude Opus 4.8",
+     "org": "Anthropic",
+     "released": "2026-05-28",
+     "open": false,
+     "eci": 158.21,
+     "price": {
+      "input": 5,
+      "output": 25,
+      "blended": 10,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-4-8"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 59,
+       "se": 0.9,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 56.1,
+       "se": 7.85,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJiqgqBTfkGx797uowZgJbk.eval"
+      },
+      "frontiermath": {
+       "v": 80,
+       "se": 2.37,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVmgtgKMwEqc54f3jA7auP.eval"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 1.41,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91,
+       "se": 1.92,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 53,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FViC6pxQZUVS3E9M9iEubF7.eval"
+      },
+      "mystery": {
+       "v": 36,
+       "se": 4.82,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt56sol",
+     "name": "GPT-5.6 Sol",
+     "org": "OpenAI",
+     "released": "2026-07-09",
+     "open": false,
+     "eci": 161.66,
+     "price": {
+      "input": 4,
+      "output": 20,
+      "blended": 8,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.6-sol"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 72.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "mirrorcode": {
+       "v": 20,
+       "se": 9.23,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 15,
+       "se": 0.72,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 82.9,
+       "se": 5.95,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQJ5rJMVypB4PMxPcBGftc8.eval"
+      },
+      "frontiermath": {
+       "v": 89.1,
+       "se": 1.85,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVBpT2WWYKBZtUxG9Z3svGh.eval"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 93.5,
+       "se": 1.57,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 69.7,
+       "se": 1.45,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 58,
+       "se": 4.96,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 8,
@@ -5076,7 +5852,127 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudefable5",
+     "name": "Claude Fable 5",
+     "org": "Anthropic",
+     "released": "2026-06-09",
+     "open": false,
+     "eci": 162.06,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 69.9,
+       "se": 1.66,
+       "setting": "xhigh"
+      },
+      "mirrorcode": {
+       "v": 63.9,
+       "se": 10.4,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 15.5,
+       "se": 1.05,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 90.2,
+       "se": 4.6,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FReDAtJGGfRtrEGGWf4Zbsd.eval"
+      },
+      "frontiermath": {
+       "v": 87,
+       "se": 1.99,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FE28uZiJvrPgKtawbJpoZQ8.eval"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhwrnvtEbDAocFtjcsHqsQh.eval"
+      },
+      "gpqa": {
+       "v": 85.9,
+       "se": 2.48,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FS5pm7ctk9zgPfbyHrbD9AV.eval"
+      },
+      "simpleqa": {
+       "v": 70.7,
+       "se": 1.44,
+       "setting": "xhigh"
+      },
+      "mystery": {
+       "v": 52,
+       "se": 5.02,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt61sol",
+     "name": "GPT-6.1 Sol",
+     "org": "OpenAI",
+     "released": "2026-09-29",
+     "open": false,
+     "eci": 166.09,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-sol"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 35.5,
+       "se": 1.14,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.4,
+       "se": 1.38,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 73.9,
+       "se": 1.39,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 80,
+       "se": 4.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 9,
@@ -5090,7 +5986,127 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt55",
+     "name": "GPT-5.5",
+     "org": "OpenAI",
+     "released": "2026-04-23",
+     "open": false,
+     "eci": 159.1,
+     "price": {
+      "input": 5,
+      "output": 30,
+      "blended": 11.25,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.5"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 67,
+       "se": 3.3,
+       "setting": "xhigh"
+      },
+      "swebench": {
+       "v": 80.6,
+       "se": 1.8,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLbhPRqUkXrs5KJ7vyT4CR7.eval"
+      },
+      "mirrorcode": {
+       "v": 10,
+       "se": 6.04,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 72.5,
+       "se": 7.15,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 85.3,
+       "se": 2.1,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdP6L7ViZSdcTiWxooLCTUh.eval"
+      },
+      "gpqa": {
+       "v": 94,
+       "se": 1.55,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFUv4EUwR78nAsdGbiwiLEr.eval"
+      },
+      "simpleqa": {
+       "v": 63,
+       "se": 1.53,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTijCafTTJUFrJ6jPGvBbgq.eval"
+      },
+      "mystery": {
+       "v": 56,
+       "se": 4.99,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "claudesonnet55",
+     "name": "Claude Sonnet 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-28",
+     "open": false,
+     "eci": 165.03,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "anthropic",
+      "modelsDevId": "claude-sonnet-5-5"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 20,
+       "se": 0.83,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 80.5,
+       "se": 6.27,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 88.8,
+       "se": 1.87,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.6,
+       "se": 1.37,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 46.5,
+       "se": 1.58,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 65,
+       "se": 4.79,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 10,
@@ -5104,7 +6120,117 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "glm53",
+     "name": "GLM-5.3",
+     "org": "Z.ai (Zhipu AI)",
+     "released": "2026-08-14",
+     "open": false,
+     "eci": 155.61,
+     "price": {
+      "input": 1.4,
+      "output": 4.4,
+      "blended": 2.15,
+      "provider": "zai",
+      "modelsDevId": "glm-5.3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 69,
+       "se": 1.54,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 29.3,
+       "se": 7.19,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 68.8,
+       "se": 2.75,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 91.1,
+       "se": 3.45,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.9,
+       "se": 1.59,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41,
+       "se": 1.56,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTY8R8FV7zCwByEipkqyg2P.eval"
+      },
+      "mystery": {
+       "v": 33,
+       "se": 4.73,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "qwen38max",
+     "name": "Qwen 3.8 Max",
+     "org": "Alibaba",
+     "released": "2026-08-02",
+     "open": false,
+     "eci": 156.41,
+     "price": {
+      "input": 2,
+      "output": 6,
+      "blended": 3,
+      "provider": "alibaba",
+      "modelsDevId": "qwen3.8-max"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 57.5,
+       "se": 1.36,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
+      },
+      "frontiermath": {
+       "v": 74.7,
+       "se": 2.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 92.7,
+       "se": 1.69,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 45.8,
+       "se": 1.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
+      },
+      "mystery": {
+       "v": 38,
+       "se": 4.88,
+       "setting": "xhigh"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 11,
@@ -5118,7 +6244,123 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt56luna",
+     "name": "GPT-5.6 Luna",
+     "org": "OpenAI",
+     "released": "2026-07-09",
+     "open": false,
+     "eci": 156.39,
+     "price": {
+      "input": 0.2,
+      "output": 1.2,
+      "blended": 0.45,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.6-luna"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 67.2,
+       "se": 2.04,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 5.2,
+       "se": 0.74,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 61,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNLiiJJSyA9wmg2FHENFpAq.eval"
+      },
+      "frontiermath": {
+       "v": 82.1,
+       "se": 2.27,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYLAk5J3Wd8EruVXee8bAQb.eval"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 1.17,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91.6,
+       "se": 1.73,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 21,
+       "se": 4.09,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudeopus48",
+     "name": "Claude Opus 4.8",
+     "org": "Anthropic",
+     "released": "2026-05-28",
+     "open": false,
+     "eci": 158.21,
+     "price": {
+      "input": 5,
+      "output": 25,
+      "blended": 10,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-4-8"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 59,
+       "se": 0.9,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 56.1,
+       "se": 7.85,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJiqgqBTfkGx797uowZgJbk.eval"
+      },
+      "frontiermath": {
+       "v": 80,
+       "se": 2.37,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVmgtgKMwEqc54f3jA7auP.eval"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 1.41,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91,
+       "se": 1.92,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 53,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FViC6pxQZUVS3E9M9iEubF7.eval"
+      },
+      "mystery": {
+       "v": 36,
+       "se": 4.82,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 12,
@@ -5132,7 +6374,132 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "qwen38max",
+     "name": "Qwen 3.8 Max",
+     "org": "Alibaba",
+     "released": "2026-08-02",
+     "open": false,
+     "eci": 156.41,
+     "price": {
+      "input": 2,
+      "output": 6,
+      "blended": 3,
+      "provider": "alibaba",
+      "modelsDevId": "qwen3.8-max"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 57.5,
+       "se": 1.36,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
+      },
+      "frontiermath": {
+       "v": 74.7,
+       "se": 2.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 92.7,
+       "se": 1.69,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 45.8,
+       "se": 1.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
+      },
+      "mystery": {
+       "v": 38,
+       "se": 4.88,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "gpt54",
+     "name": "GPT-5.4",
+     "org": "OpenAI",
+     "released": "2026-03-05",
+     "open": false,
+     "eci": 156.81,
+     "price": {
+      "input": 2.5,
+      "output": 15,
+      "blended": 5.625,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.4"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 51.8,
+       "se": 0.77,
+       "setting": "xhigh"
+      },
+      "swebench": {
+       "v": 76.9,
+       "se": 1.92,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fi9HTMbAxcwsrTf2w2FuJ6N.eval"
+      },
+      "mirrorcode": {
+       "v": 15.6,
+       "se": 7.71,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 49,
+       "se": 8,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdoiQDghqnLzbE8CFijLNQJ.eval"
+      },
+      "frontiermath": {
+       "v": 78.6,
+       "se": 2.43,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPaYEQ37A2n6giYBwZGBnXY.eval"
+      },
+      "aime": {
+       "v": 97.8,
+       "se": 2.22,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDpPahiEawokzgidE3cNZbS.eval"
+      },
+      "gpqa": {
+       "v": 93.3,
+       "se": 1.8,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FfFatyce8UvpN7ZivdmrhAy.eval"
+      },
+      "simpleqa": {
+       "v": 45.1,
+       "se": 1.57,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FAzCkm282PLhDdLJ8DnAQQc.eval"
+      },
+      "mystery": {
+       "v": 37,
+       "se": 4.85,
+       "setting": "xhigh"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 13,
@@ -5146,7 +6513,123 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gemini37flash",
+     "name": "Gemini 3.7 Flash",
+     "org": "Google DeepMind",
+     "released": "2026-08-13",
+     "open": false,
+     "eci": 157.27,
+     "price": {
+      "input": 0.75,
+      "output": 3.75,
+      "blended": 1.5,
+      "provider": "google",
+      "modelsDevId": "gemini-3.7-flash"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 65.5,
+       "se": 1.57,
+       "setting": "medium"
+      },
+      "frontiermath-t4": {
+       "v": 36.6,
+       "se": 7.62,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKptKXK5nE2Ns2WbiaSSnbc.eval"
+      },
+      "frontiermath": {
+       "v": 71.6,
+       "se": 2.68,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaxMdgNDC8UYYLnZYLHZpF5.eval"
+      },
+      "aime": {
+       "v": 97.2,
+       "se": 1.86,
+       "setting": "high"
+      },
+      "gpqa": {
+       "v": 94.8,
+       "se": 1.35,
+       "setting": "high"
+      },
+      "simpleqa": {
+       "v": 69.2,
+       "se": 1.46,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F84ARuGyhQsjgh8umRmBvas.eval"
+      },
+      "mystery": {
+       "v": 37,
+       "se": 4.85,
+       "setting": "high"
+      }
+     }
+    },
+    {
+     "id": "kimik3",
+     "name": "Kimi K3",
+     "org": "Moonshot",
+     "released": "2026-07-16",
+     "open": true,
+     "eci": 157.45,
+     "price": {
+      "input": 3,
+      "output": 15,
+      "blended": 6,
+      "provider": "moonshotai",
+      "modelsDevId": "kimi-k3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 68.5,
+       "se": 2.31,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 7.3,
+       "se": 0.79,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 39,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZERSAQwxBAevQzBsWfUie.eval"
+      },
+      "frontiermath": {
+       "v": 72.2,
+       "se": 2.66,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 97.2,
+       "se": 1.12,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 93.1,
+       "se": 1.49,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 50.6,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmZLWt2JSYvJyGhMvji7CT8.eval"
+      },
+      "mystery": {
+       "v": 26,
+       "se": 4.41,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 14,
@@ -5160,7 +6643,123 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "kimik3",
+     "name": "Kimi K3",
+     "org": "Moonshot",
+     "released": "2026-07-16",
+     "open": true,
+     "eci": 157.45,
+     "price": {
+      "input": 3,
+      "output": 15,
+      "blended": 6,
+      "provider": "moonshotai",
+      "modelsDevId": "kimi-k3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 68.5,
+       "se": 2.31,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 7.3,
+       "se": 0.79,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 39,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZERSAQwxBAevQzBsWfUie.eval"
+      },
+      "frontiermath": {
+       "v": 72.2,
+       "se": 2.66,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 97.2,
+       "se": 1.12,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 93.1,
+       "se": 1.49,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 50.6,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmZLWt2JSYvJyGhMvji7CT8.eval"
+      },
+      "mystery": {
+       "v": 26,
+       "se": 4.41,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "qwen38max",
+     "name": "Qwen 3.8 Max",
+     "org": "Alibaba",
+     "released": "2026-08-02",
+     "open": false,
+     "eci": 156.41,
+     "price": {
+      "input": 2,
+      "output": 6,
+      "blended": 3,
+      "provider": "alibaba",
+      "modelsDevId": "qwen3.8-max"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 57.5,
+       "se": 1.36,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
+      },
+      "frontiermath": {
+       "v": 74.7,
+       "se": 2.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 92.7,
+       "se": 1.69,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 45.8,
+       "se": 1.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
+      },
+      "mystery": {
+       "v": 38,
+       "se": 4.88,
+       "setting": "xhigh"
+      }
+     }
+    }
+   ]
   },
   {
    "no": 15,
@@ -5174,7 +6773,104 @@
     "facts",
     "puzzles"
    ],
-   "featured": false
+   "featured": false,
+   "fighters": [
+    {
+     "id": "qwen38max0902",
+     "name": "Qwen3.8 Max (0902)",
+     "org": "Alibaba",
+     "released": "2026-09-01",
+     "open": false,
+     "eci": 155.05,
+     "price": null,
+     "scores": {
+      "frontiermath-t4": {
+       "v": 34.1,
+       "se": 7.5,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 65.6,
+       "se": 2.82,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 92.3,
+       "se": 1.72,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 47.3,
+       "se": 1.58,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "gpt56luna",
+     "name": "GPT-5.6 Luna",
+     "org": "OpenAI",
+     "released": "2026-07-09",
+     "open": false,
+     "eci": 156.39,
+     "price": {
+      "input": 0.2,
+      "output": 1.2,
+      "blended": 0.45,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.6-luna"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 67.2,
+       "se": 2.04,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 5.2,
+       "se": 0.74,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 61,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNLiiJJSyA9wmg2FHENFpAq.eval"
+      },
+      "frontiermath": {
+       "v": 82.1,
+       "se": 2.27,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYLAk5J3Wd8EruVXee8bAQb.eval"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 1.17,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91.6,
+       "se": 1.73,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 21,
+       "se": 4.09,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ]
 }

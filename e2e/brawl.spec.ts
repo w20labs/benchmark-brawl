@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import { planFight } from '../src/fight.ts';
+import { brawlNumber } from '../src/league.ts';
 import type { BrawlData } from '../src/types.ts';
 
 const URL = `file://${resolve('_site/index.html')}`;
@@ -196,4 +197,39 @@ test('saving a clip of the daily brawl keeps the daily fight, not the free-play 
   await expect(page.locator('#verdict')).toHaveText(verdict!);
   await expect(page.locator('#share')).toContainText(/Benchmark Brawl #\d+/);
   expect(browserName).toBe('chromium');
+});
+
+test('a saved call for a different pairing does not count in the daily stats', async ({ page }) => {
+  const no = brawlNumber(new Date());
+  await page.addInitScript((n) => localStorage.setItem('brawl-daily-v1', JSON.stringify({ days: { [n]: { a: 'not-today-a', b: 'not-today-b', pick: 'not-today-a', winner: 'not-today-a', correct: true } } })), no);
+  await page.goto(URL);
+  await expect(page.locator('#callBox')).toBeVisible();
+  await expect(page.locator('#stats')).toContainText('0Played');
+  await expect(page.locator('#streakChip')).toContainText('Start a streak');
+});
+
+test('reduced motion: still scenery, and turning it on mid-fight is safe', async ({ page }) => {
+  const errors = watchErrors(page);
+  // pick a matchup in an arena with moving scenery (dojo, deep sea or snow peak)
+  const fnv = (s: string) => { let x = 0x811c9dc5; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; };
+  const ids = data.models.map((m) => m.id);
+  const [a, b] = ids.flatMap((x) => ids.map((y) => [x, y])).find(([x, y]) => x !== y && [4, 6, 7].includes(fnv(`arena|${x}|${y}`) % 8))!;
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`${URL}#a=${a}&b=${b}&r=coding,math,science,facts,puzzles`);
+  await page.click('#fight');
+  await page.waitForTimeout(150);
+  const one = await page.locator('#cv').screenshot();
+  await page.waitForTimeout(500);
+  const two = await page.locator('#cv').screenshot();
+  expect(one.equals(two)).toBe(true); // nothing drifts during the round banner
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto(`${URL}#a=${first.id}&b=${second.id}&r=coding,math,science,facts,puzzles`);
+  await page.reload(); // a new hash alone doesn't reload the page
+  await page.click('#fight');
+  await page.waitForTimeout(2500);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForTimeout(4000); // a few rounds play on with reduced motion switched on mid-fight
+  await page.click('#skip');
+  await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
+  expect(errors).toEqual([]);
 });

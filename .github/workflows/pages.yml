@@ -7,7 +7,7 @@ on:
     - cron: '30 6 * * *'
   workflow_dispatch:
 permissions:
-  contents: write # only to save the daily schedule on its own branch; main is never pushed to
+  contents: write # only to save the last good data on the data-state branch; main is never pushed to
   pages: write
   id-token: write
 concurrency:
@@ -25,22 +25,23 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version-file: .nvmrc, cache: npm }
       - run: npm ci
-      # Each day's brawl is decided once and kept on the daily-schedule branch, so it never changes during the day.
-      - name: Load the daily schedule
-        run: git fetch origin daily-schedule && git show origin/daily-schedule:daily.json > data/daily-state.json || echo "No saved schedule yet"
-      # Fresh data on every deploy. If a source is down or its data looks wrong (the build checks), the committed data is used.
+      # The last good data, with its daily schedule, is kept on the data-state branch (main is never pushed to).
+      # Each refresh starts from it, so the checks compare against it and the schedule carries on; if a refresh fails,
+      # it is what gets deployed, rather than the older copy committed on main.
+      - name: Load the last good data
+        run: (git fetch origin data-state && git show origin/data-state:brawl.json > /tmp/last.json && cp /tmp/last.json data/brawl.json) || echo "No saved data yet; starting from the committed copy"
       - name: Refresh scores and prices
-        run: (npm run data && touch data/.fresh) || (echo "::warning::Data refresh failed; deploying the committed data" && git checkout -- data/brawl.json)
+        run: (npm run data && touch data/.fresh) || echo "::warning::Data refresh failed; deploying the last good data"
       - run: npm test
-      - name: Save the daily schedule
+      - name: Save the data as the new last good
         if: github.ref == 'refs/heads/main' && hashFiles('data/.fresh') != ''
         run: |
-          node -e "const d=require('./data/brawl.json');require('fs').writeFileSync('/tmp/daily.json',JSON.stringify(d.daily,null,1)+'\n')"
+          cp data/brawl.json /tmp/brawl.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git rev-parse --verify -q origin/daily-schedule; then git worktree add -B daily-schedule /tmp/schedule origin/daily-schedule; else git worktree add --orphan -b daily-schedule /tmp/schedule; fi
-          cp /tmp/daily.json /tmp/schedule/daily.json
-          cd /tmp/schedule && git add daily.json && (git diff --cached --quiet || (git commit -m "Daily schedule $(date -u +%F)" && git push origin daily-schedule))
+          if git rev-parse --verify -q origin/data-state; then git worktree add -B data-state /tmp/state origin/data-state; else git worktree add --orphan -b data-state /tmp/state; fi
+          cp /tmp/brawl.json /tmp/state/brawl.json
+          cd /tmp/state && git add brawl.json && (git diff --cached --quiet || (git commit -m "Data $(date -u +%F)" && git push origin data-state))
       - run: npm run build -- "$SITE_URL"
       - uses: actions/upload-pages-artifact@v3
         with: { path: _site }

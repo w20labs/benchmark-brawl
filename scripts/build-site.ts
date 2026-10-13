@@ -11,7 +11,12 @@ const siteUrl = process.argv[2] || '';
 const GOATCOUNTER = 'https://benchmark-brawl.goatcounter.com/count';
 const OUT = '_site';
 
-const data = readFileSync('data/brawl.json', 'utf8');
+// The page carries the last 30 days of daily brawls (for replay links) and tomorrow's (so a page built before
+// midnight UTC still has the next day's fight), but no further: no peeking at future matchups, and a smaller page.
+const full = JSON.parse(readFileSync('data/brawl.json', 'utf8'));
+const today = Date.now(), dayOf = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+full.daily = (full.daily ?? []).filter((e: { day: string }) => e.day >= dayOf(today - 30 * 864e5) && e.day <= dayOf(today + 864e5));
+const data = JSON.stringify(full);
 const template = readFileSync('src/page/index.html', 'utf8');
 const bundle = await build({ entryPoints: ['src/page/main.js'], bundle: true, format: 'iife', target: 'es2022', minify: true, write: false });
 const js = bundle.outputFiles[0].text;
