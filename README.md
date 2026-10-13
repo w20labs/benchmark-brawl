@@ -67,7 +67,25 @@ Moves live in [`src/page/specials.js`](src/page/specials.js). They're affectiona
 
 ## Lab characters
 
-Each lab has its own robot, in colours close to its brand (no logos): Anthropic's clay-orange bot wears reading glasses and carries a scroll, OpenAI's is a sleek white capsule with a green visor line, Google's has twin antennas, xAI's wears shades and a cape, DeepSeek's spouts water, Qwen's has extra arms, Kimi's has a crescent moon, Z.ai's wears a Zorro mask, MiniMax's has a huge head, Nvidia's has a fan in its chest, Thinking Machines' has a glass dome full of gears, and Meta's has llama ears. Flagships (Opus, Pro, Max…) are bigger, fast models (Flash, Haiku, Mini…) smaller, and two models from the same lab get different shades.
+Every lab has its own body, in colours close to its brand (no logos); models from the same lab share it, and no two labs do.
+
+| Lab | Body |
+|---|---|
+| Anthropic | A thoughtful robot on one wheel, with reading glasses and a scroll |
+| OpenAI | A sleek capsule that hovers, no legs |
+| Google DeepMind | Twin bots (Gemini) fighting side by side |
+| xAI | A rocket on mech legs, shades and a cape |
+| DeepSeek | A whale with robot legs, spouting |
+| Alibaba (Qwen) | A walking stack of delivery boxes |
+| Moonshot (Kimi) | A lunar rover with a crescent moon on its mast |
+| Z.ai | A masked egg on a pogo spring, with a Zorro hat |
+| MiniMax | A giant head on tiny legs |
+| Nvidia | A walking graphics card, fans spinning |
+| Thinking Machines | A brain in a jar, on a tripod |
+| Meta | A four-legged llama mech |
+| Mistral | A swirling wind cloud with a scarf |
+
+Flagships (Opus, Pro, Max…) are bigger and fast models (Flash, Haiku, Mini…) smaller; two models from the same lab get different shades.
 
 ## The rules
 

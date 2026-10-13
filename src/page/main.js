@@ -121,119 +121,265 @@ $('soundBtn').addEventListener('click', () => {
 renderSound();
 
 // ---------- the robot ----------
-/**
+/*
+ * Every lab has its own body; models from the same lab share it. All bodies use the same points so weapons,
+ * moves and hits line up: about 170 tall, chest near y = -90, gun grip at (40, -104), raised fist at (24, -176).
  * x is the centre, y the floor, dir 1 faces right. pose: idle | aim | summon | hurt | down | win. gear: { kind, muzzle }.
- * `look` is a colour, or a look from lookOf(): each lab's robot has its own extras.
+ * `look` is a colour (the plain robot) or a look from lookOf().
  */
+const INK = '#0A0C14', STEEL = '#2b3350', IRON = '#3a3f52';
 function drawBot(g, x, y, dir, look, pose, t, flash = 0, gear = null) {
-  const L = typeof look === 'string' ? { kind: 'default', body: look, accent: '#2b3350', size: 1 } : look;
-  const K = L.kind, sz = L.size || 1;
+  const L = typeof look === 'string' ? { kind: 'default', body: look, accent: STEEL, size: 1 } : look;
+  const K = BODIES[L.kind] ? L.kind : 'default', sz = L.size || 1;
+  const B = flash > 0 ? '#ffffff' : L.body, A = L.accent;
+  const still = reduced ? 0 : 1;
   g.save();
   g.translate(x, y); g.scale(dir * sz, sz);
-  const bob = pose === 'idle' && !reduced ? Math.sin(t * (sz < 1 ? 7 : 4)) * (sz < 1 ? 3 : 2) : 0;
+  const bob = pose === 'idle' ? Math.sin(t * (sz < 1 ? 7 : 4)) * (sz < 1 ? 3 : 2) * still : 0;
   const recoil = gear?.muzzle > 0 ? -4 : 0;
   const lean = pose === 'aim' ? 4 + recoil : pose === 'hurt' ? -12 : 0;
   if (pose === 'down') { g.rotate(-Math.PI / 2 * 0.92); g.translate(-20, 30); }
   g.translate(lean, bob);
-  const ink = '#0A0C14', body = flash > 0 ? '#ffffff' : L.body, acc = L.accent;
-  const edge = () => { if (L.outline && !flash) { g.strokeStyle = 'rgba(201,207,220,.75)'; g.lineWidth = 2; g.stroke(); } };
-  // things on its back
-  if (K === 'xai' || K === 'zai') {
-    const w = reduced ? 0 : Math.sin(t * 5) * 6;
-    g.fillStyle = K === 'xai' ? '#3a3f52' : '#0d0f16';
-    g.beginPath(); g.moveTo(-24, -110); g.lineTo(-62 + w, -24); g.lineTo(-40 + w * 0.5, -30); g.lineTo(-30, -18); g.lineTo(-6, -110); g.closePath(); g.fill();
-    if (K === 'xai') { g.strokeStyle = '#F3F4F8'; g.lineWidth = 1.5; g.stroke(); }
-  } else if (K === 'anthropic') {
-    g.save(); g.translate(-30, -96); g.rotate(-0.45);
-    g.fillStyle = '#F0EEE6'; g.fillRect(-7, -40, 14, 62); g.fillStyle = '#B9A88A'; g.fillRect(-9, -43, 18, 6); g.fillRect(-9, 19, 18, 6);
-    g.restore();
-  } else if (K === 'nvidia') {
-    g.fillStyle = '#23262f'; for (let i = 0; i < 5; i++) g.fillRect(-42, -108 + i * 12, 14, 7);
-  } else if (K === 'mistral') {
-    const w = reduced ? 0 : Math.sin(t * 6) * 5;
-    g.fillStyle = acc; g.beginPath(); g.moveTo(-20, -118); g.quadraticCurveTo(-48, -122 + w, -70, -108 - w); g.lineTo(-66, -100 - w); g.quadraticCurveTo(-44, -110 + w, -20, -108); g.fill();
-  }
-  // legs
-  g.fillStyle = '#2b3350';
-  const stride = pose === 'aim' || pose === 'summon' ? 8 : 0;
-  g.fillRect(-20 - stride, -44, 14, 44); g.fillRect(6 + stride, -44, 14, 44);
-  g.fillStyle = ink; g.fillRect(-24 - stride, -6, 20, 6); g.fillRect(4 + stride, -6, 22, 6);
-  // torso
-  g.fillStyle = body; roundRect(g, -30, -112, 60, 70, K === 'deepseek' ? 26 : K === 'openai' ? 16 : 10); g.fill(); edge();
-  g.fillStyle = 'rgba(0,0,0,.18)'; roundRect(g, -30, -60, 60, 18, 6); g.fill();
-  if (K === 'nvidia') {
-    g.fillStyle = ink; g.beginPath(); g.arc(0, -86, 12, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = body; g.lineWidth = 3; for (let i = 0; i < 4; i++) { const a = (reduced ? 0 : t * 14) + i * Math.PI / 2; g.beginPath(); g.moveTo(0, -86); g.lineTo(Math.cos(a) * 10, -86 + Math.sin(a) * 10); g.stroke(); }
-  } else if (K === 'openai') {
-    g.fillStyle = flash ? body : acc; g.beginPath(); g.arc(0, -86, 5, 0, Math.PI * 2); g.fill();
-  } else { g.fillStyle = ink; g.fillRect(-10, -96, 20, 20); g.fillStyle = body; g.fillRect(-6, -92, 12, 12); }
-  if (K === 'google') { for (const [i, c] of ['#EA4335', '#FBBC05', '#34A853'].entries()) { g.fillStyle = c; g.fillRect(-24 + i * 17, -66, 14, 5); } }
-  if (K === 'xai') { g.fillStyle = '#3a3f52'; for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(sx * 30, -112); g.lineTo(sx * 40, -128); g.lineTo(sx * 18, -112); g.fill(); } }
-  if (K === 'alibaba') { g.fillStyle = '#2b3350'; g.fillRect(24, -72, 16, 6); g.fillRect(-40, -72, 16, 6); g.fillStyle = acc; g.fillRect(38, -75, 8, 12); g.fillRect(-46, -75, 8, 12); }
-  // head (MiniMax: a much bigger one)
-  g.save();
-  if (K === 'minimax') { g.translate(0, -114); g.scale(1.75, 1.75); g.translate(0, 114); }
-  if (K === 'thinking') {
-    g.fillStyle = body; g.fillRect(-24, -122, 48, 9);
-    g.fillStyle = 'rgba(210,228,255,.22)'; g.beginPath(); g.arc(0, -122, 26, Math.PI, 0); g.closePath(); g.fill();
-    g.strokeStyle = 'rgba(230,240,255,.8)'; g.lineWidth = 2; g.stroke();
-    for (const [gx, gy, r, sp] of [[-7, -132, 8, 1], [8, -136, 6, -1.4]]) {
-      g.save(); g.translate(gx, gy); g.rotate((reduced ? 0 : t * 2) * sp); g.fillStyle = '#B9A88A';
-      g.beginPath(); g.arc(0, 0, r * 0.7, 0, Math.PI * 2); g.fill(); for (let i = 0; i < 6; i++) { g.rotate(Math.PI / 3); g.fillRect(-1.5, -r, 3, 4); } g.restore();
-    }
-    g.fillStyle = '#F3F4F8'; g.fillRect(10, -127, 8, 4);
-  } else {
-    g.fillStyle = body; roundRect(g, -24, -152, 48, 38, K === 'openai' ? 18 : K === 'deepseek' ? 16 : 9); g.fill(); edge();
-    if (K === 'openai') { g.save(); g.shadowColor = acc; g.shadowBlur = 10; g.fillStyle = flash ? '#fff' : acc; g.fillRect(-10, -137, 32, 4); g.restore(); }
-    else {
-      g.fillStyle = ink; roundRect(g, -16, -142, 38, 12, 5); g.fill();
-      g.fillStyle = pose === 'hurt' || pose === 'down' ? '#FF6B6B' : '#F3F4F8'; g.fillRect(6, -139, 10, 6);
-    }
-    if (K === 'anthropic') { g.strokeStyle = '#2b3350'; g.lineWidth = 2.5; g.beginPath(); g.arc(1, -136, 7.5, 0, Math.PI * 2); g.moveTo(25.5, -136); g.arc(18, -136, 7.5, 0, Math.PI * 2); g.moveTo(8.5, -136); g.lineTo(10.5, -136); g.stroke(); }
-    if (K === 'xai') { g.fillStyle = '#05060a'; g.fillRect(-18, -143, 42, 14); g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(-12, -141, 7, 3); g.fillRect(8, -141, 7, 3); }
-    if (K === 'zai') {
-      g.fillStyle = '#05060a'; g.fillRect(-24, -145, 48, 16); g.beginPath(); g.moveTo(-24, -143); g.lineTo(-36, -150); g.lineTo(-34, -136); g.lineTo(-24, -133); g.fill();
-      g.fillStyle = '#F3F4F8'; g.fillRect(6, -140, 10, 6);
-    }
-  }
-  // antenna
-  g.fillStyle = '#2b3350';
-  if (K === 'google') { for (const [ax, c] of [[-9, '#EA4335'], [9, '#34A853']]) { g.fillStyle = '#2b3350'; g.fillRect(ax - 2, -162, 4, 10); g.fillStyle = c; g.beginPath(); g.arc(ax, -164, 4.5, 0, Math.PI * 2); g.fill(); } }
-  else if (K === 'deepseek') { g.fillStyle = '#9FD8FF'; for (let i = 0; i < 4; i++) { const p = ((reduced ? 0.3 : t * 1.5) + i / 4) % 1; g.globalAlpha = 1 - p; g.beginPath(); g.arc(Math.sin(i * 2) * 8 * p, -156 - p * 26, 3.5 - p * 1.5, 0, Math.PI * 2); g.fill(); } g.globalAlpha = 1; }
-  else if (K === 'moonshot') { g.fillRect(-2, -162, 4, 10); g.fillStyle = acc; g.beginPath(); g.arc(0, -170, 8, -Math.PI / 2, Math.PI / 2); g.arc(-4, -170, 7, Math.PI / 2, -Math.PI / 2, true); g.fill(); }
-  else if (K === 'meta') { g.fillStyle = body; roundRect(g, -18, -174, 9, 26, 4); g.fill(); roundRect(g, 9, -174, 9, 26, 4); g.fill(); g.fillStyle = acc; g.fillRect(-15, -168, 3, 14); g.fillRect(12, -168, 3, 14); }
-  else if (K !== 'openai' && K !== 'thinking') { g.fillRect(-3, -162, 6, 10); g.fillStyle = K === 'default' ? body : acc === ink ? body : acc; g.beginPath(); g.arc(0, -164, 5, 0, Math.PI * 2); g.fill(); }
+  const P = { g, B, A, L, pose, t: t * still, flash, edge: () => { if (L.outline && !flash) { g.strokeStyle = 'rgba(201,207,220,.75)'; g.lineWidth = 2; g.stroke(); } } };
+  const shoulder = BODIES[K](P);
+  drawArm(P, shoulder, gear);
   g.restore();
-  if (K === 'mistral') { g.fillStyle = acc; g.fillRect(-26, -118, 52, 8); }
-  // arms
-  g.fillStyle = '#2b3350';
+}
+const rr = (g, x, y, w, hgt, r, fill) => { g.fillStyle = fill; roundRect(g, x, y, w, hgt, r); g.fill(); };
+const dot = (g, x, y, r, fill) => { g.fillStyle = fill; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); };
+const eye = (P, x, y, w = 10, hgt = 6) => { P.g.fillStyle = P.pose === 'hurt' || P.pose === 'down' ? '#FF6B6B' : '#F3F4F8'; P.g.fillRect(x, y, w, hgt); };
+const legs = (g, x1, x2, top, w = 14, stride = 0) => { g.fillStyle = STEEL; g.fillRect(x1 - stride, top, w, -top); g.fillRect(x2 + stride, top, w, -top); g.fillStyle = INK; g.fillRect(x1 - stride - 4, -6, w + 6, 6); g.fillRect(x2 + stride - 2, -6, w + 8, 6); };
+const striding = (P) => (P.pose === 'aim' || P.pose === 'summon' ? 8 : 0);
+function cape(P, color, trim) {
+  const { g, t } = P, w = Math.sin(t * 5) * 6;
+  g.fillStyle = color; g.beginPath(); g.moveTo(-18, -128); g.lineTo(-62 + w, -26); g.lineTo(-40 + w * 0.5, -32); g.lineTo(-28, -20); g.lineTo(-2, -128); g.closePath(); g.fill();
+  if (trim) { g.strokeStyle = trim; g.lineWidth = 1.5; g.stroke(); }
+}
+
+/** The front arm and whatever it holds, from the body's shoulder. Same points for every body. */
+function drawArm(P, [sx, sy], gear) {
+  const { g, B, pose } = P;
+  const reach = (hx, hy) => { g.strokeStyle = STEEL; g.lineWidth = 12; g.lineCap = 'round'; g.beginPath(); g.moveTo(sx, sy); g.lineTo(hx, hy); g.stroke(); g.lineCap = 'butt'; };
   if (pose === 'aim' && gear?.kind === 'rocket') {
-    g.fillRect(8, -132, 34, 12);
-    g.fillStyle = '#39402f'; roundRect(g, -40, -158, 124, 26, 6); g.fill();
-    g.fillStyle = body; g.fillRect(-10, -158, 10, 26); g.fillRect(54, -158, 6, 26);
+    reach(22, -128);
+    rr(g, -40, -158, 124, 26, 6, '#39402f');
+    g.fillStyle = B; g.fillRect(-10, -158, 10, 26); g.fillRect(54, -158, 6, 26);
     g.fillStyle = '#1b1f17'; g.beginPath(); g.ellipse(84, -145, 6, 12, 0, 0, Math.PI * 2); g.fill();
     g.fillStyle = '#5b6448'; g.fillRect(14, -134, 14, 18);
     if (gear.muzzle > 0) { g.fillStyle = 'rgba(255,200,90,.9)'; g.beginPath(); g.moveTo(-40, -158); g.lineTo(-90, -145); g.lineTo(-40, -132); g.fill(); }
   } else if (pose === 'aim') {
-    g.fillRect(14, -106, 40, 12);
-    g.fillStyle = '#3a3f52'; roundRect(g, 30, -118, 62, 20, 4); g.fill();
+    reach(40, -104);
+    rr(g, 30, -118, 62, 20, 4, IRON);
     g.fillStyle = '#262a38'; g.fillRect(92, -113, 40, 8); g.fillRect(48, -100, 12, 18); g.fillRect(18, -114, 14, 10);
-    g.fillStyle = body; g.fillRect(60, -118, 22, 4);
+    g.fillStyle = B; g.fillRect(60, -118, 22, 4);
     if (gear?.muzzle > 0) {
       g.fillStyle = '#FFE066'; g.beginPath();
       for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2, r = i % 2 ? 9 : 22 + Math.random() * 8; g.lineTo(140 + Math.cos(a) * r, -109 + Math.sin(a) * r * 0.6); }
       g.fill();
     }
-  } else if (pose === 'summon') {
-    g.fillRect(16, -170, 14, 60); g.fillStyle = body; roundRect(g, 12, -186, 24, 24, 6); g.fill(); edge();
-    g.fillStyle = gear?.kind === 'laser' ? 'rgba(127,211,240,.55)' : 'rgba(255,120,60,.55)';
-    g.beginPath(); g.arc(24, -176, 16 + Math.sin(t * 18) * 5, 0, Math.PI * 2); g.fill();
-  } else if (pose === 'win') { g.fillRect(16, -170, 14, 60); g.fillStyle = body; roundRect(g, 12, -186, 24, 24, 6); g.fill(); edge(); }
-  else { g.fillRect(20, -104, 30, 13); g.fillStyle = body; roundRect(g, 42, -112, 22, 24, 6); g.fill(); edge(); }
-  g.fillStyle = '#2b3350'; g.fillRect(-36, -104, 12, 36);
-  g.fillStyle = body; roundRect(g, -40, -74, 20, 20, 6); g.fill(); edge();
-  g.restore();
+  } else if (pose === 'summon' || pose === 'win') {
+    reach(24, -168);
+    g.fillStyle = B; roundRect(g, 12, -186, 24, 24, 6); g.fill(); P.edge();
+    if (pose === 'summon') { g.fillStyle = gear?.kind === 'laser' ? 'rgba(127,211,240,.55)' : 'rgba(255,120,60,.55)'; g.beginPath(); g.arc(24, -176, 16 + Math.sin(P.t * 18) * 5, 0, Math.PI * 2); g.fill(); }
+  } else {
+    reach(46, -100);
+    g.fillStyle = B; roundRect(g, 42, -112, 22, 24, 6); g.fill(); P.edge();
+  }
 }
+
+/** One body per lab. Each draws itself and returns its shoulder point. */
+const BODIES = {
+  // The plain robot: labs without their own body.
+  default(P) {
+    const { g, B } = P, s = striding(P);
+    legs(g, -20, 6, -44, 14, s);
+    rr(g, -30, -112, 60, 70, 10, B); rr(g, -30, -60, 60, 18, 6, 'rgba(0,0,0,.18)');
+    g.fillStyle = INK; g.fillRect(-10, -96, 20, 20); g.fillStyle = B; g.fillRect(-6, -92, 12, 12);
+    rr(g, -24, -152, 48, 38, 9, B); rr(g, -16, -142, 38, 12, 5, INK); eye(P, 6, -139);
+    g.fillStyle = STEEL; g.fillRect(-3, -162, 6, 10); dot(g, 0, -164, 5, B);
+    g.fillStyle = STEEL; g.fillRect(-36, -104, 12, 36); rr(g, -40, -74, 20, 20, 6, B);
+    return [16, -104];
+  },
+  // Anthropic: the thoughtful humanoid, on one wheel, with reading glasses and a scroll.
+  anthropic(P) {
+    const { g, B, t } = P;
+    g.save(); g.translate(-30, -96); g.rotate(-0.45); rr(g, -7, -40, 14, 62, 3, '#F0EEE6'); g.fillStyle = '#B9A88A'; g.fillRect(-9, -43, 18, 6); g.fillRect(-9, 19, 18, 6); g.restore();
+    g.fillStyle = STEEL; g.fillRect(-5, -50, 10, 22);
+    dot(g, 0, -22, 21, INK); dot(g, 0, -22, 12, IRON);
+    g.strokeStyle = '#59607a'; g.lineWidth = 3; for (let i = 0; i < 3; i++) { const a = t * 6 + (i * Math.PI * 2) / 3; g.beginPath(); g.moveTo(0, -22); g.lineTo(Math.cos(a) * 18, -22 + Math.sin(a) * 18); g.stroke(); }
+    rr(g, -30, -112, 60, 64, 12, B); rr(g, -30, -64, 60, 16, 8, 'rgba(0,0,0,.16)');
+    g.fillStyle = INK; g.fillRect(-10, -96, 20, 20); g.fillStyle = B; g.fillRect(-6, -92, 12, 12);
+    rr(g, -24, -152, 48, 38, 10, B); rr(g, -16, -142, 38, 12, 5, INK); eye(P, 6, -139);
+    g.strokeStyle = STEEL; g.lineWidth = 2.5; g.beginPath(); g.arc(1, -136, 7.5, 0, Math.PI * 2); g.moveTo(25.5, -136); g.arc(18, -136, 7.5, 0, Math.PI * 2); g.moveTo(8.5, -136); g.lineTo(10.5, -136); g.stroke();
+    g.fillStyle = STEEL; g.fillRect(-3, -162, 6, 10); dot(g, 0, -164, 5, '#F0EEE6');
+    g.fillStyle = STEEL; g.fillRect(-36, -104, 12, 34); rr(g, -40, -76, 20, 20, 6, B);
+    return [16, -104];
+  },
+  // OpenAI: a sleek capsule that hovers, no legs.
+  openai(P) {
+    const { g, B, A, t, flash } = P, hover = Math.sin(t * 3) * 4;
+    g.fillStyle = 'rgba(16,163,127,.28)'; g.beginPath(); g.ellipse(0, -6, 26 + hover, 7, 0, 0, Math.PI * 2); g.fill();
+    g.translate(0, hover - 6);
+    rr(g, -28, -164, 56, 146, 28, B); rr(g, -28, -48, 56, 30, 15, 'rgba(0,0,0,.08)');
+    rr(g, -12, -24, 24, 6, 3, '#cfd3dc');
+    g.save(); g.shadowColor = A; g.shadowBlur = 10; g.fillStyle = flash ? '#fff' : A; g.fillRect(-12, -134, 34, 4); g.restore();
+    dot(g, 0, -88, 5, flash ? B : A);
+    return [14, -100];
+  },
+  // Google: twin bots, fighting side by side.
+  google(P) {
+    const { g, B } = P, s = striding(P);
+    const twin = (tx, ty, sc, body, antenna) => {
+      g.save(); g.translate(tx, ty); g.scale(sc, sc);
+      legs(g, -14, 2, -34, 11, s / 2);
+      dot(g, 0, -64, 31, body);
+      for (const [i, c] of ['#EA4335', '#FBBC05', '#34A853'].entries()) { g.fillStyle = c; g.fillRect(-20 + i * 14, -46, 11, 4); }
+      dot(g, 0, -112, 20, body); rr(g, -10, -118, 26, 10, 4, INK); eye(P, 6, -116, 8, 5);
+      g.fillStyle = STEEL; g.fillRect(-2, -138, 4, 8); dot(g, 0, -140, 4.5, antenna);
+      g.restore();
+    };
+    twin(-30, -2, 0.78, P.flash ? B : mix(B, '#000000', 0.25), '#34A853');
+    twin(8, 0, 1, B, '#EA4335');
+    return [26, -78];
+  },
+  // xAI: a rocket on mech legs, shades and a cape.
+  xai(P) {
+    const { g, B } = P, s = striding(P);
+    cape(P, IRON, '#F3F4F8');
+    g.strokeStyle = IRON; g.lineWidth = 10; g.lineJoin = 'round';
+    for (const lx of [-12 - s, 10 + s]) { g.beginPath(); g.moveTo(lx, -52); g.lineTo(lx + 10, -28); g.lineTo(lx - 2, -4); g.stroke(); }
+    g.fillStyle = INK; g.fillRect(-20 - s, -6, 18, 6); g.fillRect(4 + s, -6, 18, 6);
+    g.fillStyle = IRON; for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(sx * 22, -72); g.lineTo(sx * 38, -46); g.lineTo(sx * 22, -52); g.fill(); }
+    rr(g, -22, -150, 44, 102, 12, B); P.edge();
+    g.fillStyle = B; g.beginPath(); g.moveTo(-22, -146); g.quadraticCurveTo(-18, -178, 0, -192); g.quadraticCurveTo(18, -178, 22, -146); g.closePath(); g.fill(); P.edge();
+    dot(g, 6, -122, 13, '#F3F4F8'); dot(g, 6, -122, 10, INK);
+    g.fillStyle = '#05060a'; g.fillRect(-6, -128, 26, 9); g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(-2, -127, 5, 2); g.fillRect(10, -127, 5, 2);
+    if (!P.flash) { g.fillStyle = 'rgba(255,169,77,.8)'; g.beginPath(); g.moveTo(-10, -48); g.lineTo(0, -38 - Math.random() * 8); g.lineTo(10, -48); g.fill(); }
+    return [14, -100];
+  },
+  // DeepSeek: a whale with robot legs, spouting.
+  deepseek(P) {
+    const { g, B, A, t } = P, s = striding(P);
+    legs(g, -20, 6, -46, 13, s);
+    g.fillStyle = B; g.beginPath(); g.moveTo(-40, -86); g.lineTo(-76, -122); g.lineTo(-62, -88); g.lineTo(-76, -58); g.closePath(); g.fill();
+    g.fillStyle = B; g.beginPath(); g.ellipse(0, -84, 48, 38, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = P.flash ? B : A; g.beginPath(); g.ellipse(4, -64, 38, 16, 0, 0, Math.PI); g.fill();
+    g.strokeStyle = 'rgba(10,12,20,.25)'; g.lineWidth = 2; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(-18 + i * 12, -60); g.lineTo(-14 + i * 12, -50); g.stroke(); }
+    dot(g, 26, -94, 7, '#F3F4F8'); dot(g, 28, -94, 3.5, P.pose === 'hurt' || P.pose === 'down' ? '#FF6B6B' : INK);
+    g.strokeStyle = INK; g.lineWidth = 2.5; g.beginPath(); g.arc(30, -82, 9, 0.2, 1.2); g.stroke();
+    g.fillStyle = '#9FD8FF'; for (let i = 0; i < 4; i++) { const p = (t * 1.5 + i / 4) % 1; g.globalAlpha = 1 - p; dot(g, 4 + Math.sin(i * 2) * 10 * p, -124 - p * 34, 4 - p * 2, '#9FD8FF'); } g.globalAlpha = 1;
+    return [16, -92];
+  },
+  // Alibaba (Qwen): a walking stack of delivery boxes.
+  alibaba(P) {
+    const { g, B, A } = P, s = striding(P), card = P.flash ? '#fff' : '#C99A5B', side = P.flash ? '#fff' : '#a87c45';
+    legs(g, -18, 6, -26, 11, s);
+    const box = (bx, by, w, hgt, rot, tape) => {
+      g.save(); g.translate(bx, by); g.rotate(rot);
+      rr(g, -w / 2, -hgt, w, hgt, 3, card); g.fillStyle = side; g.fillRect(-w / 2, -hgt, w, 5);
+      g.fillStyle = tape; g.fillRect(-5, -hgt, 10, hgt); g.restore();
+    };
+    box(0, -24, 62, 46, 0, B); box(2, -70, 54, 40, -0.04, A); box(-1, -110, 46, 34, 0.05, B);
+    g.fillStyle = '#F3F4F8'; g.fillRect(-14, -100, 28, 9); g.fillStyle = INK; g.font = '700 7px sans-serif'; g.textAlign = 'center'; g.fillText('FRAGILE', 0, -93);
+    rr(g, -16, -138, 34, 11, 4, INK); eye(P, 6, -135, 9, 5);
+    return [20, -92];
+  },
+  // Moonshot (Kimi): a lunar rover, with a crescent moon on its mast.
+  moonshot(P) {
+    const { g, B, A, t } = P;
+    for (const wx of [-26, 26]) { dot(g, wx, -16, 16, INK); dot(g, wx, -16, 8, IRON); g.strokeStyle = '#59607a'; g.lineWidth = 2.5; for (let i = 0; i < 4; i++) { const a = t * 5 + (i * Math.PI) / 2; g.beginPath(); g.moveTo(wx, -16); g.lineTo(wx + Math.cos(a) * 14, -16 + Math.sin(a) * 14); g.stroke(); } }
+    rr(g, -44, -46, 88, 22, 6, B); P.edge();
+    g.save(); g.translate(-18, -58); g.rotate(-0.12); rr(g, -26, -6, 52, 12, 2, '#2c3e7a'); g.strokeStyle = '#6EA8FF'; g.lineWidth = 1; for (let i = -18; i <= 18; i += 9) { g.beginPath(); g.moveTo(i, -6); g.lineTo(i, 6); g.stroke(); } g.restore();
+    g.fillStyle = IRON; g.fillRect(6, -132, 9, 88);
+    rr(g, -10, -156, 46, 26, 6, B); P.edge(); dot(g, 26, -143, 8, INK); dot(g, 26, -143, 4.5, A); eye(P, -2, -146, 10, 5);
+    g.fillStyle = STEEL; g.fillRect(10, -168, 4, 12); g.fillStyle = A; g.beginPath(); g.arc(12, -174, 8, -Math.PI / 2, Math.PI / 2); g.arc(8, -174, 7, Math.PI / 2, -Math.PI / 2, true); g.fill();
+    return [12, -100];
+  },
+  // Z.ai: a masked egg on a pogo spring, Zorro hat and cape.
+  zai(P) {
+    const { g, B, t } = P, boing = Math.sin(t * 6) * 4;
+    cape(P, '#0d0f16');
+    g.strokeStyle = '#9aa3b8'; g.lineWidth = 3; g.beginPath(); g.moveTo(0, -4); for (let i = 1; i <= 8; i++) g.lineTo(i % 2 ? 10 : -10, -4 - i * (5.5 + boing / 8)); g.stroke();
+    g.fillStyle = INK; g.beginPath(); g.ellipse(0, -3, 16, 4, 0, 0, Math.PI * 2); g.fill();
+    g.translate(0, boing);
+    g.fillStyle = B; g.beginPath(); g.ellipse(0, -96, 31, 44, 0, 0, Math.PI * 2); g.fill(); P.edge();
+    g.fillStyle = '#05060a'; g.fillRect(-31, -126, 62, 15); g.beginPath(); g.moveTo(-30, -124); g.lineTo(-44, -132); g.lineTo(-42, -116); g.lineTo(-30, -113); g.fill();
+    eye(P, 8, -122, 11, 6);
+    g.fillStyle = '#05060a'; g.beginPath(); g.ellipse(0, -140, 38, 6, 0, 0, Math.PI * 2); g.fill(); rr(g, -17, -164, 34, 24, 7, '#05060a');
+    g.fillStyle = '#C0392B'; g.fillRect(-17, -148, 34, 4);
+    return [16, -98];
+  },
+  // MiniMax: a giant head on tiny legs.
+  minimax(P) {
+    const { g, B, A } = P, s = striding(P);
+    legs(g, -13, 3, -28, 9, s / 2);
+    dot(g, 0, -92, 60, B);
+    g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(0, -52, 46, 14, 0, 0, Math.PI); g.fill();
+    rr(g, -30, -112, 66, 22, 9, INK); eye(P, 12, -106, 14, 9); eye(P, -14, -106, 10, 9);
+    dot(g, -22, -78, 7, P.flash ? B : A); dot(g, 30, -78, 7, P.flash ? B : A);
+    g.fillStyle = STEEL; g.fillRect(-3, -160, 6, 10); dot(g, 0, -162, 6, A);
+    return [30, -86];
+  },
+  // Nvidia: a walking graphics card, fans spinning, gold-pin legs.
+  nvidia(P) {
+    const { g, B, t } = P, s = striding(P), gold = '#C9A227';
+    g.fillStyle = gold; g.fillRect(-20 - s, -42, 12, 42); g.fillRect(8 + s, -42, 12, 42);
+    g.fillStyle = '#8a6d14'; for (let i = 0; i < 5; i++) { g.fillRect(-19 - s, -38 + i * 7, 10, 2); g.fillRect(9 + s, -38 + i * 7, 10, 2); }
+    g.fillStyle = INK; g.fillRect(-24 - s, -6, 20, 6); g.fillRect(4 + s, -6, 20, 6);
+    rr(g, -34, -156, 68, 116, 8, '#1b1f2b');
+    g.fillStyle = B; g.fillRect(-34, -156, 68, 6); g.fillRect(-34, -46, 68, 6); g.fillRect(28, -150, 6, 104);
+    for (const fy of [-122, -76]) {
+      dot(g, -2, fy, 22, INK); dot(g, -2, fy, 6, IRON);
+      g.strokeStyle = P.flash ? '#fff' : B; g.lineWidth = 4;
+      for (let i = 0; i < 5; i++) { const a = t * 14 + (i * Math.PI * 2) / 5; g.beginPath(); g.moveTo(-2, fy); g.lineTo(-2 + Math.cos(a) * 19, fy + Math.sin(a) * 19); g.stroke(); }
+    }
+    g.fillStyle = '#F3F4F8'; g.fillRect(8, -152, 14, 3);
+    return [26, -100];
+  },
+  // Thinking Machines: a brain in a jar, on a tripod.
+  thinking(P) {
+    const { g, B, t } = P;
+    g.strokeStyle = IRON; g.lineWidth = 6; g.lineCap = 'round';
+    for (const [x1, x2] of [[-6, -28], [0, 2], [6, 28]]) { g.beginPath(); g.moveTo(x1, -48); g.lineTo(x2, -2); g.stroke(); }
+    g.lineCap = 'butt';
+    rr(g, -32, -56, 64, 10, 4, IRON);
+    rr(g, -28, -150, 56, 96, 14, 'rgba(160,200,235,.16)'); g.strokeStyle = 'rgba(230,240,255,.75)'; g.lineWidth = 2; roundRect(g, -28, -150, 56, 96, 14); g.stroke();
+    rr(g, -26, -92, 52, 36, 10, 'rgba(110,200,180,.22)');
+    const brain = P.flash ? '#ffffff' : '#F28DB2';
+    for (const [bx, by, r] of [[-10, -108, 14], [8, -110, 15], [-2, -120, 14], [12, -96, 11], [-12, -96, 11]]) dot(g, bx, by, r, brain);
+    g.strokeStyle = '#c96a92'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(-2, -132); g.quadraticCurveTo(-6, -110, 0, -86); g.moveTo(-18, -108); g.quadraticCurveTo(-10, -102, -16, -94); g.moveTo(16, -112); g.quadraticCurveTo(8, -104, 18, -98); g.stroke();
+    eye(P, 6, -108, 6, 4); eye(P, -6, -108, 6, 4);
+    g.fillStyle = 'rgba(230,240,255,.6)'; for (let i = 0; i < 3; i++) { const p = (t * 0.6 + i / 3) % 1; dot(g, -16 + i * 14, -60 - p * 80, 2.5, 'rgba(230,240,255,.6)'); }
+    rr(g, -32, -160, 64, 12, 5, B);
+    return [24, -100];
+  },
+  // Meta: a four-legged llama mech.
+  meta(P) {
+    const { g, B, A } = P, s = striding(P) / 2;
+    g.fillStyle = STEEL; for (const lx of [-38 - s, -24 + s, 12 - s, 26 + s]) g.fillRect(lx, -50, 9, 50);
+    g.fillStyle = INK; for (const lx of [-38 - s, -24 + s, 12 - s, 26 + s]) g.fillRect(lx - 2, -6, 13, 6);
+    rr(g, -46, -94, 86, 46, 20, B);
+    g.fillStyle = P.flash ? B : A; for (const [wx, wy] of [[-30, -92], [-12, -96], [6, -94], [-22, -80], [-2, -82]]) dot(g, wx, wy, 8, P.flash ? B : A);
+    g.fillStyle = B; g.fillRect(-52, -88, 10, 12);
+    rr(g, 16, -146, 18, 60, 8, B);
+    rr(g, 12, -166, 40, 26, 11, B); rr(g, 40, -156, 16, 14, 6, B); dot(g, 54, -150, 2, INK);
+    eye(P, 30, -160, 8, 5);
+    rr(g, 14, -190, 8, 28, 4, B); rr(g, 26, -190, 8, 28, 4, B); g.fillStyle = P.flash ? B : A; g.fillRect(16, -184, 3, 16); g.fillRect(28, -184, 3, 16);
+    return [24, -96];
+  },
+  // Mistral: a swirling wind cloud with a scarf.
+  mistral(P) {
+    const { g, B, A, t } = P, drift = Math.sin(t * 2.5) * 4;
+    g.translate(0, drift);
+    g.strokeStyle = 'rgba(190,225,255,.5)'; g.lineWidth = 3;
+    for (let i = 0; i < 4; i++) { const y0 = -60 + i * 12, w0 = 28 - i * 6; g.beginPath(); g.ellipse(Math.sin(t * 4 + i) * 4, y0, w0, 5, 0, 0, Math.PI * 2); g.stroke(); }
+    for (const [cx, cy, r] of [[-18, -108, 26], [14, -116, 30], [0, -90, 30], [24, -92, 20], [-26, -88, 18]]) dot(g, cx, cy, r, B);
+    rr(g, -10, -122, 34, 12, 5, INK); eye(P, 10, -119, 9, 6);
+    const w = Math.sin(t * 6) * 5;
+    g.fillStyle = A; g.fillRect(-24, -76, 48, 8); g.beginPath(); g.moveTo(-22, -76); g.quadraticCurveTo(-46, -78 + w, -66, -64 - w); g.lineTo(-62, -58 - w); g.quadraticCurveTo(-42, -68 + w, -22, -68); g.fill();
+    return [20, -96];
+  },
+};
 function roundRect(g, x, y, w, hgt, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + hgt, r); g.arcTo(x + w, y + hgt, x, y + hgt, r); g.arcTo(x, y + hgt, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 
 // ---------- state ----------
