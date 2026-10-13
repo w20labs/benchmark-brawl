@@ -1360,9 +1360,9 @@ function showResult() {
   $('verdict').textContent = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
   $('verdictSub').textContent = !w ? `Same HP after the last round` : `${decisionText(p)} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${p.decision === 'split' ? (p.roundsWon[0] === p.roundsWon[1] ? ': same rounds won, bigger wins' : ': fewer rounds, but bigger wins') : ''}`;
   drawVictory($('winCv'), p, F.looks);
-  const rec = F.daily ? todayRec() : null;
+  const isToday = F.daily && F.daily.no === DAILY?.no, rec = isToday ? todayRec() : null;
   $('yourCall').hidden = !F.daily;
-  if (F.daily) $('yourCall').replaceChildren(...callBadge(rec));
+  if (F.daily) $('yourCall').replaceChildren(...(isToday ? callBadge(rec) : [h('span', { class: 'pill meh' }, `Replay of Brawl #${F.daily.no}`)]));
   $('rematch').textContent = F.daily ? '▶ WATCH AGAIN' : 'REMATCH';
   $('copy').textContent = F.daily ? 'Share' : 'Share result';
   $('th1').textContent = a.name; $('th1').style.color = F.colors[0];
@@ -1380,7 +1380,7 @@ function showResult() {
           : s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
     }),
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? h('span', null, R.tie === 'margin' ? 'tie (margin)' : 'tie', h('span', { class: 't' }, grazeText(R))) : `−${R.dmg} HP`))));
-  $('share').textContent = F.daily ? dailyText(p, rec) : shareText();
+  $('share').textContent = F.daily ? dailyText(p, rec, F.daily) : shareText();
   $('skippedNote').hidden = !p.skipped.length;
   $('skippedNote').textContent = p.skipped.length ? `Left out: ${p.skipped.map((r) => r.name).join(', ')}. These two have no benchmark in common there, so the fight skipped ${p.skipped.length === 1 ? 'it' : 'them'} instead of playing empty rounds.` : '';
   $('backToBracket').hidden = !fromBracket;
@@ -1421,10 +1421,10 @@ async function copyText(text, done) {
 }
 
 $('fight').addEventListener('click', () => (mode === 'royale' ? startRoyale() : startFight()));
-$('rematch').addEventListener('click', () => startFight(F?.daily ? { daily: F.daily, fighters: [F.daily.a, F.daily.b], rounds: F.daily.rounds, replay: true } : {}));
+$('rematch').addEventListener('click', () => { if (F) startFight({ daily: F.daily, fighters: F.plan.fighters, rounds: F.roundIds, replay: !!F.daily }); });
 $('again').addEventListener('click', () => { cancelAnimationFrame(raf); fromBracket = false; openTab('play'); });
 $('copy').addEventListener('click', () => { track(F.daily ? 'share-today' : 'share'); shareOrCopy($('share').textContent, 'Copied result and link'); });
-$('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily ? todayRec() : null, F.daily); });
+$('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily && F.daily.no === DAILY?.no ? todayRec() : null, F.daily); });
 $('skip').addEventListener('click', () => {
   if (F?.royale) return skipRoyale();
   if (!F || F.over) return endFight();
@@ -1893,10 +1893,10 @@ function recordDaily(p) {
   r.correct = r.pick ? r.pick === r.winner : null;
   saveDaily();
 }
-function dailyText(p, rec) {
+function dailyText(p, rec, brawl = DAILY) {
   const [a, b] = p.fighters, st = dailyStats();
   const row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
-  return [`Benchmark Brawl #${DAILY.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${DAILY.no}`].join('\n');
+  return [`Benchmark Brawl #${brawl.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${brawl.no}`].join('\n');
 }
 function renderToday() {
   if (!DAILY) { $('callBox').hidden = true; $('doneBox').hidden = true; $('brawlNo').textContent = 'NO BRAWL TODAY'; return; }
@@ -1917,8 +1917,8 @@ function renderToday() {
   const done = !!rec?.winner;
   $('callBox').hidden = done; $('doneBox').hidden = !done;
   if (done) {
-    const w = byId.get(rec.winner);
-    $('doneLine').textContent = w ? `${w.name.toUpperCase()} WON` : 'IT WAS A DRAW';
+    const w = [DAILY.a, DAILY.b].find((m) => m.id === rec.winner); // the saved fighters, not the live roster
+    $('doneLine').textContent = w ? `${w.name.toUpperCase()} WON` : rec.winner === 'draw' ? 'IT WAS A DRAW' : 'FIGHT WATCHED';
     $('doneLine').style.color = w ? colorOf(w) : '';
     $('doneCall').replaceChildren(...callBadge(rec));
   }
@@ -2017,6 +2017,6 @@ else if (shared && mode === 'royale') {
 } else if (pastBrawl && pastBrawl !== DAILY?.no) {
   // a link to an earlier daily brawl replays that exact fight
   const old = brawlFromEntry(DATA.daily?.find((e) => e.no === pastBrawl));
-  if (old) { openTab('today'); toast(`Replaying Brawl #${old.no}: ${old.a.name} vs ${old.b.name}`); startFight({ fighters: [old.a, old.b], rounds: old.rounds, replay: true }); }
+  if (old) { openTab('today'); toast(`Replaying Brawl #${old.no}: ${old.a.name} vs ${old.b.name}`); startFight({ daily: old, fighters: [old.a, old.b], rounds: old.rounds, replay: true }); }
   else { openTab('today'); toast(`Brawl #${pastBrawl} is too old to replay. Here's today's.`); }
 } else openTab(tabHash ?? 'today');

@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import { planFight } from '../src/fight.ts';
@@ -231,5 +231,63 @@ test('reduced motion: still scenery, and turning it on mid-fight is safe', async
   await page.waitForTimeout(4000); // a few rounds play on with reduced motion switched on mid-fight
   await page.click('#skip');
   await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
+  expect(errors).toEqual([]);
+});
+
+// ---------- saved daily brawls against changed live data ----------
+/** A copy of the built page whose live data has been changed (the daily snapshots inside are left as they are). */
+function pageWithLiveData(change: (d: BrawlData) => void, name: string) {
+  const html = readFileSync(resolve('_site/index.html'), 'utf8');
+  const [, json] = html.match(/<script type="application\/json" id="brawl-data">([\s\S]*?)<\/script>/)!;
+  const d: BrawlData = JSON.parse(json);
+  change(d);
+  const file = resolve(`test-results/${name}.html`);
+  mkdirSync(resolve('test-results'), { recursive: true });
+  writeFileSync(file, html.replace(json, () => JSON.stringify(d).replace(/</g, '\\u003c')));
+  return { url: `file://${file}`, daily: d.daily ?? [] };
+}
+const snapshotWinner = (e: NonNullable<BrawlData['daily']>[number]) => { const p = planFight(data, e.fighters![0], e.fighters![1], e.rounds); return p.winner < 0 ? null : p.fighters[p.winner].name; };
+
+test('an older brawl\'s link replays that brawl, shares that brawl, and rematches it', async ({ page }, info) => {
+  const errors = watchErrors(page);
+  const site = pageWithLiveData(() => {}, `archive-${info.project.name}`);
+  const inPage = site.daily.filter((e) => e.fighters && snapshotWinner(e));
+  test.skip(inPage.length < 2, 'needs two scheduled days in the built page');
+  const [old, today] = [inPage[0], inPage[inPage.length - 1]];
+  const winner = snapshotWinner(old)!, loser = winner === old.fighters![0].name ? old.fighters![1] : old.fighters![0];
+  // live data where the saved winner is now hopeless: a free-play rematch would flip the result
+  const changed = pageWithLiveData((d) => { for (const m of d.models) if (m.name === winner) for (const s of Object.values(m.scores)) s.v = 0; }, `archive-changed-${info.project.name}`);
+  await page.clock.setFixedTime(new Date(`${today.day}T12:00:00Z`));
+  await page.goto(`${changed.url}#today=${old.no}`);
+  await page.click('#skip');
+  await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#verdict')).toContainText(winner.toUpperCase());
+  await expect(page.locator('#yourCall')).toContainText(`Replay of Brawl #${old.no}`);
+  await expect(page.locator('#share')).toContainText(`Benchmark Brawl #${old.no}`);
+  await expect(page.locator('#share')).toContainText(`#today=${old.no}`);
+  expect(page.url()).toContain(`#today=${old.no}`);
+  await page.click('#rematch');
+  await expect(page.locator('#arena')).toBeVisible();
+  await page.click('#skip');
+  await expect(page.locator('#verdict')).toContainText(winner.toUpperCase());
+  expect(loser.name).not.toBe(winner);
+  expect(errors).toEqual([]);
+});
+
+test('Today shows the saved winner even after that fighter left the roster', async ({ page }, info) => {
+  const errors = watchErrors(page);
+  const probe = pageWithLiveData(() => {}, `today-probe-${info.project.name}`);
+  const today = probe.daily.filter((e) => e.fighters && snapshotWinner(e)).at(-1);
+  test.skip(!today, 'needs a scheduled day in the built page');
+  const winner = snapshotWinner(today!)!;
+  const site = pageWithLiveData((d) => { d.models = d.models.filter((m) => m.name !== winner); }, `today-removed-${info.project.name}`);
+  await page.clock.setFixedTime(new Date(`${today!.day}T12:00:00Z`));
+  await page.goto(site.url);
+  await page.click('#callA');
+  await page.click('#todayFight');
+  await page.click('#skip');
+  await expect(page.locator('#verdict')).toContainText(winner.toUpperCase(), { timeout: 10_000 });
+  await page.click('#tabs [data-tab="today"]');
+  await expect(page.locator('#doneLine')).toContainText(`${winner.toUpperCase()} WON`);
   expect(errors).toEqual([]);
 });

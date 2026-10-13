@@ -77,6 +77,18 @@ describe('the data build, run on synthetic sources', { timeout: 60_000 }, () => 
     expect(r.ok, r.log).toBe(true);
     expect(r.model('Alpha One').scores.gpqa).toBeUndefined();
   });
+  it('leaves a model unpriced when its price alias now names a different model, even released close by', () => {
+    const r = build((s) => { const g = (s.prices.google as { models: Record<string, { name: string; release_date: string }> }).models['gemini-3.1-pro-preview']; g.name = 'Gemini 3.2 Pro Preview'; g.release_date = day(190); });
+    expect(r.ok, r.log).toBe(true);
+    expect(r.model('Gemini 3.1 Pro').price).toBeNull();
+    expect(r.log).toMatch(/now lists "Gemini 3.2 Pro Preview"/);
+  });
+  it('fails on a malformed Capabilities Index instead of dropping tournament seeding', () => {
+    const r = build((s) => { s.files['epoch_capabilities_index/eci_scores.csv'] = s.files['epoch_capabilities_index/eci_scores.csv'].replace(/,(\d+)$/gm, ',$1 points'); });
+    expect(r.ok).toBe(false);
+    expect(r.log).toMatch(/eci_scores\.csv row 2, eci/);
+    expect(build().model('Alpha One').eci).toBe(150);
+  });
   it('leaves a model unpriced when its price alias now lists a different release', () => {
     expect(build().model('Gemini 3.1 Pro').price.blended).toBe(4.5);
     const r = build((s) => { const g = (s.prices.google as { models: Record<string, { name: string; release_date: string }> }).models['gemini-3.1-pro-preview']; g.name = 'Gemini 3.2 Pro Preview'; g.release_date = day(0); });

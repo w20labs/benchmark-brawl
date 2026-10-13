@@ -72,11 +72,13 @@ export function checkCoverage(next: BrawlData, prev: BrawlData | null, defaultRo
   const problems: string[] = [];
   for (const id of defaultRounds) if (!coverage(next, id)) problems.push(`no fighter has a result for ${id}`);
   if (!next.models.some((m) => m.price)) problems.push('no fighter has a price');
+  if (!next.models.some((m) => m.eci != null)) problems.push('no fighter has a Capabilities Index');
   if (prev) {
     const shrink = (what: string, a: number, b: number) => { if (b > 0 && a < b * 0.6) problems.push(`${what} fell from ${b} to ${a}`); };
     shrink('the roster', next.models.length, prev.models.length);
     shrink('priced fighters', next.models.filter((m) => m.price).length, prev.models.filter((m) => m.price).length);
     shrink('checkable claims', next.claims.length, prev.claims?.length ?? 0);
+    shrink('fighters with a Capabilities Index (tournament seeding)', next.models.filter((m) => m.eci != null).length, prev.models.filter((m) => m.eci != null).length);
     for (const id of defaultRounds) shrink(`${id} coverage`, coverage(next, id), coverage(prev, id));
   }
   if (problems.length) throw new Error(`Refusing to publish this data:\n  - ${problems.join('\n  - ')}\n(Set BRAWL_ALLOW_DROP=1 if the drop is real.)`);

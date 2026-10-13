@@ -28,8 +28,22 @@ jobs:
       # The last good data, with its daily schedule, is kept on the data-state branch (main is never pushed to).
       # Each refresh starts from it, so the checks compare against it and the schedule carries on; if a refresh fails,
       # it is what gets deployed, rather than the older copy committed on main.
+      # Only a branch that truly doesn't exist yet (the very first run) may start from the committed copy. If the saved
+      # data exists but can't be read, stop here: the live site stays as it is rather than regressing to older data.
       - name: Load the last good data
-        run: (git fetch origin data-state && git show origin/data-state:brawl.json > /tmp/last.json && cp /tmp/last.json data/brawl.json) || echo "No saved data yet; starting from the committed copy"
+        run: |
+          set -euo pipefail
+          status=0; git ls-remote --exit-code --heads origin data-state > /dev/null || status=$?
+          if [ "$status" = 0 ]; then
+            git fetch origin data-state
+            git show origin/data-state:brawl.json > /tmp/last.json
+            node -e "const d=JSON.parse(require('fs').readFileSync('/tmp/last.json','utf8')); if (!d.models?.length) throw new Error('saved data is empty')"
+            cp /tmp/last.json data/brawl.json
+          elif [ "$status" = 2 ]; then
+            echo "No saved data yet (first run); starting from the committed copy"
+          else
+            echo "::error::Couldn't check for the saved data (git ls-remote exited $status)"; exit 1
+          fi
       - name: Refresh scores and prices
         run: (npm run data && touch data/.fresh) || echo "::warning::Data refresh failed; deploying the last good data"
       - run: npm test

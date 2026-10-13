@@ -131,7 +131,7 @@ async function main() {
 
   const eciRows = csv('epoch_capabilities_index/eci_scores.csv');
   requireColumns(eciRows, ['Model', 'eci'], 'eci_scores.csv');
-  const eci = new Map(eciRows.flatMap((r) => { const v = num(r['eci']); return v == null ? [] : [[r['Model'], v] as const]; }));
+  const eci = new Map(eciRows.flatMap((r, i) => { const v = strictNum(r['eci'], `eci_scores.csv row ${i + 2}, eci`, 0, 1000); return v == null ? [] : [[r['Model'], v] as const]; }));
 
   // Prices: the lab's own API list price from models.dev, matched by name or model id. Third-party hosts are
   // left out on purpose: they often undercut the lab for open-weight models, which would skew the price round.
@@ -139,13 +139,18 @@ async function main() {
   checkModelsDev(md);
   const aliased = new Set(Object.values(PRICE_ALIASES).map(([p, id]) => `${p}/${id}`));
   const priceOf = (name: string, org: string, released: string): Price | null => {
-    const [provider, alias] = PRICE_ALIASES[name] ?? [LAB_PROVIDER[org], null];
+    const [provider, alias, aliasName, aliasCanonical] = PRICE_ALIASES[name] ?? [LAB_PROVIDER[org], null];
     const models = md[provider]?.models ?? {};
     for (const [id, m] of Object.entries(models)) {
       if (alias ? id !== alias : norm(m.name ?? '') !== norm(name) && norm(id.split('/').pop()!) !== norm(name)) continue;
       // it must be the same release: a name match can't take a listing reserved for another model, and any listing
       // (aliases included) must be released around the same time, so a rolling alias that moves on stops matching
       if (!alias && aliased.has(`${provider}/${id}`)) continue;
+      const listing = m as { name?: string; canonical_model_id?: string };
+      if (alias && (norm(listing.name ?? '') !== norm(aliasName!) || (aliasCanonical && listing.canonical_model_id !== aliasCanonical))) {
+        console.warn(`  price alias ${provider}/${id} now lists "${listing.name}" (${listing.canonical_model_id ?? 'no canonical id'}), not "${aliasName}"; ${name} left unpriced`);
+        continue;
+      }
       if (m.release_date && released && daysApart(m.release_date, released) > 60) { if (alias) console.warn(`  price alias ${provider}/${id} now lists a ${m.release_date} release; ${name} left unpriced`); continue; }
       const input = priceNum(m.cost?.input), output = priceNum(m.cost?.output); // both checked numbers before any arithmetic
       if (input == null || output == null || !(input > 0 && output > 0)) continue;
@@ -214,13 +219,17 @@ const LAB_PROVIDER: Record<string, string> = {
   Anthropic: 'anthropic', OpenAI: 'openai', 'Google DeepMind': 'google', xAI: 'xai', DeepSeek: 'deepseek', Alibaba: 'alibaba',
   Moonshot: 'moonshotai', 'Z.ai (Zhipu AI)': 'zai', MiniMax: 'minimax', Nvidia: 'nvidia', 'Thinking Machines': 'thinkingmachines',
 };
-/** Models whose lab lists them under a different name: Epoch name -> [provider, models.dev id]. Checked by hand. */
-const PRICE_ALIASES: Record<string, [string, string]> = {
-  'Gemini 3.1 Pro': ['google', 'gemini-3.1-pro-preview'],
-  'Grok 4.20': ['xai', 'grok-4.20-0309-reasoning'],
-  'Nemotron 3 Ultra': ['nvidia', 'nvidia/nemotron-3-ultra-550b-a55b'],
-  Inkling: ['thinkingmachines', 'thinkingmachines/Inkling'],
-  'DeepSeek V4 Pro 0813': ['deepseek', 'deepseek-v4-pro'],
+/**
+ * Models whose lab lists them under a different name: Epoch name -> [provider, models.dev id, the listing's expected
+ * name, and its canonical id if it has one]. Checked by hand. Every build checks the listing still is that model; if it
+ * has moved on to another (a rolling "preview" id, say), the fighter is left unpriced rather than given its price.
+ */
+const PRICE_ALIASES: Record<string, [string, string, string, string?]> = {
+  'Gemini 3.1 Pro': ['google', 'gemini-3.1-pro-preview', 'Gemini 3.1 Pro Preview'],
+  'Grok 4.20': ['xai', 'grok-4.20-0309-reasoning', 'Grok 4.20 (Reasoning)'],
+  'Nemotron 3 Ultra': ['nvidia', 'nvidia/nemotron-3-ultra-550b-a55b', 'Nemotron 3 Ultra 550B A55B', 'nvidia/nemotron-3-ultra-550b-a55b'],
+  Inkling: ['thinkingmachines', 'thinkingmachines/Inkling', 'Inkling', 'thinkingmachines/inkling'],
+  'DeepSeek V4 Pro 0813': ['deepseek', 'deepseek-v4-pro', 'DeepSeek V4 Pro', 'deepseek/deepseek-v4-pro-0813'],
 };
 
 /** Prices at source precision (float noise trimmed); the page formats them for display. */
