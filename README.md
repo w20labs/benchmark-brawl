@@ -48,10 +48,15 @@ Every lab has a signature move. It plays in place of the weapon on a model's **b
 | Thinking Machines | **Deep Thought** | Thinks for 7.5 million years, then throws 42 |
 | MiniMax | **Mini → MAX** | A giant version of itself stomps down |
 | Nvidia | **GPU Drop** | A graphics card falls from the sky. It's sold out |
-| Mistral · Meta | **Mistral** · **Llama Spit** | Ready for when their models join the roster |
+| Meta | **Llama Spit** | A llama pops up and spits |
+| Mistral | **Mistral** | The cold north wind, literally (ready for when Mistral models join the roster) |
 | Everyone else | **Hallucination** | Confidently summons an opponent that doesn't exist |
 
 Moves live in [`src/page/specials.js`](src/page/specials.js). They're affectionate jokes about each lab, not claims about anyone.
+
+## Lab characters
+
+Each lab has its own robot, in colours close to its brand (no logos): Anthropic's clay-orange bot wears reading glasses and carries a scroll, OpenAI's is a sleek white capsule with a green visor line, Google's has twin antennas, xAI's wears shades and a cape, DeepSeek's spouts water, Qwen's has extra arms, Kimi's has a crescent moon, Z.ai's wears a Zorro mask, MiniMax's has a huge head, Nvidia's has a fan in its chest, Thinking Machines' has a glass dome full of gears, and Meta's has llama ears. Flagships (Opus, Pro, Max…) are bigger, fast models (Flash, Haiku, Mini…) smaller, and two models from the same lab get different shades.
 
 ## The rules
 

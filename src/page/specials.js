@@ -163,7 +163,7 @@ const MOVES = {
       sizes.forEach((nm, i) => {
         const p = (sp.t - i * 0.09) / 1.8; if (p <= 0 || p >= 1) return;
         const x = lerp(from, to, p), sc = (0.16 + (i % 5) * 0.025) * Math.max(0.7, c.s) * 1.4, y = c.floor - (i % 3) * 6;
-        g.save(); g.translate(x, y + Math.abs(Math.sin(t * 18 + i)) * -6); g.scale(sc, sc); c.drawBot(g, 0, 0, c.dir, i % 2 ? c.color : '#F2B544', 'aim', t + i); g.restore();
+        g.save(); g.translate(x, y + Math.abs(Math.sin(t * 18 + i)) * -6); g.scale(sc, sc); c.drawBot(g, 0, 0, c.dir, i % 2 ? (c.look || c.color) : '#F2B544', 'aim', t + i); g.restore();
         g.font = '700 10px "JetBrains Mono", monospace'; g.textAlign = 'center'; g.fillStyle = '#F3F4F8'; g.fillText(nm, x, y - 200 * sc - 4);
       });
     },
@@ -276,7 +276,7 @@ const MOVES = {
       const grow = ease((sp.t - 0.3) / 0.8), sc = lerp(0.2, 2.1, grow) * Math.max(0.6, c.s);
       const fall = sp.t < 1.25 ? 0 : ease((sp.t - 1.25) / 0.35);
       const x = c.tx, y = lerp(c.floor - 250 * Math.max(0.6, c.s), c.floor + 40, fall);
-      g.save(); g.globalAlpha = sp.t > 1.9 ? 1 - (sp.t - 1.9) / 0.3 : 0.9; g.translate(x, y); g.scale(sc, sc); c.drawBot(g, 0, 0, -c.dir, c.color, 'win', t); g.restore();
+      g.save(); g.globalAlpha = sp.t > 1.9 ? 1 - (sp.t - 1.9) / 0.3 : 0.9; g.translate(x, y); g.scale(sc, sc); c.drawBot(g, 0, 0, -c.dir, c.look || c.color, 'win', t); g.restore();
     },
   },
 

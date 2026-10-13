@@ -30,12 +30,39 @@ const roundById = new Map(DATA.rounds.map((r) => [r.id, r]));
 const benchById = new Map(DATA.benchmarks.map((b) => [b.id, b]));
 const fmtDate = (d) => new Date(`${d}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 
-// ---------- fighter colours: by lab, from our own palette (no brand colours) ----------
+// ---------- fighter looks: each lab its own robot, in colours close to its brand (no logos) ----------
 const PALETTE = ['#D4F25C', '#F28DB2', '#7FD3F0', '#F2B544', '#B79CF2', '#2EC4A6', '#FF8A65', '#9BE36D', '#6EA8FF', '#F2E85C'];
 const hash = (s) => { let x = 0x811c9dc5; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; };
-const colorOf = (m) => PALETTE[hash(m.org) % PALETTE.length];
-/** Two fighters from the same lab get different colours. */
-const fightColors = (a, b) => { const ca = colorOf(a); let cb = colorOf(b); if (cb === ca) cb = PALETTE[(PALETTE.indexOf(ca) + 5) % PALETTE.length]; return [ca, cb]; };
+/** body: the robot; accent: its trim; ui: a colour that reads well as text on the dark page; outline: for dark bodies. */
+const LAB_LOOKS = {
+  Anthropic: { kind: 'anthropic', body: '#D97757', accent: '#F0EEE6', ui: '#E8906F' },
+  OpenAI: { kind: 'openai', body: '#E9EAEE', accent: '#10A37F', ui: '#4FD8B0' },
+  'Google DeepMind': { kind: 'google', body: '#4285F4', accent: '#FBBC05', ui: '#7FA9FF' },
+  xAI: { kind: 'xai', body: '#1A1C24', accent: '#F3F4F8', ui: '#E6E7EC', outline: true },
+  DeepSeek: { kind: 'deepseek', body: '#4D6BFE', accent: '#BFD0FF', ui: '#8DA0FF' },
+  Alibaba: { kind: 'alibaba', body: '#615CED', accent: '#FF6A00', ui: '#A29EFF' },
+  Moonshot: { kind: 'moonshot', body: '#1C1E28', accent: '#FFE38A', ui: '#FFE38A', outline: true },
+  'Z.ai (Zhipu AI)': { kind: 'zai', body: '#23317A', accent: '#F3F4F8', ui: '#93A4FF', outline: true },
+  MiniMax: { kind: 'minimax', body: '#E73562', accent: '#FFC2D3', ui: '#FF7A9C' },
+  Nvidia: { kind: 'nvidia', body: '#76B900', accent: '#1A1C24', ui: '#A5DC3C' },
+  'Thinking Machines': { kind: 'thinking', body: '#ECE8DE', accent: '#2B2B2B', ui: '#DCD5C4' },
+  Meta: { kind: 'meta', body: '#0866FF', accent: '#9EC5FF', ui: '#5E9BFF' },
+  'Meta AI': { kind: 'meta', body: '#0866FF', accent: '#9EC5FF', ui: '#5E9BFF' },
+  'Mistral AI': { kind: 'mistral', body: '#FA520F', accent: '#FFC24D', ui: '#FF8A50' },
+};
+/** Big for flagships, small and bouncy for fast models. */
+const sizeOf = (m) => (/flash|haiku|mini|nano|luna|lite|small|air\b/i.test(m.name) ? 0.86 : /opus|fable|\bpro\b|max|ultra|astra/i.test(m.name) ? 1.1 : 1);
+const mix = (hex, to, k) => { const a = parseInt(hex.slice(1), 16), b = parseInt(to.slice(1), 16); const c = [16, 8, 0].map((sh) => Math.round(((a >> sh) & 255) * (1 - k) + ((b >> sh) & 255) * k)); return `#${c.map((v) => v.toString(16).padStart(2, '0')).join('')}`; };
+/** A fighter's look. `variant` > 0 lightens it, so two models from one lab are told apart. */
+function lookOf(m, variant = 0) {
+  const base = LAB_LOOKS[m.org] ?? { kind: 'default', body: PALETTE[hash(m.org) % PALETTE.length], accent: '#2b3350', ui: PALETTE[hash(m.org) % PALETTE.length] };
+  const k = Math.min(0.6, variant * 0.3);
+  return { ...base, size: sizeOf(m), body: variant ? mix(base.body, '#FFFFFF', base.outline ? k * 0.6 : k) : base.body, ui: variant ? mix(base.ui, '#FFFFFF', k) : base.ui };
+}
+const colorOf = (m) => lookOf(m).ui;
+/** Looks for a list of fighters: repeats from the same lab get lighter shades. */
+function looksFor(ms) { const seen = {}; return ms.map((m) => lookOf(m, (seen[m.org] = (seen[m.org] ?? -1) + 1))); }
+const fightColors = (a, b) => looksFor([a, b]).map((l) => l.ui);
 
 // ---------- sound (synthesized) ----------
 let soundOn = true, actx = null, master = null, recDest = null;
@@ -94,35 +121,96 @@ $('soundBtn').addEventListener('click', () => {
 renderSound();
 
 // ---------- the robot ----------
-/** x is the centre, y the floor, dir 1 faces right. pose: idle | aim | summon | hurt | down | win. gear: { kind, muzzle }. */
-function drawBot(g, x, y, dir, color, pose, t, flash = 0, gear = null) {
+/**
+ * x is the centre, y the floor, dir 1 faces right. pose: idle | aim | summon | hurt | down | win. gear: { kind, muzzle }.
+ * `look` is a colour, or a look from lookOf(): each lab's robot has its own extras.
+ */
+function drawBot(g, x, y, dir, look, pose, t, flash = 0, gear = null) {
+  const L = typeof look === 'string' ? { kind: 'default', body: look, accent: '#2b3350', size: 1 } : look;
+  const K = L.kind, sz = L.size || 1;
   g.save();
-  g.translate(x, y); g.scale(dir, 1);
-  const bob = pose === 'idle' && !reduced ? Math.sin(t * 4) * 2 : 0;
+  g.translate(x, y); g.scale(dir * sz, sz);
+  const bob = pose === 'idle' && !reduced ? Math.sin(t * (sz < 1 ? 7 : 4)) * (sz < 1 ? 3 : 2) : 0;
   const recoil = gear?.muzzle > 0 ? -4 : 0;
   const lean = pose === 'aim' ? 4 + recoil : pose === 'hurt' ? -12 : 0;
   if (pose === 'down') { g.rotate(-Math.PI / 2 * 0.92); g.translate(-20, 30); }
   g.translate(lean, bob);
-  const ink = '#0A0C14', body = flash > 0 ? '#ffffff' : color;
+  const ink = '#0A0C14', body = flash > 0 ? '#ffffff' : L.body, acc = L.accent;
+  const edge = () => { if (L.outline && !flash) { g.strokeStyle = 'rgba(201,207,220,.75)'; g.lineWidth = 2; g.stroke(); } };
+  // things on its back
+  if (K === 'xai' || K === 'zai') {
+    const w = reduced ? 0 : Math.sin(t * 5) * 6;
+    g.fillStyle = K === 'xai' ? '#3a3f52' : '#0d0f16';
+    g.beginPath(); g.moveTo(-24, -110); g.lineTo(-62 + w, -24); g.lineTo(-40 + w * 0.5, -30); g.lineTo(-30, -18); g.lineTo(-6, -110); g.closePath(); g.fill();
+    if (K === 'xai') { g.strokeStyle = '#F3F4F8'; g.lineWidth = 1.5; g.stroke(); }
+  } else if (K === 'anthropic') {
+    g.save(); g.translate(-30, -96); g.rotate(-0.45);
+    g.fillStyle = '#F0EEE6'; g.fillRect(-7, -40, 14, 62); g.fillStyle = '#B9A88A'; g.fillRect(-9, -43, 18, 6); g.fillRect(-9, 19, 18, 6);
+    g.restore();
+  } else if (K === 'nvidia') {
+    g.fillStyle = '#23262f'; for (let i = 0; i < 5; i++) g.fillRect(-42, -108 + i * 12, 14, 7);
+  } else if (K === 'mistral') {
+    const w = reduced ? 0 : Math.sin(t * 6) * 5;
+    g.fillStyle = acc; g.beginPath(); g.moveTo(-20, -118); g.quadraticCurveTo(-48, -122 + w, -70, -108 - w); g.lineTo(-66, -100 - w); g.quadraticCurveTo(-44, -110 + w, -20, -108); g.fill();
+  }
+  // legs
   g.fillStyle = '#2b3350';
   const stride = pose === 'aim' || pose === 'summon' ? 8 : 0;
   g.fillRect(-20 - stride, -44, 14, 44); g.fillRect(6 + stride, -44, 14, 44);
   g.fillStyle = ink; g.fillRect(-24 - stride, -6, 20, 6); g.fillRect(4 + stride, -6, 22, 6);
-  g.fillStyle = body; roundRect(g, -30, -112, 60, 70, 10); g.fill();
+  // torso
+  g.fillStyle = body; roundRect(g, -30, -112, 60, 70, K === 'deepseek' ? 26 : K === 'openai' ? 16 : 10); g.fill(); edge();
   g.fillStyle = 'rgba(0,0,0,.18)'; roundRect(g, -30, -60, 60, 18, 6); g.fill();
-  g.fillStyle = ink; g.fillRect(-10, -96, 20, 20);
-  g.fillStyle = body; g.fillRect(-6, -92, 12, 12);
-  g.fillStyle = body; roundRect(g, -24, -152, 48, 38, 9); g.fill();
-  g.fillStyle = ink; roundRect(g, -16, -142, 38, 12, 5); g.fill();
-  g.fillStyle = pose === 'hurt' || pose === 'down' ? '#FF6B6B' : '#F3F4F8';
-  g.fillRect(6, -139, 10, 6);
-  g.fillStyle = '#2b3350'; g.fillRect(-3, -162, 6, 10);
-  g.fillStyle = body; g.beginPath(); g.arc(0, -164, 5, 0, Math.PI * 2); g.fill();
+  if (K === 'nvidia') {
+    g.fillStyle = ink; g.beginPath(); g.arc(0, -86, 12, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = body; g.lineWidth = 3; for (let i = 0; i < 4; i++) { const a = (reduced ? 0 : t * 14) + i * Math.PI / 2; g.beginPath(); g.moveTo(0, -86); g.lineTo(Math.cos(a) * 10, -86 + Math.sin(a) * 10); g.stroke(); }
+  } else if (K === 'openai') {
+    g.fillStyle = flash ? body : acc; g.beginPath(); g.arc(0, -86, 5, 0, Math.PI * 2); g.fill();
+  } else { g.fillStyle = ink; g.fillRect(-10, -96, 20, 20); g.fillStyle = body; g.fillRect(-6, -92, 12, 12); }
+  if (K === 'google') { for (const [i, c] of ['#EA4335', '#FBBC05', '#34A853'].entries()) { g.fillStyle = c; g.fillRect(-24 + i * 17, -66, 14, 5); } }
+  if (K === 'xai') { g.fillStyle = '#3a3f52'; for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(sx * 30, -112); g.lineTo(sx * 40, -128); g.lineTo(sx * 18, -112); g.fill(); } }
+  if (K === 'alibaba') { g.fillStyle = '#2b3350'; g.fillRect(24, -72, 16, 6); g.fillRect(-40, -72, 16, 6); g.fillStyle = acc; g.fillRect(38, -75, 8, 12); g.fillRect(-46, -75, 8, 12); }
+  // head (MiniMax: a much bigger one)
+  g.save();
+  if (K === 'minimax') { g.translate(0, -114); g.scale(1.75, 1.75); g.translate(0, 114); }
+  if (K === 'thinking') {
+    g.fillStyle = body; g.fillRect(-24, -122, 48, 9);
+    g.fillStyle = 'rgba(210,228,255,.22)'; g.beginPath(); g.arc(0, -122, 26, Math.PI, 0); g.closePath(); g.fill();
+    g.strokeStyle = 'rgba(230,240,255,.8)'; g.lineWidth = 2; g.stroke();
+    for (const [gx, gy, r, sp] of [[-7, -132, 8, 1], [8, -136, 6, -1.4]]) {
+      g.save(); g.translate(gx, gy); g.rotate((reduced ? 0 : t * 2) * sp); g.fillStyle = '#B9A88A';
+      g.beginPath(); g.arc(0, 0, r * 0.7, 0, Math.PI * 2); g.fill(); for (let i = 0; i < 6; i++) { g.rotate(Math.PI / 3); g.fillRect(-1.5, -r, 3, 4); } g.restore();
+    }
+    g.fillStyle = '#F3F4F8'; g.fillRect(10, -127, 8, 4);
+  } else {
+    g.fillStyle = body; roundRect(g, -24, -152, 48, 38, K === 'openai' ? 18 : K === 'deepseek' ? 16 : 9); g.fill(); edge();
+    if (K === 'openai') { g.save(); g.shadowColor = acc; g.shadowBlur = 10; g.fillStyle = flash ? '#fff' : acc; g.fillRect(-10, -137, 32, 4); g.restore(); }
+    else {
+      g.fillStyle = ink; roundRect(g, -16, -142, 38, 12, 5); g.fill();
+      g.fillStyle = pose === 'hurt' || pose === 'down' ? '#FF6B6B' : '#F3F4F8'; g.fillRect(6, -139, 10, 6);
+    }
+    if (K === 'anthropic') { g.strokeStyle = '#2b3350'; g.lineWidth = 2.5; g.beginPath(); g.arc(1, -136, 7.5, 0, Math.PI * 2); g.moveTo(25.5, -136); g.arc(18, -136, 7.5, 0, Math.PI * 2); g.moveTo(8.5, -136); g.lineTo(10.5, -136); g.stroke(); }
+    if (K === 'xai') { g.fillStyle = '#05060a'; g.fillRect(-18, -143, 42, 14); g.fillStyle = 'rgba(255,255,255,.7)'; g.fillRect(-12, -141, 7, 3); g.fillRect(8, -141, 7, 3); }
+    if (K === 'zai') {
+      g.fillStyle = '#05060a'; g.fillRect(-24, -145, 48, 16); g.beginPath(); g.moveTo(-24, -143); g.lineTo(-36, -150); g.lineTo(-34, -136); g.lineTo(-24, -133); g.fill();
+      g.fillStyle = '#F3F4F8'; g.fillRect(6, -140, 10, 6);
+    }
+  }
+  // antenna
+  g.fillStyle = '#2b3350';
+  if (K === 'google') { for (const [ax, c] of [[-9, '#EA4335'], [9, '#34A853']]) { g.fillStyle = '#2b3350'; g.fillRect(ax - 2, -162, 4, 10); g.fillStyle = c; g.beginPath(); g.arc(ax, -164, 4.5, 0, Math.PI * 2); g.fill(); } }
+  else if (K === 'deepseek') { g.fillStyle = '#9FD8FF'; for (let i = 0; i < 4; i++) { const p = ((reduced ? 0.3 : t * 1.5) + i / 4) % 1; g.globalAlpha = 1 - p; g.beginPath(); g.arc(Math.sin(i * 2) * 8 * p, -156 - p * 26, 3.5 - p * 1.5, 0, Math.PI * 2); g.fill(); } g.globalAlpha = 1; }
+  else if (K === 'moonshot') { g.fillRect(-2, -162, 4, 10); g.fillStyle = acc; g.beginPath(); g.arc(0, -170, 8, -Math.PI / 2, Math.PI / 2); g.arc(-4, -170, 7, Math.PI / 2, -Math.PI / 2, true); g.fill(); }
+  else if (K === 'meta') { g.fillStyle = body; roundRect(g, -18, -174, 9, 26, 4); g.fill(); roundRect(g, 9, -174, 9, 26, 4); g.fill(); g.fillStyle = acc; g.fillRect(-15, -168, 3, 14); g.fillRect(12, -168, 3, 14); }
+  else if (K !== 'openai' && K !== 'thinking') { g.fillRect(-3, -162, 6, 10); g.fillStyle = K === 'default' ? body : acc === ink ? body : acc; g.beginPath(); g.arc(0, -164, 5, 0, Math.PI * 2); g.fill(); }
+  g.restore();
+  if (K === 'mistral') { g.fillStyle = acc; g.fillRect(-26, -118, 52, 8); }
+  // arms
   g.fillStyle = '#2b3350';
   if (pose === 'aim' && gear?.kind === 'rocket') {
     g.fillRect(8, -132, 34, 12);
     g.fillStyle = '#39402f'; roundRect(g, -40, -158, 124, 26, 6); g.fill();
-    g.fillStyle = color; g.fillRect(-10, -158, 10, 26); g.fillRect(54, -158, 6, 26);
+    g.fillStyle = body; g.fillRect(-10, -158, 10, 26); g.fillRect(54, -158, 6, 26);
     g.fillStyle = '#1b1f17'; g.beginPath(); g.ellipse(84, -145, 6, 12, 0, 0, Math.PI * 2); g.fill();
     g.fillStyle = '#5b6448'; g.fillRect(14, -134, 14, 18);
     if (gear.muzzle > 0) { g.fillStyle = 'rgba(255,200,90,.9)'; g.beginPath(); g.moveTo(-40, -158); g.lineTo(-90, -145); g.lineTo(-40, -132); g.fill(); }
@@ -130,20 +218,20 @@ function drawBot(g, x, y, dir, color, pose, t, flash = 0, gear = null) {
     g.fillRect(14, -106, 40, 12);
     g.fillStyle = '#3a3f52'; roundRect(g, 30, -118, 62, 20, 4); g.fill();
     g.fillStyle = '#262a38'; g.fillRect(92, -113, 40, 8); g.fillRect(48, -100, 12, 18); g.fillRect(18, -114, 14, 10);
-    g.fillStyle = color; g.fillRect(60, -118, 22, 4);
+    g.fillStyle = body; g.fillRect(60, -118, 22, 4);
     if (gear?.muzzle > 0) {
       g.fillStyle = '#FFE066'; g.beginPath();
       for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2, r = i % 2 ? 9 : 22 + Math.random() * 8; g.lineTo(140 + Math.cos(a) * r, -109 + Math.sin(a) * r * 0.6); }
       g.fill();
     }
   } else if (pose === 'summon') {
-    g.fillRect(16, -170, 14, 60); g.fillStyle = body; roundRect(g, 12, -186, 24, 24, 6); g.fill();
+    g.fillRect(16, -170, 14, 60); g.fillStyle = body; roundRect(g, 12, -186, 24, 24, 6); g.fill(); edge();
     g.fillStyle = gear?.kind === 'laser' ? 'rgba(127,211,240,.55)' : 'rgba(255,120,60,.55)';
     g.beginPath(); g.arc(24, -176, 16 + Math.sin(t * 18) * 5, 0, Math.PI * 2); g.fill();
-  } else if (pose === 'win') { g.fillRect(16, -170, 14, 60); g.fillStyle = body; roundRect(g, 12, -186, 24, 24, 6); g.fill(); }
-  else { g.fillRect(20, -104, 30, 13); g.fillStyle = body; roundRect(g, 42, -112, 22, 24, 6); g.fill(); }
+  } else if (pose === 'win') { g.fillRect(16, -170, 14, 60); g.fillStyle = body; roundRect(g, 12, -186, 24, 24, 6); g.fill(); edge(); }
+  else { g.fillRect(20, -104, 30, 13); g.fillStyle = body; roundRect(g, 42, -112, 22, 24, 6); g.fill(); edge(); }
   g.fillStyle = '#2b3350'; g.fillRect(-36, -104, 12, 36);
-  g.fillStyle = body; roundRect(g, -40, -74, 20, 20, 6); g.fill();
+  g.fillStyle = body; roundRect(g, -40, -74, 20, 20, 6); g.fill(); edge();
   g.restore();
 }
 function roundRect(g, x, y, w, hgt, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + hgt, r); g.arcTo(x + w, y + hgt, x, y + hgt, r); g.arcTo(x, y + hgt, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
@@ -229,7 +317,7 @@ function renderRoster() {
       h('div', { class: 'badges' }, fresh.has(m.id) ? h('span', { class: 'badge new' }, 'NEW') : null, m.open ? h('span', { class: 'badge open' }, 'OPEN WEIGHTS') : null,
         m.price ? h('span', { class: 'badge' }, `$${m.price.blended.toFixed(2)}/M`) : null, m.eci ? h('span', { class: 'badge', title: 'Epoch Capabilities Index' }, `ECI ${m.eci.toFixed(0)}`) : null),
       h('div', { class: 'bars' }, rounds.map((rid) => { const v = cardValue(m, rid); return h('div', null, h('span', null, v.label), h('i', null, h('b', { style: `width:${v.pct}%` })), h('span', null, v.text)); })));
-    const g = cv2.getContext('2d'); g.scale(0.42, 0.42); drawBot(g, 100, 236, 1, c, slot >= 0 ? 'win' : 'idle', 0);
+    const g = cv2.getContext('2d'); g.scale(0.42, 0.42); drawBot(g, 100, 236, 1, lookOf(m), slot >= 0 ? 'win' : 'idle', 0);
     return card;
   }));
   const [a, b] = picks.map((id) => byId.get(id));
@@ -310,7 +398,7 @@ function startFight(opts = {}) {
   const [a, b] = picks.map((id) => byId.get(id));
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, rounds);
-  F = { plan, colors: fightColors(a, b), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
+  F = { plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
   for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
   $('arena').hidden = false;
   $('arena').classList.remove('royale');
@@ -476,7 +564,7 @@ function startFx(R) {
     const l = 1 - w, m = F.plan.fighters[w];
     F.pose[w] = 'summon';
     Object.assign(fx, { kind: 'special', hits: 1, title: moveNameFor(m.org) });
-    fx.sp = startMove(m.org, { ...moveKit(), ax: F.x[w] + dirOf(w) * 24, ay: FLOOR - 176, x: F.x[w], tx: F.x[l], ty: FLOOR - 100, floor: FLOOR, s: 1, dir: dirOf(w), color: F.colors[w], ko: R.hpAfter[l] === 0,
+    fx.sp = startMove(m.org, { ...moveKit(), ax: F.x[w] + dirOf(w) * 24, ay: FLOOR - 176, x: F.x[w], tx: F.x[l], ty: FLOOR - 100, floor: FLOOR, s: 1, dir: dirOf(w), color: F.colors[w], look: F.looks[w], ko: R.hpAfter[l] === 0,
       land: () => landHit(fx, R, F.x[l], FLOOR - 100, 'big') });
     return fx;
   }
@@ -622,7 +710,7 @@ function draw(t) {
   drawBackdrop(t, F.fx);
   for (const k of [0, 1]) {
     g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(F.x[k], FLOOR + 6, 46, 9, 0, 0, Math.PI * 2); g.fill();
-    drawBot(g, F.x[k], FLOOR, k === 0 ? 1 : -1, F.colors[k], F.pose[k], t + k, F.flash[k], F.fx ? { kind: F.fx.kind === 'tie' ? 'mg' : F.fx.kind, muzzle: F.fx.muzzle[k] } : null);
+    drawBot(g, F.x[k], FLOOR, k === 0 ? 1 : -1, F.looks[k], F.pose[k], t + k, F.flash[k], F.fx ? { kind: F.fx.kind === 'tie' ? 'mg' : F.fx.kind, muzzle: F.fx.muzzle[k] } : null);
   }
   drawSmoke();
   drawFx(F.fx, t);
@@ -859,16 +947,14 @@ $('tcopy').addEventListener('click', () => { track('share-bracket'); copyText(to
 const R_PHASES = [['banner', 1.2], ['reveal', 1.0], ['attack', 0], ['after', 1.0]];
 const R_NO_DATA = [['banner', 1.0], ['after', 0.6]];
 /** Distinct colours for up to 8 fighters: lab colour first, the next free one if taken. */
-function royaleColors(ms) {
-  const used = new Set();
-  return ms.map((m) => { let c = colorOf(m), i = PALETTE.indexOf(c); while (used.has(c)) c = PALETTE[++i % PALETTE.length]; used.add(c); return c; });
-}
+
 function startRoyale() {
   const ms = picks.map((id) => byId.get(id)).filter(Boolean);
   if (ms.length < ROYALE_MIN) return;
   const plan = planRoyale(DATA, ms, rounds), n = ms.length;
   const gap = (W - 80) / n;
-  F = { royale: true, plan, n, colors: royaleColors(ms), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
+  const looks = looksFor(ms);
+  F = { royale: true, plan, n, looks, colors: looks.map((l) => l.ui), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
     pose: ms.map(() => 'idle'), flash: ms.map(() => 0), dodge: ms.map(() => 0), hp: ms.map(() => 100), shown: ms.map(() => null),
     i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false, moveTitle: null,
     // per fighter, its biggest hit as leader: where its signature move plays
@@ -953,7 +1039,7 @@ function rFire(R, hit) {
   if (sp && sp.i === F.i && sp.target === k) {
     const m = F.plan.fighters[L];
     F.moveTitle = { text: moveNameFor(m.org), c: F.colors[L], t: 0 };
-    F.shots.push({ kind: 'move', sp: startMove(m.org, { ...moveKit(), ax: o.x, ay: o.y, x: F.x[L], tx: c.x, ty: c.y, floor: FLOOR, s: F.s, dir: Math.sign(c.x - F.x[L]) || 1, color: F.colors[L], ko: R.hpAfter[k] === 0,
+    F.shots.push({ kind: 'move', sp: startMove(m.org, { ...moveKit(), ax: o.x, ay: o.y, x: F.x[L], tx: c.x, ty: c.y, floor: FLOOR, s: F.s, dir: Math.sign(c.x - F.x[L]) || 1, color: F.colors[L], look: F.looks[L], ko: R.hpAfter[k] === 0,
       land: () => rLand(R, hit, true, 'big') }) });
     return;
   }
@@ -1055,7 +1141,7 @@ function drawRoyale(t) {
     g.fillStyle = 'rgba(0,0,0,.45)'; g.beginPath(); g.ellipse(x, FLOOR + 5, 40 * F.s, 8 * F.s, 0, 0, Math.PI * 2); g.fill();
     if (lead) { g.save(); g.globalAlpha = 0.35 + Math.sin(t * 8) * 0.15; g.strokeStyle = F.colors[k]; g.lineWidth = 4; g.beginPath(); g.ellipse(x, FLOOR + 5, 56 * F.s, 12 * F.s, 0, 0, Math.PI * 2); g.stroke(); g.restore(); }
     g.save(); g.translate(x, FLOOR + dy); g.scale(F.s, F.s);
-    drawBot(g, 0, 0, dir, F.colors[k], F.pose[k], t + k, F.flash[k]);
+    drawBot(g, 0, 0, dir, F.looks[k], F.pose[k], t + k, F.flash[k]);
     g.restore();
     // HP bar and value above, name below
     const bw = Math.min(96, F.gap - 16), top = FLOOR - 196 * F.s - 16;
