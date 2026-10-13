@@ -31,12 +31,23 @@ describe('empty rounds and weapon styles', () => {
     expect(p.rounds.map((R) => R.round.id)).toEqual(['r1', 'r1']);
     expect(p.skipped.map((r) => r.id)).toEqual(['r2']);
   });
-  it('a fighter switches weapon styles and never repeats one twice in a row', () => {
+  it('never uses the same weapon twice in a fight, for either fighter', () => {
     const pick = stylePicker();
-    const mine = ['mg', 'mg', 'mg', 'mg', 'rocket', 'rocket'].map((w) => pick(0, w as 'mg'));
-    expect(mine.slice(0, 3)).toEqual(STYLES.mg);
-    for (let i = 1; i < mine.length; i++) expect(mine[i]).not.toBe(mine[i - 1]);
-    expect(pick(1, 'mg')).toBe('mg'); // the other fighter has its own list
+    const seq = (['mg', 'mg', 'tie', 'mg', 'rocket', 'mg', 'tie'] as const).map((w, i) => pick(i % 2, w));
+    expect(new Set(seq).size).toBe(seq.length);
+    expect(STYLES.mg).toContain(seq[0]);
+  });
+  it('borrows from the next size down when a size runs out, rather than repeat', () => {
+    const pick = stylePicker();
+    const huge = Array.from({ length: 6 }, (_, i) => pick(i % 2, 'laser'));
+    expect(new Set(huge).size).toBe(6);
+    expect(huge.slice(0, 4).every((x) => STYLES.laser.includes(x))).toBe(true);
+    expect(STYLES.meteor).toContain(huge[4]);
+  });
+  it('in a royale, a shooter never repeats its previous weapon', () => {
+    const pick = stylePicker(false);
+    const seq = Array.from({ length: 12 }, () => pick(0, 'mg'));
+    for (let i = 1; i < seq.length; i++) expect(seq[i]).not.toBe(seq[i - 1]);
   });
 });
 

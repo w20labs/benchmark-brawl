@@ -23,25 +23,45 @@ export const WEAPONS: { id: Exclude<WeaponId, 'tie'>; name: string; maxPoints: n
 export const weaponFor = (points: number): WeaponId => (points <= 0 ? 'tie' : WEAPONS.find((w) => points <= w.maxPoints)!.id);
 export const weaponName = (id: WeaponId) => (id === 'tie' ? 'CROSSFIRE' : WEAPONS.find((w) => w.id === id)!.name);
 
-/** Each weapon size comes in a few styles, so a fight doesn't repeat itself. The size still says how big the gap was. */
+/** Each weapon size comes in several styles. The size still says how big the gap was; the style keeps fights fresh. */
 export const STYLES: Record<WeaponId, string[]> = {
-  mg: ['mg', 'shotgun', 'pistol'], rocket: ['rocket', 'grenade', 'plasma'], meteor: ['meteor', 'lightning', 'swarm'], laser: ['laser', 'anvil'],
-  tie: ['mg', 'shotgun', 'pistol'],
+  mg: ['glove', 'pie', 'balloon', 'chicken', 'boomerang', 'pebble', 'tokens'],
+  rocket: ['rocket', 'grenade', 'plasma', 'bowling', 'drone', 'cannon'],
+  meteor: ['meteor', 'lightning', 'swarm', 'piano', 'tornado'],
+  laser: ['laser', 'anvil', 'blackhole', 'foot'],
+  tie: ['glove', 'pie', 'balloon', 'chicken', 'boomerang', 'pebble', 'tokens'],
 };
 export const STYLE_NAMES: Record<string, string> = {
-  mg: 'MACHINE GUN', shotgun: 'SHOTGUN', pistol: 'LASER PISTOL', rocket: 'ROCKET LAUNCHER', grenade: 'GRENADE', plasma: 'PLASMA BALL',
-  meteor: 'METEOR SHOWER', lightning: 'LIGHTNING STORM', swarm: 'MISSILE SWARM', laser: 'ORBITAL LASER', anvil: 'SPACE ANVIL',
+  glove: 'BOXING GLOVE', pie: 'PIE IN THE FACE', balloon: 'WATER BALLOON', chicken: 'RUBBER CHICKEN', boomerang: 'BOOMERANG', pebble: 'SLINGSHOT', tokens: 'TOKEN SPRAY',
+  rocket: 'ROCKET LAUNCHER', grenade: 'GRENADE', plasma: 'PLASMA BALL', bowling: 'BOWLING BALL', drone: 'DRONE STRIKE', cannon: 'CANNONBALL',
+  meteor: 'METEOR SHOWER', lightning: 'LIGHTNING STORM', swarm: 'MISSILE SWARM', piano: 'PIANO DROP', tornado: 'TORNADO',
+  laser: 'ORBITAL LASER', anvil: 'SPACE ANVIL', blackhole: 'BLACK HOLE', foot: 'GIANT FOOT',
 };
+const TIERS: WeaponId[] = ['mg', 'rocket', 'meteor', 'laser'];
 /**
- * Picks styles for one fight: each shooter (or the crossfire) uses a style it hasn't used yet for that weapon size,
- * and never the same one twice in a row. Deterministic, so a share link replays the same weapons.
+ * Picks weapon styles. In a fight (`unique`), no style is used twice by anyone: each hit takes an unused style of its
+ * size, or, if that size has run out, the nearest size down (then up) that still has one. In a battle royale there
+ * are too many shots for that, so each shooter just never repeats its previous style. Deterministic either way.
  */
-export function stylePicker() {
-  const used = new Map<string, Set<string>>(), last = new Map<string, string>();
+export function stylePicker(unique = true, seed = '') {
+  // each fight gets its own order of styles, fixed by the seed (the matchup), so share links replay the same weapons
+  let x = 0x811c9dc5; for (let i = 0; i < seed.length; i++) { x ^= seed.charCodeAt(i); x = Math.imul(x, 16777619); }
+  const rnd = () => { x = (x + 0x6d2b79f5) | 0; let t = Math.imul(x ^ (x >>> 15), 1 | x); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const order = Object.fromEntries(TIERS.map((t) => { const a = [...STYLES[t]]; if (seed) for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return [t, a]; }));
+  const used = new Set<string>(), last = new Map<string, string>(), count = new Map<string, number>();
   return (shooter: string | number, weapon: WeaponId): string => {
-    const key = String(shooter), options = STYLES[weapon], seen = used.get(key) ?? new Set<string>(), prev = last.get(key);
-    const style = options.find((s) => !seen.has(s) && s !== prev) ?? options.find((s) => s !== prev) ?? options[0];
-    seen.add(style); used.set(key, seen); last.set(key, style);
+    const key = String(shooter), prev = last.get(key), tier = weapon === 'tie' ? 'mg' : weapon;
+    let style: string | undefined;
+    if (unique) {
+      const i = TIERS.indexOf(tier), order2 = [tier, ...TIERS.slice(0, i).reverse(), ...TIERS.slice(i + 1)];
+      for (const t of order2) { style = order[t].find((x: string) => !used.has(x)); if (style) break; }
+    } else {
+      const options = order[tier], n = count.get(key) ?? 0;
+      style = options[n % options.length] === prev ? options[(n + 1) % options.length] : options[n % options.length];
+      count.set(key, n + 1);
+    }
+    style ??= STYLES[tier].find((x) => x !== prev) ?? STYLES[tier][0];
+    used.add(style); last.set(key, style);
     return style;
   };
 }
@@ -154,7 +174,7 @@ export const hasBench = (bench: Benchmark, m: Model) => (bench.kind === 'price' 
 export function planFight(data: BrawlData, a: Model, b: Model, roundIds: string[]): FightResult {
   const hp: [number, number] = [START_HP, START_HP];
   const rounds: RoundResult[] = [], skipped: Round[] = [];
-  const pick = stylePicker();
+  const pick = stylePicker(true, `${a.id}|${b.id}|${roundIds.join(',')}`);
   for (const id of roundIds) {
     if (hp[0] === 0 || hp[1] === 0) break;
     const round = data.rounds.find((r) => r.id === id);

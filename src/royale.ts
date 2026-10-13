@@ -66,7 +66,7 @@ export function planRoyale(data: BrawlData, fighters: Model[], roundIds: string[
   const hp = fighters.map(() => START_HP);
   const outIn: (number | null)[] = fighters.map(() => null);
   const rounds: RoyaleRound[] = [];
-  const pick = stylePicker();
+  const pick = stylePicker(false, fighters.map((m) => m.id).join('|'));
   for (const id of roundIds) {
     if (hp.filter((x) => x > 0).length < 2) break;
     const round = data.rounds.find((r) => r.id === id);
