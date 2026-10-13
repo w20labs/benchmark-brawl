@@ -598,8 +598,8 @@ function resultLine(R) {
   if (R.winner == null) return 'No shared benchmark for this round. No damage.';
   if (R.winner === -1) {
     const why = R.tie === 'margin' ? `Within the margin of error (±${R.margin})` : R.tie === 'price' ? 'Prices within 15% of each other' : 'Dead even';
-    const name = (TIE_NAMES[R.style] || 'CROSSFIRE').toLowerCase();
-    return `${why}. ${name[0].toUpperCase()}${name.slice(1)} grazes both: ${grazeText(R)}.`;
+    const [x, y] = R.tieStyles.map((st) => STYLE_NAMES[st].toLowerCase());
+    return `${why}. ${x[0].toUpperCase()}${x.slice(1)} vs ${y}: both grazed, ${grazeText(R)}.`;
   }
   const w = R.winner === 0 ? a : b;
   const by = R.bench.kind === 'price' ? `${(Math.max(...R.values) / Math.min(...R.values)).toFixed(1)}× cheaper` : `by ${R.points} point${R.points === 1 ? '' : 's'}`;
@@ -724,20 +724,20 @@ const ITEMS = {
   bowling: { motion: 'roll', dur: 0.85, n: 1, pose: 'idle', hit: 'strike' },
   drone: { motion: 'drone', dur: 1.2, n: 1, pose: 'summon', hit: 'boom' },
   cannon: { motion: 'arc', dur: 0.8, arc: 160, n: 1, pose: 'win', hit: 'boom' },
+  meteor: { motion: 'meteor', dur: 0.45, n: 5, every: 0.17, pose: 'summon', hit: 'boom' },
   piano: { motion: 'fall', dur: 0.6, wait: 0.35, n: 1, pose: 'summon', hit: 'klong' },
   tornado: { motion: 'spot', dur: 1.25, n: 1, pose: 'summon', hit: 'whirl' },
   blackhole: { motion: 'spot', dur: 1.4, n: 1, pose: 'summon', hit: 'boomBig' },
   foot: { motion: 'fall', dur: 0.5, wait: 0.6, n: 1, pose: 'summon', hit: 'stomp' },
 };
-/** What a tie is called when both throw the same thing. */
-const TIE_NAMES = { glove: 'GLOVE BUMP', pie: 'PIE FIGHT', balloon: 'BALLOON FIGHT', chicken: 'CHICKEN FIGHT', boomerang: 'BOOMERANG CLASH', pebble: 'PEBBLE CLASH', tokens: 'TOKEN TANGLE' };
 const TOKEN_WORDS = ['the', 'delve', 'tapestry', '—', 'certainly!', 'synergy', 'as an AI', 'robust', 'leverage', '🙂', 'crucial', 'in summary'];
 const ease = (k) => 1 - (1 - k) ** 3;
 
 /** A flying item. `from` is the thrower's hand, `to` the target's chest, `floor` the ground line. */
 function makeItem(style, from, to, { delay = 0, s = 1, floor = FLOOR, onLand }) {
   const d = ITEMS[style];
-  const spread = style === 'tokens' || style === 'pebble' || style === 'balloon' ? 1 : 0;
+  const spread = style === 'tokens' || style === 'pebble' || style === 'balloon' || style === 'meteor' ? 1 : 0;
+  if (d.motion === 'meteor') from = { x: to.x - (Math.sign(to.x - from.x) || 1) * (200 + Math.random() * 140) * s, y: -40 }; // in from the thrower's side of the sky
   return { style, d, x0: from.x, y0: from.y, x1: to.x, y1: to.y + spread * (Math.random() - 0.5) * 50 * s, x: from.x, y: from.y, a: 0, t: -delay - (d.wait || 0), dur: d.dur, s, floor, onLand, landed: false,
     word: TOKEN_WORDS[Math.floor(Math.random() * TOKEN_WORDS.length)], col: ['#9BE36D', '#7FD3F0', '#F28DB2', '#F2B544'][Math.floor(Math.random() * 4)] };
 }
@@ -747,7 +747,7 @@ function stepItem(it, dt) {
   if (it.t < 0) return false;
   const { d } = it, k = Math.min(1, it.t / it.dur), m = d.motion;
   const lerp = (a, b, q) => a + (b - a) * q;
-  if (m === 'line' || m === 'arc' || m === 'boomerang') {
+  if (m === 'line' || m === 'arc' || m === 'boomerang' || m === 'meteor') {
     const q = m === 'boomerang' && it.landed ? 1 - Math.min(1, (it.t - it.dur) / it.dur) : k;
     const arc = (d.arc || 0) * (m === 'boomerang' && it.landed ? -1 : 1);
     it.x = lerp(it.x0, it.x1, q); it.y = lerp(it.y0, it.y1, q) - Math.sin(q * Math.PI) * arc * it.s;
@@ -791,7 +791,7 @@ function itemLaunch(style) {
   ({ glove: () => tone(180, { to: 700, dur: 0.12, type: 'square', vol: 0.2 }), pie: () => noise({ dur: 0.15, vol: 0.5, freq: 1200 }), balloon: () => tone(600, { to: 400, dur: 0.1, type: 'sine', vol: 0.15 }),
     chicken: () => tone(1200, { to: 1700, dur: 0.1, type: 'triangle', vol: 0.18 }), boomerang: () => noise({ dur: 0.5, vol: 0.5, freq: 1500, to: 600, type: 'bandpass' }), pebble: () => tone(900, { to: 1600, dur: 0.06, type: 'triangle', vol: 0.2 }),
     tokens: () => tone(1300, { dur: 0.02, vol: 0.06 }), bowling: () => noise({ dur: 0.8, vol: 0.5, freq: 160 }), drone: () => tone(220, { to: 260, dur: 1, type: 'sawtooth', vol: 0.08 }),
-    cannon: () => { tone(60, { to: 30, dur: 0.3, type: 'sine', vol: 0.8 }); noise({ dur: 0.3, vol: 1.2, freq: 600 }); }, piano: () => sfx.whistle(), tornado: () => noise({ dur: 1.2, vol: 0.7, freq: 250, to: 900, type: 'bandpass' }),
+    meteor: () => sfx.whistle(), cannon: () => { tone(60, { to: 30, dur: 0.3, type: 'sine', vol: 0.8 }); noise({ dur: 0.3, vol: 1.2, freq: 600 }); }, piano: () => sfx.whistle(), tornado: () => noise({ dur: 1.2, vol: 0.7, freq: 250, to: 900, type: 'bandpass' }),
     blackhole: () => tone(300, { to: 40, dur: 1.3, type: 'sine', vol: 0.4 }), foot: () => sfx.whistle() })[style]?.();
 }
 /** Draws an item at its position (and, for the punch and drone, what it's attached to). */
@@ -832,6 +832,13 @@ function drawItem(c, it, t) {
       c.restore(); break;
     }
     case 'boomerang': c.translate(x, y); c.scale(s, s); c.rotate(it.t * 18); c.strokeStyle = '#B07A3F'; c.lineWidth = 7; c.lineCap = 'round'; c.beginPath(); c.moveTo(-16, -10); c.lineTo(0, 4); c.lineTo(16, -10); c.stroke(); break;
+    case 'meteor': {
+      const a = Math.atan2(it.y1 - it.y0, it.x1 - it.x0), r = 13 * s;
+      const tail = c.createLinearGradient(x, y, x - Math.cos(a) * 70 * s, y - Math.sin(a) * 70 * s); tail.addColorStop(0, 'rgba(255,169,77,.9)'); tail.addColorStop(1, 'rgba(255,107,107,0)');
+      c.strokeStyle = tail; c.lineWidth = r * 1.6; c.lineCap = 'round'; c.beginPath(); c.moveTo(x, y); c.lineTo(x - Math.cos(a) * 70 * s, y - Math.sin(a) * 70 * s); c.stroke();
+      c.shadowColor = '#FF8A3D'; c.shadowBlur = 20; c.fillStyle = '#7a3b22'; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+      c.shadowBlur = 0; c.fillStyle = '#FFB36B'; c.beginPath(); c.arc(x - r * 0.3, y - r * 0.3, r * 0.45, 0, Math.PI * 2); c.fill(); break;
+    }
     case 'pebble': c.fillStyle = '#8a8f9e'; c.beginPath(); c.arc(x, y, 6 * s, 0, Math.PI * 2); c.fill(); c.strokeStyle = 'rgba(200,205,220,.5)'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, y); c.lineTo(x - dir * 20 * s, y); c.stroke(); break;
     case 'tokens': {
       const px = Math.round(14 * Math.max(0.8, s)), col = it.col;
@@ -884,7 +891,7 @@ function drawItem(c, it, t) {
 function startFx(R) {
   const w = R.winner, style = R.style || R.weapon, kind = R.weapon === 'tie' ? 'tie' : ITEMS[style] ? R.weapon : FAMILY[style] || R.weapon;
   const fx = { kind, style, gear: style === 'rocket' ? 'rocket' : kind === 'meteor' || kind === 'laser' ? kind : 'mg', t: 0, shots: [], rockets: [], meteors: [], hits: 0, landed: 0, fired: 0, nextShot: 0.25, muzzle: [0, 0],
-    title: kind === 'tie' ? TIE_NAMES[style] || 'CROSSFIRE' : STYLE_NAMES[style] || weaponName(kind), titleC: w >= 0 ? F.colors[w] : '#F3F4F8' };
+    title: kind === 'tie' ? R.tieStyles.map((x) => STYLE_NAMES[x]).join(' vs ') : STYLE_NAMES[style] || weaponName(kind), titleC: w >= 0 ? F.colors[w] : '#F3F4F8' };
   if (kind === 'tie') return startItems(fx, R);
   if (F.special[w] === F.i) {
     const l = 1 - w, m = F.plan.fighters[w];
@@ -916,20 +923,21 @@ function throwFrom(d, x, dir, size, s = 1) {
 /** The middle of a fighter's body, allowing for its size (flagships are taller). */
 const bodyOf = (k) => ({ x: F.x[k], y: FLOOR - 92 * (F.looks[k].size || 1) });
 function startItems(fx, R) {
-  const d = ITEMS[fx.style], w = R.winner, tie = w === -1;
-  Object.assign(fx, { mode: 'items', items: [], gear: 'none', hits: d.n, landed: 0 });
+  const w = R.winner, tie = w === -1, styleOf = (k) => (tie ? R.tieStyles[k] : fx.style);
+  Object.assign(fx, { mode: 'items', items: [], gear: 'none', hits: ITEMS[fx.style].n, landed: 0, len: 0 });
   for (const k of tie ? [0, 1] : [w]) {
+    const d = ITEMS[styleOf(k)];
     F.pose[k] = d.pose;
+    fx.len = Math.max(fx.len, 0.25 + (d.n - 1) * (d.every || 0) + (d.wait || 0) + d.dur * (d.motion === 'boomerang' ? 2 : 1) + 0.8);
     const l = 1 - k, body = bodyOf(l), to = { x: body.x - dirOf(k) * 8, y: body.y };
     for (let i = 0; i < d.n; i++) {
       const last = i === d.n - 1;
-      fx.items.push(makeItem(fx.style, throwFrom(d, F.x[k], dirOf(k), F.looks[k].size || 1), to, { delay: 0.25 + i * (d.every || 0), onLand: (it) => {
+      fx.items.push(makeItem(styleOf(k), throwFrom(d, F.x[k], dirOf(k), F.looks[k].size || 1), to, { delay: 0.25 + i * (d.every || 0), onLand: (it) => {
         if (tie) { itemImpact(it, it.x, it.y, last); F.flash[l] = 0.08; F.pose[l] = 'hurt'; return; } // the graze lands once both have hit
         fx.itemHit = it; landHit(fx, R, it.x, it.y, last ? 'mid' : 'small');
       } }));
     }
   }
-  fx.len = 0.25 + (d.n - 1) * (d.every || 0) + (d.wait || 0) + d.dur * (d.motion === 'boomerang' ? 2 : 1) + 0.8;
   return fx;
 }
 /** A tie: both fighters lose the graze. */
@@ -1023,19 +1031,6 @@ function updateFx(fx, R, dt) {
       if (!reduced) F.sparks.push({ kind: 'smoke', x: r.x, y: r.y, vx: 0, vy: -8, r: 4, life: 0.4, c: '#5a5f73' });
       if (k < 1) return true;
       landHit(fx, R, r.x1, r.y1, fx.landed === fx.hits - 1 ? 'big' : 'mid'); return false;
-    });
-  } else if (fx.kind === 'meteor') {
-    if (fx.fired < fx.toFire && fx.t >= 0.4 + fx.fired * 0.2) {
-      const tx = F.x[l] + (Math.random() - 0.5) * 70, ty = FLOOR - 40 - Math.random() * 90;
-      const m = { x: tx - dirOf(w) * (220 + Math.random() * 120), y: -40, tx, ty, r: 12 + Math.random() * 10 }; // in from the winner's side
-      const d = Math.hypot(m.tx - m.x, m.ty - m.y); m.vx = (m.tx - m.x) / d * 900; m.vy = (m.ty - m.y) / d * 900;
-      fx.meteors.push(m); fx.fired++; sfx.whistle();
-    }
-    fx.meteors = fx.meteors.filter((m) => {
-      m.x += m.vx * dt; m.y += m.vy * dt;
-      if (!reduced) F.sparks.push({ kind: 'fire', x: m.x, y: m.y, vx: -m.vx * 0.05, vy: -m.vy * 0.05, r: m.r * 0.8, life: 0.25, c: Math.random() < 0.5 ? '#FFA94D' : '#FF6B6B' });
-      if (m.y < m.ty) return true;
-      landHit(fx, R, m.tx, m.ty, fx.landed === fx.hits - 1 ? 'big' : 'mid'); return false;
     });
   } else if (fx.kind === 'laser' && fx.style === 'anvil') {
     const k = Math.min(1, Math.max(0, (fx.t - 0.35) / 0.7));
@@ -1504,9 +1499,6 @@ function rFire(R, hit) {
     tone(600, { to: 1500, dur: 0.25, type: 'sawtooth', vol: 0.1 });
   } else if (st === 'anvil') {
     F.shots.push({ kind: 'anvil', x: c.x, y: -60, tx: c.x, ty: FLOOR - 30 * F.s, v: 1100, onLand: () => { rLand(R, hit, true, 'big'); tone(70, { to: 30, dur: 0.4, type: 'square', vol: 0.4 }); } });
-    sfx.whistle();
-  } else if (st === 'meteor') {
-    for (let b = 0; b < 3; b++) { const tx = c.x + (Math.random() - 0.5) * 40, ty = c.y + (Math.random() - 0.5) * 30; F.shots.push({ kind: 'meteor', delay: b * 0.16, x: tx - 160 + Math.random() * 320, y: -30, tx, ty, v: 950, r: 9 + Math.random() * 7, onLand: () => rLand(R, hit, b === 2, b === 2 ? 'big' : 'mid') }); }
     sfx.whistle();
   } else {
     F.shots.push({ kind: 'beam', x: c.x, t: 0, onLand: () => rLand(R, hit, true, 'big') });

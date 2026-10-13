@@ -38,6 +38,9 @@ export const STYLE_NAMES: Record<string, string> = {
   laser: 'ORBITAL LASER', anvil: 'SPACE ANVIL', blackhole: 'BLACK HOLE', foot: 'GIANT FOOT',
 };
 const TIERS: WeaponId[] = ['mg', 'rocket', 'meteor', 'laser'];
+/** In a tie, one fighter throws something cheeky and the other something big: a rubber chicken against a meteor shower. */
+export const TIE_CHEEKY = STYLES.mg;
+export const TIE_BIG = ['meteor', 'piano', 'tornado', 'blackhole', 'foot', 'bowling', 'drone', 'cannon'];
 /**
  * Picks weapon styles. In a fight (`unique`), no style is used twice by anyone: each hit takes an unused style of its
  * size, or, if that size has run out, the nearest size down (then up) that still has one. In a battle royale there
@@ -49,8 +52,16 @@ export function stylePicker(unique = true, seed = '') {
   const rnd = () => { x = (x + 0x6d2b79f5) | 0; let t = Math.imul(x ^ (x >>> 15), 1 | x); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const order = Object.fromEntries(TIERS.map((t) => { const a = [...STYLES[t]]; if (seed) for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return [t, a]; }));
   const used = new Set<string>(), last = new Map<string, string>(), count = new Map<string, number>();
-  return (shooter: string | number, weapon: WeaponId): string => {
-    const key = String(shooter), prev = last.get(key), tier = weapon === 'tie' ? 'mg' : weapon;
+  const pool = (list: string[]) => { const a = [...list]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const tiePools = { cheeky: pool(TIE_CHEEKY), big: pool(TIE_BIG) };
+  return (shooter: string | number, weapon: WeaponId | 'cheeky' | 'big'): string => {
+    const key = String(shooter), prev = last.get(key);
+    if (weapon === 'cheeky' || weapon === 'big') {
+      const style = tiePools[weapon].find((x) => !used.has(x)) ?? tiePools[weapon].find((x) => x !== prev) ?? tiePools[weapon][0];
+      used.add(style); last.set(key, style);
+      return style;
+    }
+    const tier = weapon === 'tie' ? 'mg' : weapon;
     let style: string | undefined;
     if (unique) {
       const i = TIERS.indexOf(tier), order2 = [tier, ...TIERS.slice(0, i).reverse(), ...TIERS.slice(i + 1)];
@@ -85,8 +96,10 @@ export type RoundResult = {
   weapon: WeaponId;
   /** HP each fighter lost to a tie's graze (0 unless the round was a tie). */
   graze: [number, number];
-  /** Which style of the weapon to show (see STYLES). */
+  /** Which style of the weapon to show (see STYLES). In a tie, the first fighter's. */
   style: string;
+  /** In a tie, each fighter's weapon: one cheeky, one big, never the same. */
+  tieStyles?: [string, string];
   hpBefore: [number, number];
   hpAfter: [number, number];
 };
@@ -175,6 +188,7 @@ export function planFight(data: BrawlData, a: Model, b: Model, roundIds: string[
   const hp: [number, number] = [START_HP, START_HP];
   const rounds: RoundResult[] = [], skipped: Round[] = [];
   const pick = stylePicker(true, `${a.id}|${b.id}|${roundIds.join(',')}`);
+  let ties = 0;
   for (const id of roundIds) {
     if (hp[0] === 0 || hp[1] === 0) break;
     const round = data.rounds.find((r) => r.id === id);
@@ -185,7 +199,11 @@ export function planFight(data: BrawlData, a: Model, b: Model, roundIds: string[
     const graze: [number, number] = [0, 0];
     if (r.winner === 0 || r.winner === 1) hp[1 - r.winner] = Math.max(0, hp[1 - r.winner] - r.dmg);
     else if (r.winner === -1) for (const k of [0, 1] as const) { graze[k] = Math.max(0, Math.min(TIE_GRAZE, hp[k] - 1)); hp[k] -= graze[k]; }
-    rounds.push({ ...r, graze, style: pick(r.winner === -1 ? 'tie' : r.winner, r.weapon), hpBefore, hpAfter: [...hp] });
+    if (r.winner === -1) {
+      // the fighters take turns with the big weapon
+      const bigSide = ties++ % 2, tieStyles = [0, 1].map((k) => pick(k, k === bigSide ? 'big' : 'cheeky')) as [string, string];
+      rounds.push({ ...r, graze, style: tieStyles[0], tieStyles, hpBefore, hpAfter: [...hp] });
+    } else rounds.push({ ...r, graze, style: pick(r.winner, r.weapon), hpBefore, hpAfter: [...hp] });
   }
   const roundsWon: [number, number] = [rounds.filter((r) => r.winner === 0).length, rounds.filter((r) => r.winner === 1).length];
   const winner = hp[0] === hp[1] ? -1 : hp[0] > hp[1] ? 0 : 1, ko = hp[0] === 0 || hp[1] === 0;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { judgeRound, planFight, START_HP, stylePicker, STYLES, weaponFor } from '../src/fight.ts';
+import { judgeRound, planFight, START_HP, stylePicker, STYLES, TIE_BIG, TIE_CHEEKY, weaponFor } from '../src/fight.ts';
 import { brawlNumber, dailyBrawl, featuredFight, inClass, newChallengers, PRESETS, runTournament } from '../src/league.ts';
 import type { BrawlData, Model, Score } from '../src/types.ts';
 
@@ -36,6 +36,14 @@ describe('empty rounds and weapon styles', () => {
     const seq = (['mg', 'mg', 'tie', 'mg', 'rocket', 'mg', 'tie'] as const).map((w, i) => pick(i % 2, w));
     expect(new Set(seq).size).toBe(seq.length);
     expect(STYLES.mg).toContain(seq[0]);
+  });
+  it('in a tie, one fighter throws something cheeky and the other something big, never the same', () => {
+    const a = model('a', { b1: s(60, 2), b2: s(50, 2) }), b = model('b', { b1: s(59, 2), b2: s(51, 2) });
+    const p = planFight(data([a, b]), a, b, ['r1', 'r2']);
+    const [t1, t2] = p.rounds.map((R) => R.tieStyles!);
+    expect(TIE_CHEEKY).toContain(t1[1]); expect(TIE_BIG).toContain(t1[0]);
+    expect(TIE_CHEEKY).toContain(t2[0]); expect(TIE_BIG).toContain(t2[1]); // they take turns with the big one
+    expect(new Set([...t1, ...t2]).size).toBe(4);
   });
   it('borrows from the next size down when a size runs out, rather than repeat', () => {
     const pick = stylePicker();
