@@ -19,7 +19,8 @@ describe('data build checks', () => {
     expect(() => requireColumns([], ['Model version'], 'x.csv')).toThrow(/no rows/);
   });
   it('fails when models.dev changes shape', () => {
-    const md = JSON.parse(readFileSync('data/cache/models-dev.json', 'utf8'));
+    // a small stand-in for models.dev: 6 providers with 10 priced models each
+    const md = Object.fromEntries(Array.from({ length: 6 }, (_, p) => [`lab${p}`, { models: Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`m${i}`, { name: `M${i}`, cost: { input: 1, output: 4 } }])) }]));
     expect(() => checkModelsDev(md)).not.toThrow();
     expect(() => checkModelsDev({ providers: md })).toThrow(/unexpected shape/);
     expect(() => checkModelsDev([])).toThrow();
