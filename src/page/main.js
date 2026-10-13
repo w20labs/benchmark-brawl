@@ -1,6 +1,7 @@
 // Benchmark Brawl page. The rules live in ../fight.ts and ../league.ts; this file draws and plays them.
 import { formatValue, planFight, STYLE_NAMES, weaponName } from '../fight.ts';
 import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
+import { judgeClaim } from '../claims.ts';
 import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
 import { CLASSES, dailyBrawl, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 
@@ -22,6 +23,8 @@ const h = (tag, attrs, ...kids) => {
   for (const c of kids.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c));
   return el;
 };
+/** A link from the data, only if it's a web link; anything else (javascript:, data:…) is dropped. */
+const safeUrl = (u) => { try { return ['https:', 'http:'].includes(new URL(u).protocol) ? u : null; } catch { return null; } };
 const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
 let reduced = motionQuery.matches;
 motionQuery.addEventListener?.('change', (e) => { reduced = e.matches; });
@@ -489,6 +492,8 @@ addEventListener('keydown', (e) => {
   if (e.target.closest?.('button, a') && !e.target.closest('.fighter')) return;
   const list = visibleModels(), n = list.length;
   if (!n) return;
+  const focused = e.target.closest?.('.fighter');
+  if (focused) cursor = Math.max(0, list.findIndex((m) => m.id === focused.dataset.id));
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') cursor = (cursor + 1) % n;
   else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') cursor = (cursor + n - 1) % n;
   else if ((e.key === 'Enter' || e.key === ' ') && mode === '1v1' && picks.length === 2 && picks.includes(list[cursor].id)) { e.preventDefault(); return startFight(); }
@@ -512,8 +517,8 @@ const classPart = () => (classId === 'all' ? '' : `&c=${classId}`);
 function writeHash() { const h2 = mode === 'royale' ? royaleHash(picks, rounds) + classPart() : picks.length === 2 ? hashFor(picks[0], picks[1], rounds) + classPart() : `#r=${rounds.join(',')}${classPart()}`; history.replaceState(null, '', h2); }
 function readHash() {
   const p = new URLSearchParams(location.hash.slice(1));
-  const rs = (p.get('r') || '').split(',').filter((r) => roundById.has(r));
-  if (rs.length >= MIN_ROUNDS) rounds = [...new Set(rs)].slice(0, MAX_ROUNDS);
+  const rs = [...new Set((p.get('r') || '').split(',').filter((r) => roundById.has(r)))];
+  if (rs.length >= MIN_ROUNDS) rounds = rs.slice(0, MAX_ROUNDS);
   const c = p.get('c');
   if (c && CLASSES.some((x) => x.id === c)) classId = c;
   if (p.get('t') === '1') wantTourney = true;
@@ -539,7 +544,7 @@ function startFight(opts = {}) {
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, opts.rounds || rounds);
   if (!plan.rounds.length) return toast(`${a.name} and ${b.name} have no benchmark in common in these rounds. Try other rounds.`);
-  F = { arena: opts.daily ? arenaFor(`daily|${opts.daily.no}`) : arenaFor(`${a.id}|${b.id}`), daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
+  F = { roundIds: opts.rounds || rounds, arena: opts.daily ? arenaFor(`daily|${opts.daily.no}`) : arenaFor(`${a.id}|${b.id}`), daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: reduced ? [-1, -1] : bigHits(plan) };
   setView('arena');
   $('arena').classList.remove('royale');
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
@@ -553,7 +558,7 @@ function startFight(opts = {}) {
   }
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
   setHp(true);
-  if (F.daily) history.replaceState(null, '', '#today'); else writeHashFight();
+  if (F.daily) history.replaceState(null, '', `#today=${F.daily.no}`); else writeHashFight();
   if (!F.recording) track(F.daily ? `today/${F.daily.no}` : `fight/${a.id}-vs-${b.id}`);
   $('arena').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   enterPhase();
@@ -642,9 +647,10 @@ function finish() {
   else banner('DRAW', 'Same HP after the last round');
 }
 function frame(now) {
+  if (!F || $('arena').hidden || F.done) { raf = 0; return; } // nothing on screen: stop until the next fight starts
   const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
-  if (F && !$('arena').hidden) { if (F.royale) { stepRoyale(dt); drawRoyale(now / 1000); } else { step(dt); draw(now / 1000); } }
-  raf = requestAnimationFrame(frame);
+  if (F.royale) { stepRoyale(dt); drawRoyale(now / 1000); } else { step(dt); draw(now / 1000); }
+  if (!F.done) raf = requestAnimationFrame(frame);
 }
 /** Sparks, smoke, explosions and floating numbers, for both fights and royales. */
 function stepParticles(dt) {
@@ -1353,7 +1359,7 @@ function showResult() {
   $('verdict').textContent = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
   $('verdictSub').textContent = !w ? `Same HP after the last round` : `${decisionText(p)} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${p.decision === 'split' ? (p.roundsWon[0] === p.roundsWon[1] ? ': same rounds won, bigger wins' : ': fewer rounds, but bigger wins') : ''}`;
   drawVictory($('winCv'), p, F.looks);
-  const rec = F.daily ? daily.days[F.daily.no] : null;
+  const rec = F.daily ? todayRec() : null;
   $('yourCall').hidden = !F.daily;
   if (F.daily) $('yourCall').replaceChildren(...callBadge(rec));
   $('rematch').textContent = F.daily ? '▶ WATCH AGAIN' : 'REMATCH';
@@ -1362,14 +1368,14 @@ function showResult() {
   $('th2').textContent = b.name; $('th2').style.color = F.colors[1];
   $('rows').replaceChildren(...p.rounds.map((R) => h('tr', null,
     h('td', null, R.round.name, h('span', { class: 't' }, R.parts
-      ? ['Average of ', ...R.parts.flatMap((p, i) => [i ? ' + ' : '', h('a', { href: p.bench.source.url, target: '_blank', rel: 'noopener' }, p.bench.name)])]
-      : R.bench ? [h('a', { href: R.bench.source.url, target: '_blank', rel: 'noopener' }, R.bench.name), ` · ${R.bench.source.name}`] : 'No benchmark in common')),
+      ? ['Average of ', ...R.parts.flatMap((p, i) => [i ? ' + ' : '', h('a', { href: safeUrl(p.bench.source.url), target: '_blank', rel: 'noopener' }, p.bench.name)])]
+      : R.bench ? [h('a', { href: safeUrl(R.bench.source.url), target: '_blank', rel: 'noopener' }, R.bench.name), ` · ${R.bench.source.name}`] : 'No benchmark in common')),
     ...[0, 1].map((k) => {
       const m = p.fighters[k], s = R.bench && R.bench.kind === 'score' ? m.scores[R.bench.id] : null;
       return h('td', { class: `num ${R.winner === k ? 'win' : ''}`, style: `--c:${F.colors[k]}` },
-        s?.log ? h('a', { href: s.log, target: '_blank', rel: 'noopener', title: 'Epoch AI run logs', style: 'color:inherit' }, formatValue(R.bench, R.values[k])) : formatValue(R.bench, R.values[k]),
+        safeUrl(s?.log) ? h('a', { href: safeUrl(s.log), target: '_blank', rel: 'noopener', title: 'Epoch AI run logs', style: 'color:inherit' }, formatValue(R.bench, R.values[k])) : formatValue(R.bench, R.values[k]),
         R.winner === k ? ' ✓' : '',
-        R.parts ? h('span', { class: 't' }, R.parts.map((pt) => `${pt.bench.name} ${pt.values[k].toFixed(1)}`).join(' · '))
+        R.parts ? h('span', { class: 't' }, R.parts.map((pt) => { const sc = m.scores[pt.bench.id]; return `${pt.bench.name} ${pt.values[k].toFixed(1)} (${sc.setting}${sc.se != null ? `, ±${(1.96 * sc.se).toFixed(1)}` : ''})`; }).join(' · '), R.margin != null ? ` · combined ±${R.margin}` : '')
           : s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
     }),
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? h('span', null, R.tie === 'margin' ? 'tie (margin)' : 'tie', h('span', { class: 't' }, grazeText(R))) : `−${R.dmg} HP`))));
@@ -1417,7 +1423,7 @@ $('fight').addEventListener('click', () => (mode === 'royale' ? startRoyale() : 
 $('rematch').addEventListener('click', () => startFight(F?.daily ? { daily: F.daily, rounds: F.daily.rounds, replay: true } : {}));
 $('again').addEventListener('click', () => { cancelAnimationFrame(raf); fromBracket = false; openTab('play'); });
 $('copy').addEventListener('click', () => { track(F.daily ? 'share-today' : 'share'); shareOrCopy($('share').textContent, 'Copied result and link'); });
-$('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily ? daily.days[F.daily.no] : null, F.daily); });
+$('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily ? todayRec() : null, F.daily); });
 $('skip').addEventListener('click', () => {
   if (F?.royale) return skipRoyale();
   if (!F || F.over) return endFight();
@@ -1442,9 +1448,13 @@ async function recordClip() {
   rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
   const done = new Promise((r) => (rec.onstop = r));
   rec.start(250);
-  startFight({ recording: true, onDone: () => rec.state !== 'inactive' && rec.stop() });
-  await done;
-  if (recDest) { try { master?.disconnect(recDest); } catch { /* fine */ } recDest = null; }
+  const finished = F; // record the fight that was just watched, not whatever the builder now says
+  picks = finished.plan.fighters.map((m) => m.id);
+  startFight({ recording: true, rounds: finished.roundIds, daily: finished.daily, replay: true, onDone: () => rec.state !== 'inactive' && rec.stop() });
+  try { await done; } finally {
+    for (const tr of stream.getTracks()) tr.stop();
+    if (recDest) { try { master?.disconnect(recDest); } catch { /* fine */ } recDest = null; }
+  }
   const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
   const [x, y] = F.plan.fighters.map((m) => m.id);
   const file = new File(chunks, `benchmark-brawl-${x}-vs-${y}.${ext}`, { type: mimeType.split(';')[0] });
@@ -1467,6 +1477,7 @@ function openTournament() {
   const pool = DATA.models.filter((m) => inClass(m, classId));
   bracket = runTournament(DATA, pool, rounds);
   if (!bracket) return toast('A tournament needs at least 8 fighters in this weight class');
+  bracket.key = `${classId}|${rounds.join(',')}`; bracket.roundIds = [...rounds];
   track(`tournament/${classId}`);
   sfx.bell();
   showBracket();
@@ -1482,7 +1493,7 @@ function showBracket() {
   const titles = ['Quarterfinals', 'Semifinals', 'Final'];
   $('bracket').replaceChildren(...bracket.rounds.map((ms, ri) => h('div', { class: 'bcol' }, h('h3', null, titles[ri]), ...ms.map((m) => {
     const side = (x, k) => h('div', { class: `p ${m.winner === x ? 'w' : ''}`, style: `--c:${colorOf(x)}` }, h('span', { class: 'n' }, `${bracket.seeds.indexOf(x) + 1}. ${x.name}`), h('span', { class: 'hp2' }, `${m.fight.hp[k]} HP`));
-    return h('button', { type: 'button', class: 'match', title: 'Watch this fight', onclick: () => { picks = [m.a.id, m.b.id]; fromBracket = true; startFight(); } },
+    return h('button', { type: 'button', class: 'match', title: 'Watch this fight', onclick: () => { picks = [m.a.id, m.b.id]; fromBracket = true; startFight({ rounds: bracket.roundIds }); } },
       side(m.a, 0), side(m.b, 1), h('span', { class: 'note2' }, m.tiebreak ? 'Draw: higher seed advances' : m.fight.ko ? 'K.O.' : `${m.fight.decision === 'unanimous' ? 'Unanimous' : 'Split'} decision · ${m.fight.roundsWon[0]}–${m.fight.roundsWon[1]}`));
   }))));
   $('tshare').textContent = tournamentText();
@@ -1493,7 +1504,7 @@ function tournamentText() {
   const semis = bracket.rounds[1].map((m) => (m.winner === m.a ? m.b : m.a).name);
   return [`🏆 Benchmark Brawl tournament · ${CLASSES.find((c) => c.id === classId).name}`, `Champion: ${bracket.champion.name}`, `Final: beat ${loser.name}`, `Semifinalists: ${semis.join(', ')}`, `${SITE_URL}#t=1&r=${rounds.join(',')}${classPart()}`].join('\n');
 }
-$('watchFinal').addEventListener('click', () => { const f = bracket.rounds.at(-1)[0]; picks = [f.a.id, f.b.id]; fromBracket = true; startFight(); });
+$('watchFinal').addEventListener('click', () => { const f = bracket.rounds.at(-1)[0]; picks = [f.a.id, f.b.id]; fromBracket = true; startFight({ rounds: bracket.roundIds }); });
 $('tcopy').addEventListener('click', () => { track('share-bracket'); copyText(tournamentText(), 'Copied bracket and link'); });
 
 // ---------- battle royale ----------
@@ -1505,13 +1516,14 @@ function startRoyale() {
   const ms = picks.map((id) => byId.get(id)).filter(Boolean);
   if (ms.length < ROYALE_MIN) return;
   const plan = planRoyale(DATA, ms, rounds), n = ms.length;
+  if (!plan.rounds.length) return toast('No two of these fighters share a benchmark in these rounds. Try other rounds or fighters.');
   const gap = (W - 80) / n;
   const looks = looksFor(ms);
   F = { royale: true, arena: arenaFor(ms.map((m) => m.id).join('|')), plan, n, looks, colors: looks.map((l) => l.ui), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
     pose: ms.map(() => 'idle'), flash: ms.map(() => 0), dodge: ms.map(() => 0), hp: ms.map(() => 100), shown: ms.map(() => null),
     i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false, moveTitle: null,
     // per fighter, its biggest hit as leader: where its signature move plays
-    special: ms.map((_, k) => { let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
+    special: ms.map((_, k) => { if (reduced) return null; let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
   setView('arena');
   $('arena').classList.add('royale'); $('rec').hidden = true;
   $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
@@ -1758,7 +1770,7 @@ function showRoyaleResult() {
   const w = p.winner >= 0 ? p.fighters[p.winner] : null;
   $('rverdict').style.setProperty('--c', w ? F.colors[p.winner] : '#F3F4F8');
   $('rverdict').replaceChildren(...(w ? ['👑 ', h('b', null, w.name), ' wins the royale'] : ['👑 A shared crown']));
-  $('rhead').replaceChildren(h('th', null, '#'), h('th', null, 'Fighter'), ...p.rounds.map((R) => h('th', null, R.round.name, R.bench ? h('span', { class: 't' }, h('a', { href: R.bench.source.url, target: '_blank', rel: 'noopener' }, R.bench.name)) : h('span', { class: 't' }, 'skipped'))), h('th', null, 'HP'));
+  $('rhead').replaceChildren(h('th', null, '#'), h('th', null, 'Fighter'), ...p.rounds.map((R) => h('th', null, R.round.name, R.bench ? h('span', { class: 't' }, h('a', { href: safeUrl(R.bench.source.url), target: '_blank', rel: 'noopener' }, R.bench.name)) : h('span', { class: 't' }, 'skipped'))), h('th', null, 'HP'));
   $('rrows').replaceChildren(...p.placing.map((k, place) => h('tr', null,
     h('td', { class: 'num' }, MEDALS[place] || `${place + 1}`),
     h('td', { style: `color:${F.colors[k]};font-weight:700` }, shortName(p.fighters[k]), h('span', { class: 't' }, p.fighters[k].org)),
@@ -1776,11 +1788,8 @@ $('rcopy').addEventListener('click', () => { track('share-royale'); copyText(roy
 $('ragain').addEventListener('click', backHome);
 
 // ---------- claim check ----------
-const VERDICTS = { match: '✅ Matches', lab: '🔺 Lab higher', ind: '🔻 Independent higher' };
-function verdictOf(c) {
-  const margin = c.indep.se != null ? 1.96 * c.indep.se : 1, diff = c.claimed - c.indep.v;
-  return { margin, diff, kind: Math.abs(diff) <= margin ? 'match' : diff > 0 ? 'lab' : 'ind' };
-}
+const VERDICTS = { match: '✅ Matches', lab: '🔺 Lab higher', ind: '🔻 Independent higher', unknown: '❔ No margin published' };
+const verdictOf = judgeClaim;
 let claimLab = 'all';
 function openClaims(lab = 'all') {
   claimLab = lab;
@@ -1797,21 +1806,21 @@ function renderClaims() {
   $('claimLab').replaceChildren(h('option', { value: 'all' }, 'All labs'), ...labs.map((l) => h('option', { value: l, selected: l === claimLab ? '' : null }, l)));
   const list = claimList().map((c) => ({ c, m: byId.get(c.modelId), b: benchById.get(c.bench), v: verdictOf(c) }))
     .sort((x, y) => (y.m.eci ?? 0) - (x.m.eci ?? 0) || x.b.name.localeCompare(y.b.name));
-  const n = { match: 0, lab: 0, ind: 0 }; for (const x of list) n[x.v.kind]++;
+  const n = { match: 0, lab: 0, ind: 0, unknown: 0 }; for (const x of list) n[x.v.kind]++;
   $('claimSummary').replaceChildren(h('span', { class: 'stat' }, h('b', null, list.length), ' claims checked'),
-    ...Object.entries(VERDICTS).map(([k, label]) => h('span', { class: 'stat' }, `${label}: `, h('b', null, n[k]))));
+    ...Object.entries(VERDICTS).filter(([k]) => k !== 'unknown' || n.unknown).map(([k, label]) => h('span', { class: 'stat' }, `${label}: `, h('b', null, n[k]))));
   $('claimRows').replaceChildren(...list.map(({ c, m, b, v }) => h('tr', null,
     h('td', { style: `color:${colorOf(m)};font-weight:700` }, m.name, h('span', { class: 't' }, m.org)),
     h('td', null, b.name, h('span', { class: 't' }, c.version && !/not stated/.test(c.version) ? `version ${c.version}` : '')),
-    h('td', { class: 'num' }, `${c.claimed.toFixed(1)}%`, h('span', { class: 't', title: c.conditions }, h('a', { href: c.url, target: '_blank', rel: 'noopener' }, 'source'), ` · ${c.conditions.length > 60 ? `${c.conditions.slice(0, 58).replace(/[\s,;·]+\S*$/, '')}…` : c.conditions}`)),
-    h('td', { class: 'num' }, `${c.indep.v.toFixed(1)}%`, h('span', { class: 't' }, `±${v.margin.toFixed(1)} · ${c.indep.setting} setting${c.indep.sameSetting ? ' (same as lab)' : ''} · `,
-      h('a', { href: b.source.url, target: '_blank', rel: 'noopener' }, b.epochRun ? 'Epoch AI' : b.source.name.replace(/ by .*$/, '').replace(/, via Epoch AI$/, '')))),
-    h('td', null, h('span', { class: `verdict-pill ${v.kind}` }, VERDICTS[v.kind]), v.kind === 'match' ? '' : h('span', { class: 't' }, `${v.diff > 0 ? '+' : ''}${v.diff.toFixed(1)} points`)))));
+    h('td', { class: 'num' }, `${c.claimed.toFixed(1)}%`, h('span', { class: 't', title: c.conditions }, h('a', { href: safeUrl(c.url), target: '_blank', rel: 'noopener' }, 'source'), ` · ${c.conditions.length > 60 ? `${c.conditions.slice(0, 58).replace(/[\s,;·]+\S*$/, '')}…` : c.conditions}`)),
+    h('td', { class: 'num' }, `${c.indep.v.toFixed(1)}%`, h('span', { class: 't' }, `${v.margin != null ? `±${v.margin.toFixed(1)}` : 'no margin published'} · ${c.indep.setting} setting${c.indep.sameSetting ? ' (same as lab)' : v.settingsDiffer ? ` ⚠ the lab ran ${c.labSetting}` : ''} · `,
+      h('a', { href: safeUrl(b.source.url), target: '_blank', rel: 'noopener' }, b.epochRun ? 'Epoch AI' : b.source.name.replace(/ by .*$/, '').replace(/, via Epoch AI$/, '')))),
+    h('td', null, h('span', { class: `verdict-pill ${v.kind}` }, VERDICTS[v.kind]), v.kind === 'match' ? '' : h('span', { class: 't' }, `${v.diff > 0 ? '+' : ''}${v.diff.toFixed(1)} points${v.settingsDiffer ? ', different settings' : ''}`)))));
   $('claimShare').textContent = claimText(n, list.length);
 }
 function claimText(n, total) {
   return [`🔎 Benchmark Brawl claim check${claimLab === 'all' ? '' : ` · ${claimLab}`}`, `${total} lab claims vs independent tests`,
-    `✅ ${n.match} match · 🔺 ${n.lab} lab higher · 🔻 ${n.ind} independent higher`, `${SITE_URL}#claims${claimLab === 'all' ? '' : `=${encodeURIComponent(claimLab)}`}`].join('\n');
+    `✅ ${n.match} match · 🔺 ${n.lab} lab higher · 🔻 ${n.ind} independent higher${n.unknown ? ` · ❔ ${n.unknown} no margin` : ''}`, `${SITE_URL}#claims${claimLab === 'all' ? '' : `=${encodeURIComponent(claimLab)}`}`].join('\n');
 }
 $('claimsClose').addEventListener('click', () => openTab('today'));
 $('claimLab').addEventListener('change', (e) => openClaims(e.target.value));
@@ -1832,18 +1841,32 @@ function openTab(t) {
   cancelAnimationFrame(raf);
   if (t === 'today') { history.replaceState(null, '', location.pathname + location.search); setView('today'); renderToday(); }
   else if (t === 'play' || t === 'royale') { mode = t === 'royale' ? 'royale' : '1v1'; if (mode === '1v1') picks = picks.slice(0, 2); setView(t); renderAll(); }
-  else if (t === 'tournament') { if (!bracket) openTournament(); else showBracket(); }
+  else if (t === 'tournament') { if (bracket?.key === `${classId}|${rounds.join(',')}`) showBracket(); else openTournament(); }
   else if (t === 'claims') openClaims(claimLab);
   scrollTo({ top: 0 });
 }
 for (const b of document.querySelectorAll('#tabs button')) b.addEventListener('click', () => openTab(b.dataset.tab));
 
 // ---------- today: the daily brawl ----------
-const DAILY = dailyBrawl(DATA, NOW);
+/** A scheduled brawl, with its fighters looked up; null if a fighter has since left the roster. */
+function brawlFromEntry(e) {
+  const a = e && byId.get(e.a), b = e && byId.get(e.b);
+  return a && b ? { no: e.no, day: e.day, a, b, rounds: e.rounds.filter((id) => roundById.has(id)), featured: e.featured } : null;
+}
+// today's fight comes from the published schedule, so it never changes during the day; computed only as a fallback
+const DAILY = brawlFromEntry(DATA.daily?.find((e) => e.day === NOW.toISOString().slice(0, 10))) ?? dailyBrawl(DATA, NOW);
 const DAILY_KEY = 'brawl-daily-v1';
 let daily = { days: {} };
 try { daily = JSON.parse(localStorage.getItem(DAILY_KEY)) || daily; } catch { /* a private window: nothing saved */ }
 const saveDaily = () => { try { localStorage.setItem(DAILY_KEY, JSON.stringify(daily)); } catch { /* fine */ } };
+/** Today's saved call and result, only if it was for today's pairing (else it's from a different fight). */
+function todayRec(create = false) {
+  if (!DAILY) return null;
+  const r = daily.days[DAILY.no];
+  if (r && r.a === DAILY.a.id && r.b === DAILY.b.id) return r;
+  if (!create) return null;
+  return (daily.days[DAILY.no] = { a: DAILY.a.id, b: DAILY.b.id, pick: null });
+}
 /** Played, called, called right, current streak (consecutive brawls called right) and best streak. */
 function dailyStats() {
   const recs = Object.entries(daily.days).map(([no, r]) => ({ no: Number(no), ...r })).filter((r) => r.winner).sort((x, y) => x.no - y.no);
@@ -1855,7 +1878,7 @@ function dailyStats() {
   return { played: recs.length, called: called.length, right: called.filter((r) => r.correct).length, streak, best };
 }
 function recordDaily(p) {
-  const r = (daily.days[DAILY.no] ??= { a: DAILY.a.id, b: DAILY.b.id, pick: null });
+  const r = todayRec(true);
   if (r.winner) return; // the first watch counts
   r.winner = p.winner >= 0 ? p.fighters[p.winner].id : 'draw';
   r.correct = r.pick ? r.pick === r.winner : null;
@@ -1864,11 +1887,11 @@ function recordDaily(p) {
 function dailyText(p, rec) {
   const [a, b] = p.fighters, st = dailyStats();
   const row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
-  return [`Benchmark Brawl #${DAILY.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today`].join('\n');
+  return [`Benchmark Brawl #${DAILY.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${DAILY.no}`].join('\n');
 }
 function renderToday() {
   if (!DAILY) { $('callBox').hidden = true; $('doneBox').hidden = true; $('brawlNo').textContent = 'NO BRAWL TODAY'; return; }
-  const looks = looksFor([DAILY.a, DAILY.b]), rec = daily.days[DAILY.no], st = dailyStats();
+  const looks = looksFor([DAILY.a, DAILY.b]), rec = todayRec(), st = dailyStats();
   $('brawlNo').textContent = `BRAWL #${DAILY.no}`;
   $('streakChip').textContent = st.streak ? `🔥 ${st.streak}-day streak` : '🔥 Start a streak';
   [[DAILY.a, 'A', 0], [DAILY.b, 'B', 1]].forEach(([m, k, i]) => {
@@ -1894,7 +1917,7 @@ function renderToday() {
     .map(([v, l]) => h('div', null, h('b', null, String(v)), h('span', null, l))));
 }
 function callToday(k) {
-  const m = k ? DAILY.b : DAILY.a, r = (daily.days[DAILY.no] ??= { a: DAILY.a.id, b: DAILY.b.id, pick: null });
+  const m = k ? DAILY.b : DAILY.a, r = todayRec(true);
   if (r.winner) return;
   r.pick = m.id; saveDaily(); sfx.blip(true); renderToday();
 }
@@ -1902,10 +1925,10 @@ function fightToday(replay = false) { picks = [DAILY.a.id, DAILY.b.id]; startFig
 $('callA').addEventListener('click', () => callToday(0));
 $('callB').addEventListener('click', () => callToday(1));
 $('todayFight').addEventListener('click', () => fightToday());
-$('justWatch').addEventListener('click', () => { const r = (daily.days[DAILY.no] ??= { a: DAILY.a.id, b: DAILY.b.id, pick: null }); r.pick = null; saveDaily(); fightToday(); });
+$('justWatch').addEventListener('click', () => { const r = todayRec(true); if (!r.winner) { r.pick = null; saveDaily(); } fightToday(); });
 $('doneWatch').addEventListener('click', () => fightToday(true));
-$('doneShare').addEventListener('click', () => { track('share-today'); shareOrCopy(dailyText(planFight(DATA, DAILY.a, DAILY.b, DAILY.rounds), daily.days[DAILY.no]), 'Copied your brawl'); });
-$('doneCard').addEventListener('click', () => { track('card'); shareCard(planFight(DATA, DAILY.a, DAILY.b, DAILY.rounds), looksFor([DAILY.a, DAILY.b]), daily.days[DAILY.no], DAILY); });
+$('doneShare').addEventListener('click', () => { track('share-today'); shareOrCopy(dailyText(planFight(DATA, DAILY.a, DAILY.b, DAILY.rounds), todayRec()), 'Copied your brawl'); });
+$('doneCard').addEventListener('click', () => { track('card'); shareCard(planFight(DATA, DAILY.a, DAILY.b, DAILY.rounds), looksFor([DAILY.a, DAILY.b]), todayRec(), DAILY); });
 // the stage: the two fighters idling under the city lights, and the countdown to the next brawl
 let todayRaf = 0, todayTick = 0;
 function startToday() {
@@ -1963,10 +1986,17 @@ async function shareCard(p, looks, rec, brawl) {
 
 // ---------- start ----------
 const claimsHash = location.hash.match(/^#claims(?:=(.+))?$/);
+/** The lab in a #claims=… link, if it's one we have claims for. */
+function claimLabFromHash(raw) {
+  let lab = 'all';
+  try { lab = raw ? decodeURIComponent(raw) : 'all'; } catch { /* a malformed link: show all */ }
+  return DATA.claims.some((c) => byId.get(c.modelId)?.org === lab) ? lab : 'all';
+}
 const shared = claimsHash ? false : readHash();
 const tabHash = location.hash.match(/^#(today|play|royale|tournament)$/)?.[1];
+const pastBrawl = Number(location.hash.match(/^#today=(\d+)$/)?.[1]) || null;
 renderAll();
-if (claimsHash) { claimLab = claimsHash[1] ? decodeURIComponent(claimsHash[1]) : 'all'; openTab('claims'); }
+if (claimsHash) { claimLab = claimLabFromHash(claimsHash[1]); openTab('claims'); }
 else if (wantTourney) openTab('tournament');
 else if (shared && mode === 'royale') {
   openTab('royale');
@@ -1975,4 +2005,9 @@ else if (shared && mode === 'royale') {
   openTab('play');
   const [a, b] = picks.map((id) => byId.get(id));
   toast(`Shared fight: ${a.name} vs ${b.name}. Press FIGHT!`);
+} else if (pastBrawl && pastBrawl !== DAILY?.no) {
+  // a link to an earlier daily brawl replays that exact fight
+  const old = brawlFromEntry(DATA.daily?.find((e) => e.no === pastBrawl));
+  if (old) { picks = [old.a.id, old.b.id]; rounds = old.rounds.length >= MIN_ROUNDS ? old.rounds : rounds; openTab('play'); toast(`Brawl #${old.no}: ${old.a.name} vs ${old.b.name}. Press FIGHT to replay it.`); }
+  else { openTab('today'); toast(`Brawl #${pastBrawl} is too old to replay. Here's today's.`); }
 } else openTab(tabHash ?? 'today');

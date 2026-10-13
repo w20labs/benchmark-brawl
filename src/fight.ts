@@ -119,6 +119,9 @@ export type FightResult = {
 };
 
 const benchById = (data: BrawlData, id: string) => data.benchmarks.find((b) => b.id === id)!;
+const round1 = (n: number) => Math.round(n * 10) / 10;
+/** Damage is 2 × the gap, rounded to whole HP (at least 1 for any real win). */
+const damage = (gap: number) => Math.max(1, Math.round(gap * DAMAGE_PER_POINT));
 
 /** The first benchmark in the round that both fighters have, or null. */
 export function pickBench(data: BrawlData, round: Round, a: Model, b: Model): Benchmark | null {
@@ -144,19 +147,21 @@ export function judgeRound(data: BrawlData, round: Round, a: Model, b: Model): O
 export function compareAverage(round: Round, benches: Benchmark[], a: Model, b: Model): Omit<RoundResult, 'round' | 'hpBefore' | 'hpAfter' | 'graze' | 'style'> {
   const n = benches.length;
   const parts = benches.map((bench) => ({ bench, values: [a.scores[bench.id].v, b.scores[bench.id].v] as [number, number] }));
-  const mean = (k: 0 | 1) => Math.round((parts.reduce((s, p) => s + p.values[k], 0) / n) * 10) / 10;
-  const values: [number, number] = [mean(0), mean(1)];
+  const mean = (k: 0 | 1) => parts.reduce((s, p) => s + p.values[k], 0) / n;
+  const [ma, mb] = [mean(0), mean(1)]; // judge on the exact means; round only what's shown
+  const values: [number, number] = [round1(ma), round1(mb)];
   const ses = benches.flatMap((bench) => [a.scores[bench.id].se, b.scores[bench.id].se]);
-  const margin = ses.every((x) => x != null) ? Math.round((TIE_Z * Math.sqrt(ses.reduce((s, x) => s + x! ** 2, 0)) / n) * 10) / 10 : null;
+  const exactMargin = ses.every((x) => x != null) ? (TIE_Z * Math.sqrt(ses.reduce((s, x) => s + x! ** 2, 0))) / n : null;
+  const margin = exactMargin == null ? null : round1(exactMargin);
   const bench: Benchmark = {
     id: `${round.id}-average`, name: `Average of ${benches.map((x) => x.name).join(' + ')}`, kind: 'score', epochRun: benches.every((x) => x.epochRun),
     what: `The average over the ${n} ${round.name.toLowerCase()} benchmarks both models have`, source: benches[0].source,
   };
-  const gap = Math.round(Math.abs(values[0] - values[1]) * 10) / 10;
+  const gap = Math.abs(ma - mb);
   const none = { bench, values, parts, margin, points: 0, dmg: 0, weapon: 'tie' as const };
-  if (gap < 0.5) return { ...none, winner: -1, tie: 'exact' };
-  if (margin != null && gap <= margin) return { ...none, winner: -1, tie: 'margin' };
-  return { ...none, winner: values[0] > values[1] ? 0 : 1, tie: null, points: gap, dmg: Math.round(gap * DAMAGE_PER_POINT), weapon: weaponFor(gap) };
+  if (gap < 1e-9) return { ...none, winner: -1, tie: 'exact' };
+  if (exactMargin != null && gap <= exactMargin) return { ...none, winner: -1, tie: 'margin' };
+  return { ...none, winner: ma > mb ? 0 : 1, tie: null, points: round1(gap), dmg: damage(gap), weapon: weaponFor(round1(gap)) };
 }
 
 /** Compares two models on one benchmark (which both must have). Shared by fights and royales. */
@@ -167,17 +172,18 @@ export function compareOn(bench: Benchmark | null, a: Model, b: Model): Omit<Rou
     const pa = a.price!.blended, pb = b.price!.blended;
     const ratio = Math.max(pa, pb) / Math.min(pa, pb);
     const values: [number, number] = [pa, pb];
-    if (ratio < PRICE_TIE_RATIO) return { ...none, values, winner: -1, tie: 'price' };
+    if (ratio <= PRICE_TIE_RATIO + 1e-9) return { ...none, values, winner: -1, tie: 'price' }; // within 15%, inclusive
     const points = Math.round(Math.log2(ratio) * PRICE_POINTS_PER_DOUBLING * 10) / 10;
-    return { ...none, values, winner: pa < pb ? 0 : 1, points, dmg: Math.round(points * DAMAGE_PER_POINT), weapon: weaponFor(points) };
+    return { ...none, values, winner: pa < pb ? 0 : 1, points, dmg: damage(Math.log2(ratio) * PRICE_POINTS_PER_DOUBLING), weapon: weaponFor(points) };
   }
   const sa = a.scores[bench.id], sb = b.scores[bench.id];
   const values: [number, number] = [sa.v, sb.v];
-  const gap = Math.round(Math.abs(sa.v - sb.v) * 10) / 10;
-  const margin = sa.se != null && sb.se != null ? Math.round(TIE_Z * Math.hypot(sa.se, sb.se) * 10) / 10 : null;
-  if (gap < 0.5) return { ...none, values, winner: -1, tie: 'exact', margin };
-  if (margin != null && gap <= margin) return { ...none, values, winner: -1, tie: 'margin', margin };
-  return { ...none, values, winner: sa.v > sb.v ? 0 : 1, margin, points: gap, dmg: Math.round(gap * DAMAGE_PER_POINT), weapon: weaponFor(gap) };
+  const gap = Math.abs(sa.v - sb.v);
+  const exactMargin = sa.se != null && sb.se != null ? TIE_Z * Math.hypot(sa.se, sb.se) : null;
+  const margin = exactMargin == null ? null : round1(exactMargin); // shown as "±4.4"; the call uses the exact value
+  if (gap < 1e-9) return { ...none, values, winner: -1, tie: 'exact', margin }; // only equal scores are dead even
+  if (exactMargin != null && gap <= exactMargin) return { ...none, values, winner: -1, tie: 'margin', margin };
+  return { ...none, values, winner: sa.v > sb.v ? 0 : 1, margin, points: round1(gap), dmg: damage(gap), weapon: weaponFor(round1(gap)) };
 }
 
 /** True when the model has a result for this benchmark. */

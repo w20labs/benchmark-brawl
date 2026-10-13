@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { judgeRound, planFight, START_HP, stylePicker, STYLES, TIE_BIG, TIE_CHEEKY, weaponFor } from '../src/fight.ts';
+import { judgeRound, planFight, START_HP, stylePicker, STYLES, TIE_BIG, TIE_CHEEKY, TIE_Z, weaponFor } from '../src/fight.ts';
 import { brawlNumber, dailyBrawl, featuredFight, inClass, newChallengers, PRESETS, runTournament } from '../src/league.ts';
 import type { BrawlData, Model, Score } from '../src/types.ts';
 
@@ -56,6 +56,34 @@ describe('empty rounds and weapon styles', () => {
     const pick = stylePicker(false);
     const seq = Array.from({ length: 12 }, () => pick(0, 'mg'));
     for (let i = 1; i < seq.length; i++) expect(seq[i]).not.toBe(seq[i - 1]);
+  });
+});
+
+describe('tie boundaries', () => {
+  const one = (sa: Score, sb: Score) => { const a = model('a', { b1: sa }), b = model('b', { b1: sb }); const d = data([a, b]); return judgeRound(d, d.rounds[0], a, b); };
+  it('unequal scores with zero or no published error are a win, not a tie', () => {
+    expect(one(s(80, 0), s(79.6, 0))).toMatchObject({ winner: 0, tie: null, dmg: 1 });
+    expect(one(s(80), s(79.6))).toMatchObject({ winner: 0, tie: null, dmg: 1 });
+  });
+  it('only equal scores are dead even', () => {
+    expect(one(s(80, 0), s(80, 0))).toMatchObject({ winner: -1, tie: 'exact' });
+  });
+  it('compares the gap with the exact margin, not the rounded one', () => {
+    const se = 4.3990103 / TIE_Z / Math.SQRT2; // combined margin 4.399…, shown as ±4.4
+    const r = one(s(95.8, se), s(91.4, se));
+    expect(r.margin).toBe(4.4);
+    expect(r).toMatchObject({ winner: 0, tie: null }); // 4.4 > 4.399…
+  });
+  it('prices exactly 15% apart are a tie, as the rules say', () => {
+    const a = model('a', {}, { price: { input: 1, output: 1, blended: 1, provider: 'x', modelsDevId: 'x' } });
+    const b = model('b', {}, { price: { input: 1.15, output: 1.15, blended: 1.15, provider: 'x', modelsDevId: 'x' } });
+    const d = data([a, b]);
+    expect(judgeRound(d, d.rounds[2], a, b)).toMatchObject({ winner: -1, tie: 'price' });
+  });
+  it('averaged rounds judge on the exact means', () => {
+    const a = model('a', { b1: s(80.04, 0), b2: s(50.04, 0) }), b = model('b', { b1: s(80, 0), b2: s(50, 0) });
+    const d = data([a, b]); d.rounds[0] = { ...d.rounds[0], combine: 'average' };
+    expect(judgeRound(d, d.rounds[0], a, b)).toMatchObject({ winner: 0, values: [65, 65] }); // shown equal, but a is ahead
   });
 });
 

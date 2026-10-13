@@ -14,7 +14,7 @@
 
 | | |
 |---|---|
-| **Today** | Brawl #N: one official fight a day, the same for everyone. Call the winner, watch, share your result, keep your streak (saved only in your browser) |
+| **Today** | Brawl #N: one official fight a day, the same for everyone. Each day's fight is decided once and saved, so it never changes during the day, and a share link (`#today=12`) always replays that brawl. Call the winner, watch, share, keep your streak (saved only in your browser) |
 | **Free play** | Any two of ~70 models released in the last year, with real scores from Epoch AI |
 | **Build your arena** | Pick 3–7 rounds (Coding, Math, Science, Facts, Puzzles, Chess, Price) or a preset like *I write code* or *On a budget*. The fight answers "which model wins *for me*?" |
 | **Price round** | The cheaper model wins; every halving of price is worth a 10-point hit |
@@ -95,8 +95,8 @@ Flagships (Opus, Pro, Max…) are bigger and fast models (Flash, Haiku, Mini…)
 | One benchmark per round | A round lists benchmarks in order (Math: FrontierMath Tier 4, then Tiers 1–3, then OTIS Mock AIME). The fight uses the first one **both** models have, so it always compares like with like |
 | Coding is averaged | Coding averages the gap over **every** coding benchmark both models have (DeepSWE, SWE-bench Verified, MirrorCode, WeirdML v3), with their margins of error combined. One noisy benchmark can't decide it alone. In a battle royale, Coding uses the single benchmark most fighters have |
 | Best reported setting | Each model's best score across its reasoning settings (low, high, max…); the scorecard says which |
-| Damage | 2 × the score gap in percentage points |
-| Ties | A gap inside the combined 95% margin of error is a tie: the crossfire grazes **both** fighters for 3 HP. A graze never knocks anyone out (it stops at 1 HP) |
+| Damage | 2 × the score gap in percentage points, rounded to whole HP (at least 1). Coding's gap is the gap between the exact averages |
+| Ties | Equal scores, or a gap inside the combined 95% margin of error (compared before rounding), is a tie: the crossfire grazes **both** fighters for 3 HP. A graze never knocks anyone out (it stops at 1 HP) |
 | Price | Blended list price, (3 × input + output) / 4 per million tokens. Cheaper wins; within 15% is a tie |
 | Weapons | The size shows the gap. 1–4: boxing glove, pie in the face, water balloon, rubber chicken, boomerang, slingshot, token spray · 5–9: rocket launcher, grenade, plasma ball, bowling ball, drone strike, cannonball · 10–15: meteor shower, lightning storm, missile swarm, piano drop, tornado · 16+: orbital laser, space anvil, black hole, giant foot. **No weapon is used twice in a fight**, by either fighter; in a tie the two fighters throw *different* things at each other, one cheeky and one big (a rubber chicken against a meteor shower), taking turns with the big one |
 | Empty rounds | A round where the two have no benchmark in common is left out, not played empty: two full rounds beat five half-empty ones. The scorecard lists what was skipped |
@@ -118,7 +118,7 @@ The rules live in [`src/fight.ts`](src/fight.ts) and [`src/league.ts`](src/leagu
 
 **Changes we make to Epoch's data:** scores are shown as percentages, each model shows its best reasoning setting, and Coding averages the benchmarks two models share. Third-party hosts' prices are left out on purpose: they often undercut the lab for open-weight models.
 
-The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Scores and prices are never edited by hand; the only hand-entered numbers are Claim check's lab claims, each linked to its source. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
+The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Before publishing, it checks every file's columns and the shape of the price list, treats blank cells as missing (never 0%), and refuses data where a round, the prices or the claims suddenly collapse; the site then keeps yesterday's data. Scores and prices are never edited by hand; the only hand-entered numbers are Claim check's lab claims, each linked to its source. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
 
 **Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). We don't use FrontierCode (its publisher's terms don't allow republishing) or Terminal-Bench (Epoch's copy is the older 2.0 version and stops in March 2026). There is no speed round: we found no free, independent speed data whose terms allow reuse.
 

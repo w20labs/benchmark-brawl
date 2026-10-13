@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-13T06:07:42.829Z",
+ "generatedAt": "2026-10-13T07:40:04.919Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -11,7 +11,8 @@
     "name": "DeepSWE by Datacurve, via Epoch AI",
     "url": "https://deepswe.datacurve.ai/",
     "license": "Original source terms (see their site)"
-   }
+   },
+   "version": "1.1"
   },
   {
    "id": "swebench",
@@ -59,7 +60,8 @@
     "name": "Epoch AI Benchmarking Hub",
     "url": "https://epoch.ai/benchmarks",
     "license": "CC BY 4.0"
-   }
+   },
+   "version": "v2"
   },
   {
    "id": "frontiermath",
@@ -71,7 +73,8 @@
     "name": "Epoch AI Benchmarking Hub",
     "url": "https://epoch.ai/benchmarks",
     "license": "CC BY 4.0"
-   }
+   },
+   "version": "v2"
   },
   {
    "id": "aime",
@@ -300,8 +303,8 @@
     },
     "frontiermath-t4": {
      "v": 97.6,
-     "se": 2.44,
-     "setting": "medium"
+     "se": 2.4,
+     "setting": "high"
     },
     "frontiermath": {
      "v": 93.7,
@@ -1128,7 +1131,7 @@
    "price": {
     "input": 2.5,
     "output": 15,
-    "blended": 5.63,
+    "blended": 5.625,
     "provider": "openai",
     "modelsDevId": "gpt-5.4"
    },
@@ -1892,7 +1895,7 @@
    "price": {
     "input": 0.15,
     "output": 0.6,
-    "blended": 0.26,
+    "blended": 0.2625,
     "provider": "deepseek",
     "modelsDevId": "deepseek-flash"
    },
@@ -1974,9 +1977,9 @@
     },
     "aime": {
      "v": 95.6,
-     "se": 3.11,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fnhim2QCRgpir5cZdqrmUz3.eval"
+     "se": 3.1,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbXgZZgzRE3wXoSRUgrbsVf.eval"
     },
     "gpqa": {
      "v": 94.4,
@@ -2061,7 +2064,7 @@
    "price": {
     "input": 1.5,
     "output": 9,
-    "blended": 3.38,
+    "blended": 3.375,
     "provider": "google",
     "modelsDevId": "gemini-3.5-flash"
    },
@@ -2365,7 +2368,7 @@
    "price": {
     "input": 1.75,
     "output": 14,
-    "blended": 4.81,
+    "blended": 4.8125,
     "provider": "openai",
     "modelsDevId": "gpt-5.2"
    },
@@ -2388,9 +2391,9 @@
     },
     "aime": {
      "v": 96.1,
-     "se": 2.7,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FR393BZjXtkEYju29gs5R8B.eval"
+     "se": 2.6,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLiUMZyNSM8q93KDubWgYCh.eval"
     },
     "gpqa": {
      "v": 91.4,
@@ -2517,7 +2520,7 @@
    "price": {
     "input": 1.25,
     "output": 2.5,
-    "blended": 1.56,
+    "blended": 1.5625,
     "provider": "xai",
     "modelsDevId": "grok-4.20-0309-reasoning"
    },
@@ -2567,7 +2570,7 @@
    "price": {
     "input": 0.15,
     "output": 0.5,
-    "blended": 0.24,
+    "blended": 0.2375,
     "provider": "zai",
     "modelsDevId": "glm-5.3-flash"
    },
@@ -2742,7 +2745,7 @@
    "price": {
     "input": 0.95,
     "output": 4,
-    "blended": 1.71,
+    "blended": 1.7125,
     "provider": "moonshotai",
     "modelsDevId": "kimi-k2.6"
    },
@@ -2923,7 +2926,7 @@
    "price": {
     "input": 0.95,
     "output": 4,
-    "blended": 1.71,
+    "blended": 1.7125,
     "provider": "moonshotai",
     "modelsDevId": "kimi-k2.7-code"
    },
@@ -3033,7 +3036,7 @@
    "price": {
     "input": 1.25,
     "output": 10,
-    "blended": 3.44,
+    "blended": 3.4375,
     "provider": "openai",
     "modelsDevId": "gpt-5.1"
    },
@@ -3085,7 +3088,7 @@
    "price": {
     "input": 1.3,
     "output": 7.8,
-    "blended": 2.93,
+    "blended": 2.925,
     "provider": "alibaba",
     "modelsDevId": "qwen3.6-max-preview"
    },
@@ -3178,13 +3181,7 @@
    "released": "2026-04-24",
    "open": true,
    "eci": 149.13,
-   "price": {
-    "input": 0.66,
-    "output": 1.98,
-    "blended": 0.99,
-    "provider": "deepseek",
-    "modelsDevId": "deepseek-v4-pro"
-   },
+   "price": null,
    "scores": {
     "swebench": {
      "v": 77.6,
@@ -3243,7 +3240,7 @@
    "price": {
     "input": 0.75,
     "output": 4.5,
-    "blended": 1.69,
+    "blended": 1.6875,
     "provider": "openai",
     "modelsDevId": "gpt-5.4-mini"
    },
@@ -3299,7 +3296,7 @@
    "price": {
     "input": 1.87,
     "output": 4.68,
-    "blended": 2.57,
+    "blended": 2.5725,
     "provider": "thinkingmachines",
     "modelsDevId": "thinkingmachines/Inkling"
    },
@@ -3390,7 +3387,7 @@
    "price": {
     "input": 0.5,
     "output": 3,
-    "blended": 1.13,
+    "blended": 1.125,
     "provider": "alibaba",
     "modelsDevId": "qwen3.6-plus"
    },
@@ -3494,7 +3491,7 @@
    "price": {
     "input": 0.3,
     "output": 1.2,
-    "blended": 0.52,
+    "blended": 0.525,
     "provider": "minimax",
     "modelsDevId": "MiniMax-M3"
    },
@@ -3747,7 +3744,7 @@
    "price": {
     "input": 0.2,
     "output": 1.25,
-    "blended": 0.46,
+    "blended": 0.4625,
     "provider": "openai",
     "modelsDevId": "gpt-5.4-nano"
    },
@@ -3857,7 +3854,7 @@
    "price": {
     "input": 0.03,
     "output": 0.13,
-    "blended": 0.06,
+    "blended": 0.055,
     "provider": "alibaba",
     "modelsDevId": "qwen3.7-flash"
    },
@@ -3947,9 +3944,9 @@
    "open": true,
    "eci": 143.93,
    "price": {
-    "input": 0.25,
-    "output": 1.49,
-    "blended": 0.56,
+    "input": 0.248,
+    "output": 1.485,
+    "blended": 0.55725,
     "provider": "alibaba",
     "modelsDevId": "qwen3.6-35b-a3b"
    },
@@ -4034,9 +4031,9 @@
    "open": false,
    "eci": 143.26,
    "price": {
-    "input": 0.19,
-    "output": 1.13,
-    "blended": 0.42,
+    "input": 0.1875,
+    "output": 1.125,
+    "blended": 0.421875,
     "provider": "alibaba",
     "modelsDevId": "qwen3.6-flash"
    },
@@ -4211,6 +4208,7 @@
    "url": "https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf",
    "quote": "Claude Opus 5 scored an average of 68.8% over five trials.",
    "published": "2026-07-24",
+   "labSetting": "max",
    "indep": {
     "v": 73.6,
     "se": 1.98,
@@ -4227,6 +4225,7 @@
    "url": "https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf",
    "quote": "DeepSWE v1.1 68.8 59.0 69.7 72.7",
    "published": "2026-07-24",
+   "labSetting": null,
    "indep": {
     "v": 69.9,
     "se": 1.66,
@@ -4243,6 +4242,7 @@
    "url": "https://www-cdn.anthropic.com/0b4915911bb0d19eca5b5ee635c80fef830a37ea.pdf",
    "quote": "Opus 4.8 achieved 93.6% on GPQA Diamond, averaged over 25 trials.",
    "published": "2026-05-28",
+   "labSetting": "max",
    "indep": {
     "v": 91,
     "se": 1.92,
@@ -4259,6 +4259,7 @@
    "url": "https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf",
    "quote": "DeepSWE v1.1 68.8 59.0 69.7 72.7",
    "published": "2026-07-24",
+   "labSetting": null,
    "indep": {
     "v": 59,
     "se": 0.9,
@@ -4275,6 +4276,7 @@
    "url": "https://www-cdn.anthropic.com/037f06850df7fbe871e206dad004c3db5fd50340.pdf",
    "quote": "SWE-bench Verified (OpenAI) is a 500-problem subset ... Claude Opus 4.7 achieves 87.6%.",
    "published": "2026-04-16",
+   "labSetting": "max",
    "indep": {
     "v": 83.5,
     "se": 1.69,
@@ -4291,6 +4293,7 @@
    "url": "https://www-cdn.anthropic.com/037f06850df7fbe871e206dad004c3db5fd50340.pdf",
    "quote": "Claude Opus 4.7 achieved 94.2% on GPQA Diamond, averaged over 10 trials.",
    "published": "2026-04-16",
+   "labSetting": "max",
    "indep": {
     "v": 86.4,
     "se": 2.45,
@@ -4307,6 +4310,7 @@
    "url": "https://www.anthropic.com/news/claude-opus-4-6",
    "quote": "SWE-bench Verified: Our score was averaged over 25 trials.",
    "published": "2026-02-05",
+   "labSetting": "max",
    "indep": {
     "v": 78.7,
     "se": 1.86,
@@ -4323,6 +4327,7 @@
    "url": "https://www.anthropic.com/news/claude-opus-4-6",
    "quote": "With a prompt modification, we saw a score of 81.42%.",
    "published": "2026-02-05",
+   "labSetting": null,
    "indep": {
     "v": 78.7,
     "se": 1.86,
@@ -4339,6 +4344,7 @@
    "url": "https://www-cdn.anthropic.com/6a5fa276ac68b9aeb0c8b6af5fa36326e0e166dd/Claude%20Opus%204.6%20System%20Card.pdf",
    "quote": "Claude Opus 4.6 achieved a score of 91.31% on GPQA Diamond, averaged over 5 trials",
    "published": "2026-02-05",
+   "labSetting": "max",
    "indep": {
     "v": 88.4,
     "se": 2.28,
@@ -4355,6 +4361,7 @@
    "url": "https://openai.com/index/gpt-6-astra/",
    "quote": "GPT‑6 Astra reaches a new high in the comparison shown at 96.0%.",
    "published": "2026-09-03",
+   "labSetting": null,
    "indep": {
     "v": 95.8,
     "se": 1.37,
@@ -4371,6 +4378,7 @@
    "url": "https://openai.com/index/gpt-6-astra/",
    "quote": "At a lower-cost setting, it also exceeds GPT‑5.6 Sol's best score—94.9% versus 94.6%",
    "published": "2026-09-03",
+   "labSetting": null,
    "indep": {
     "v": 95.8,
     "se": 1.37,
@@ -4387,10 +4395,11 @@
    "url": "https://openai.com/index/gpt-6-astra/",
    "quote": "FrontierMath Tier 4 (v2) 97.6% 83.0%",
    "published": "2026-09-03",
+   "labSetting": null,
    "indep": {
     "v": 97.6,
-    "se": 2.44,
-    "setting": "medium",
+    "se": 2.4,
+    "setting": "high",
     "sameSetting": false
    }
   },
@@ -4403,6 +4412,7 @@
    "url": "https://openai.com/index/gpt-6-astra/",
    "quote": "DeepSWE v1.1 74.1% 72.7%",
    "published": "2026-09-03",
+   "labSetting": "xhigh",
    "indep": {
     "v": 74.1,
     "se": 1.46,
@@ -4419,6 +4429,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "GPQA Diamond 94.6% 92.9% 92.3% 93.6%",
    "published": "2026-07-09",
+   "labSetting": "max",
    "indep": {
     "v": 93.5,
     "se": 1.57,
@@ -4435,6 +4446,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "FrontierMath Tier 1-3 (v2) 89% 84.9% 78.6% 85.3%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 89.1,
     "se": 1.85,
@@ -4451,6 +4463,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "FrontierMath Tier 4 (v2) 83% 68.3% 58.5% 72.5%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 82.9,
     "se": 5.95,
@@ -4467,6 +4480,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "DeepSWE v1.1 72.7% — 69.6% 67.2% 67%",
    "published": "2026-07-09",
+   "labSetting": "max",
    "indep": {
     "v": 72.7,
     "se": 1.44,
@@ -4483,6 +4497,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "GPQA Diamond 94.6% 92.9% 92.3% 93.6%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 93.3,
     "se": 1.54,
@@ -4499,6 +4514,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "FrontierMath Tier 1-3 (v2) 89% 84.9% 78.6% 85.3%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 86,
     "se": 2.06,
@@ -4515,6 +4531,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "FrontierMath Tier 4 (v2) 83% 68.3% 58.5% 72.5%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 70.7,
     "se": 7.19,
@@ -4531,6 +4548,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "DeepSWE v1.1 72.7% — 69.6% 67.2% 67%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 69.6,
     "se": 1.3,
@@ -4547,6 +4565,7 @@
    "url": "https://openai.com/index/introducing-gpt-5-5/",
    "quote": "GPQA Diamond 93.6% 92.8% - 94.4%",
    "published": "2026-04-23",
+   "labSetting": "xhigh",
    "indep": {
     "v": 94,
     "se": 1.55,
@@ -4563,6 +4582,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "FrontierMath Tier 1-3 (v2) 89% 84.9% 78.6% 85.3%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 85.3,
     "se": 2.1,
@@ -4579,6 +4599,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "FrontierMath Tier 4 (v2) 83% 68.3% 58.5% 72.5%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 72.5,
     "se": 7.15,
@@ -4595,6 +4616,7 @@
    "url": "https://openai.com/index/gpt-5-6/",
    "quote": "DeepSWE v1.1 72.7% — 69.6% 67.2% 67%",
    "published": "2026-07-09",
+   "labSetting": null,
    "indep": {
     "v": 67,
     "se": 3.3,
@@ -4611,6 +4633,7 @@
    "url": "https://openai.com/index/introducing-gpt-5-4/",
    "quote": "GPQA Diamond 92.8% 94.4% 92.6% 92.4% 93.2%",
    "published": "2026-03-05",
+   "labSetting": "xhigh",
    "indep": {
     "v": 94.6,
     "se": 1.6,
@@ -4627,6 +4650,7 @@
    "url": "https://openai.com/index/introducing-gpt-5-4/",
    "quote": "GPQA Diamond 92.8% 94.4% 92.6% 92.4% 93.2%",
    "published": "2026-03-05",
+   "labSetting": "xhigh",
    "indep": {
     "v": 93.3,
     "se": 1.8,
@@ -4643,6 +4667,7 @@
    "url": "https://deepmind.google/models/model-cards/gemini-3-8-flash/",
    "quote": "DeepSWE v1.1 ... Long-horizon software engineering ... 73.7%",
    "published": "2026-09-02",
+   "labSetting": "high",
    "indep": {
     "v": 73.8,
     "se": 0.72,
@@ -4659,6 +4684,7 @@
    "url": "https://deepmind.google/models/model-cards/gemini-3-7-flash/",
    "quote": "DeepSWE v1.1 ... 65.3%",
    "published": "2026-08-13",
+   "labSetting": "high",
    "indep": {
     "v": 65.3,
     "se": 0.91,
@@ -4675,6 +4701,7 @@
    "url": "https://deepmind.google/models/model-cards/gemini-3-1-pro/",
    "quote": "GPQA Diamond ... No tools ... 94.3%",
    "published": "2026-02-19",
+   "labSetting": "high",
    "indep": {
     "v": 94.4,
     "se": 1.63,
@@ -4691,6 +4718,7 @@
    "url": "https://deepmind.google/models/model-cards/gemini-3-1-pro/",
    "quote": "SWE-Bench Verified ... Single attempt ... 80.6%",
    "published": "2026-02-19",
+   "labSetting": "high",
    "indep": {
     "v": 75.6,
     "se": 1.95,
@@ -4707,6 +4735,7 @@
    "url": "https://deepmind.google/models/model-cards/gemini-3-6-flash/",
    "quote": "DeepSWE v1.1 ... long-horizon software engineering ... 12%",
    "published": "2026-07-21",
+   "labSetting": null,
    "indep": {
     "v": 11.7,
     "se": 0.76,
@@ -4723,6 +4752,7 @@
    "url": "https://deepmind.google/models/model-cards/gemini-3-6-flash/",
    "quote": "DeepSWE v1.1 ... 37%",
    "published": "2026-07-21",
+   "labSetting": null,
    "indep": {
     "v": 37.4,
     "se": 0.91,
@@ -4739,6 +4769,7 @@
    "url": "https://media.x.ai/v1/website/card-4p6-4cd2dc57.pdf",
    "quote": "Grok 4.6 scores 65.9% at high thinking effort and 67.0% at xhigh thinking effort.",
    "published": "2026-08-12",
+   "labSetting": "high",
    "indep": {
     "v": 65.2,
     "se": 0.78,
@@ -4755,6 +4786,7 @@
    "url": "https://media.x.ai/v1/website/card-4p6-4cd2dc57.pdf",
    "quote": "Grok 4.6 scores 65.9% at high thinking effort and 67.0% at xhigh thinking effort.",
    "published": "2026-08-12",
+   "labSetting": "xhigh",
    "indep": {
     "v": 66.7,
     "se": 1.11,
@@ -4771,6 +4803,7 @@
    "url": "https://x.ai/news/grok-4-7",
    "quote": "DeepSWE v1.1 ... 65.2%",
    "published": "2026-09-21",
+   "labSetting": "high",
    "indep": {
     "v": 65.2,
     "se": 0.78,
@@ -4787,6 +4820,7 @@
    "url": "https://x.ai/news/grok-4-5",
    "quote": "DeepSWE 1.1 (mini-swe-agent harness run by Datacurve)",
    "published": "2026-07-16",
+   "labSetting": "high",
    "indep": {
     "v": 53.8,
     "se": 1.16,
@@ -4803,6 +4837,7 @@
    "url": "https://x.ai/news/grok-4-6",
    "quote": "DeepSWE v1.1 ... 54%",
    "published": "2026-08-12",
+   "labSetting": "high",
    "indep": {
     "v": 53.8,
     "se": 1.16,
@@ -4819,6 +4854,7 @@
    "url": "https://huggingface.co/moonshotai/Kimi-K3",
    "quote": "GPQA Diamond | 93.5",
    "published": "2026-07-16",
+   "labSetting": "max",
    "indep": {
     "v": 93.1,
     "se": 1.49,
@@ -4835,6 +4871,7 @@
    "url": "https://huggingface.co/moonshotai/Kimi-K3",
    "quote": "DeepSWE | 67.5",
    "published": "2026-07-16",
+   "labSetting": "max",
    "indep": {
     "v": 68.5,
     "se": 2.31,
@@ -4851,6 +4888,7 @@
    "url": "https://huggingface.co/moonshotai/Kimi-K3",
    "quote": "under which Kimi K3 attains 67.3 with the mini-SWE-agent harness.",
    "published": "2026-07-16",
+   "labSetting": null,
    "indep": {
     "v": 68.5,
     "se": 2.31,
@@ -4867,6 +4905,7 @@
    "url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
    "quote": "GPQA Diamond ... 92.6 (Qwen3.8-Max column)",
    "published": "2026-08-03",
+   "labSetting": "max",
    "indep": {
     "v": 92.7,
     "se": 1.69,
@@ -4883,6 +4922,7 @@
    "url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
    "quote": "Evaluated with the Claude Code and mini-SWE-agent harnesses, temp=1.0, top_p=0.95",
    "published": "2026-08-03",
+   "labSetting": null,
    "indep": {
     "v": 57.5,
     "se": 1.36,
@@ -4899,6 +4939,7 @@
    "url": "https://huggingface.co/zai-org/GLM-5.3",
    "quote": "We run DeepSWE using the mini-swe-agent harness with temperature=0.95, top_p=1.0, timeout=6h and 400K context.",
    "published": null,
+   "labSetting": null,
    "indep": {
     "v": 69,
     "se": 1.54,
@@ -4915,12 +4956,225 @@
    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
    "quote": "GPQA Diamond (Pass@1) ... 90.9",
    "published": "2026-09-10",
+   "labSetting": "max",
    "indep": {
     "v": 89.8,
     "se": 1.73,
     "setting": "max",
     "sameSetting": true
    }
+  }
+ ],
+ "daily": [
+  {
+   "no": 1,
+   "day": "2026-10-13",
+   "a": "claudefable5",
+   "b": "gpt56sol",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 2,
+   "day": "2026-10-14",
+   "a": "musespark13",
+   "b": "gpt6luna",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 3,
+   "day": "2026-10-15",
+   "a": "deepseekv4pro0813",
+   "b": "glm53",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 4,
+   "day": "2026-10-16",
+   "a": "gemini31pro",
+   "b": "qwen38max0902",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 5,
+   "day": "2026-10-17",
+   "a": "qwen38max",
+   "b": "claudeopus46",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 6,
+   "day": "2026-10-18",
+   "a": "deepseekv41flash",
+   "b": "gpt56luna",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 7,
+   "day": "2026-10-19",
+   "a": "claudeopus48",
+   "b": "gpt56sol",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 8,
+   "day": "2026-10-20",
+   "a": "claudefable5",
+   "b": "gpt61sol",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 9,
+   "day": "2026-10-21",
+   "a": "gpt55",
+   "b": "claudesonnet55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 10,
+   "day": "2026-10-22",
+   "a": "glm53",
+   "b": "qwen38max",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 11,
+   "day": "2026-10-23",
+   "a": "gpt56luna",
+   "b": "claudeopus48",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 12,
+   "day": "2026-10-24",
+   "a": "qwen38max",
+   "b": "gpt54",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 13,
+   "day": "2026-10-25",
+   "a": "gemini37flash",
+   "b": "kimik3",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 14,
+   "day": "2026-10-26",
+   "a": "kimik3",
+   "b": "qwen38max",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
+  },
+  {
+   "no": 15,
+   "day": "2026-10-27",
+   "a": "qwen38max0902",
+   "b": "gpt56luna",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false
   }
  ]
 }

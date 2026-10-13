@@ -12,6 +12,8 @@ export type Benchmark = {
   source: Source;
   /** True for Epoch AI's own runs; false for results Epoch republishes from elsewhere. */
   epochRun: boolean;
+  /** The benchmark version our results are for, when the source names one (claims must match it). */
+  version?: string;
 };
 
 /** A round category. A fight uses the first benchmark in `benches` that both fighters have a result for. */
@@ -70,9 +72,14 @@ export type Claim = {
   url: string;
   quote: string;
   published: string | null;
+  /** The reasoning setting the lab names, if any. */
+  labSetting: string | null;
   /** The independent result: at the same reasoning setting when the lab names one, else the best. */
   indep: { v: number; se: number | null; setting: string; sameSetting: boolean };
 };
+
+/** One day's official fight. Written once and never changed, so everyone that day plays the same thing. */
+export type DailyEntry = { no: number; day: string; a: string; b: string; rounds: string[]; featured: boolean };
 
 export type BrawlData = {
   generatedAt: string;
@@ -83,4 +90,6 @@ export type BrawlData = {
   models: Model[];
   /** Claim check: labs' own published numbers next to independent results. */
   claims: Claim[];
+  /** The daily brawl schedule: past days are kept as they were, new days appended. */
+  daily?: DailyEntry[];
 };

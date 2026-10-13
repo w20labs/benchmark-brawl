@@ -115,3 +115,85 @@ test('the daily brawl: make a call, watch, get a verdict, share, and come back t
   await expect(page.locator('body')).not.toContainText(/\bnull\b|\bundefined\b|NaN/);
   expect(errors).toEqual([]);
 });
+
+// ---------- regressions from the code review ----------
+test('Tab then Enter picks the focused fighter, not the first one', async ({ page }) => {
+  await page.goto(URL);
+  await page.click('#tabs [data-tab="play"]');
+  const fourth = page.locator('.fighter').nth(3);
+  await fourth.focus();
+  await page.keyboard.press('Enter');
+  await expect(fourth).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.fighter').first()).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('a royale whose fighters share no benchmark declines to start instead of crashing', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto(`${URL}#m=royale&f=claudeopus55,qwen38max0902,gemini3pro&r=coding,puzzles,price`);
+  await page.click('#fight');
+  await expect(page.locator('#toast')).toContainText('share a benchmark');
+  await expect(page.locator('#arena')).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('the tournament follows a change of weight class', async ({ page }) => {
+  await page.goto(URL);
+  await page.click('#tabs [data-tab="tournament"]');
+  await page.click('#tabs [data-tab="play"]');
+  await page.getByRole('button', { name: /^Open weights/ }).click();
+  await page.click('#tabs [data-tab="tournament"]');
+  const topOpen = [...data.models].filter((m) => m.open).sort((a, b) => (b.eci ?? -1) - (a.eci ?? -1))[0];
+  const topClosed = [...data.models].sort((a, b) => (b.eci ?? -1) - (a.eci ?? -1))[0];
+  await expect(page.locator('#bracket')).toContainText(topOpen.name);
+  await expect(page.locator('#bracket')).not.toContainText(topClosed.name);
+});
+
+test('bad links fall back safely', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto(`${URL}#r=coding,coding,coding`);
+  await page.click('#tabs [data-tab="play"]');
+  expect(await page.locator('#roundChips .chip[aria-pressed="true"]').count()).toBeGreaterThanOrEqual(3);
+  await page.goto(`${URL}#claims=%`);
+  await page.reload();
+  await expect(page.locator('#claims')).toBeVisible();
+  await expect(page.locator('#claimRows tr')).toHaveCount(data.claims.length);
+  expect(errors).toEqual([]);
+});
+
+test.describe('phones', () => {
+  test.use({ viewport: { width: 320, height: 700 } });
+  test('nothing scrolls sideways, and sources stay visible', async ({ page }) => {
+    await page.goto(`${URL}#a=${first.id}&b=${second.id}&r=coding,math,science,facts,puzzles`);
+    const width = () => page.evaluate(() => document.documentElement.scrollWidth);
+    expect(await width()).toBeLessThanOrEqual(321);
+    await page.click('#fight');
+    await page.click('#skip');
+    await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
+    await page.click('#numbers summary');
+    expect(await width()).toBeLessThanOrEqual(321);
+    await expect(page.locator('#rows a').first()).toBeVisible();
+    await page.click('#tabs [data-tab="claims"]');
+    await expect(page.locator('#claimRows a').first()).toBeVisible();
+  });
+});
+
+test('saving a clip of the daily brawl keeps the daily fight, not the free-play rounds', async ({ page, browserName }, info) => {
+  test.skip(info.project.name !== 'desktop', 'recording runs once, on desktop');
+  test.setTimeout(120_000);
+  await page.goto(URL);
+  await page.click('#tabs [data-tab="play"]');
+  await page.click('#builderSummary');
+  await page.getByRole('button', { name: 'On a budget' }).click();
+  await page.click('#tabs [data-tab="today"]');
+  await page.click('#callA');
+  await page.click('#todayFight');
+  await page.click('#skip');
+  await expect(page.locator('#result')).toBeVisible({ timeout: 10_000 });
+  const verdict = await page.locator('#verdict').textContent();
+  const download = page.waitForEvent('download', { timeout: 100_000 });
+  await page.click('#clip');
+  await download;
+  await expect(page.locator('#verdict')).toHaveText(verdict!);
+  await expect(page.locator('#share')).toContainText(/Benchmark Brawl #\d+/);
+  expect(browserName).toBe('chromium');
+});
