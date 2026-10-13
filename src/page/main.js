@@ -268,11 +268,11 @@ addEventListener('keydown', (e) => {
 });
 function renderMode() {
   $('selectTitle').textContent = mode === 'royale' ? `2 · Choose ${ROYALE_MIN} to ${ROYALE_MAX} fighters` : '2 · Choose two fighters';
-  $('modeChips').replaceChildren(h('span', { class: 'fine' }, 'Mode:'),
+  $('modeChips').replaceChildren(...[h('span', { class: 'fine' }, 'Mode:'),
     ...[['1v1', '🥊 1 v 1'], ['royale', `👑 Battle royale (${ROYALE_MIN}–${ROYALE_MAX})`]].map(([id, label]) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(mode === id),
       onclick: () => { if (mode === id) return; mode = id; if (mode === '1v1') picks = picks.slice(0, 2); renderAll(); sfx.blip(true); } }, label)),
     mode === 'royale' ? h('button', { type: 'button', class: 'btn small', id: 'fillTop', title: 'The 8 most capable in this weight class, by Epoch Capabilities Index',
-      onclick: () => { picks = DATA.models.filter((m) => inClass(m, classId)).sort((a, b) => (b.eci ?? -1) - (a.eci ?? -1)).slice(0, ROYALE_MAX).map((m) => m.id); renderAll(); sfx.blip(true); } }, 'Fill with the top 8') : null);
+      onclick: () => { picks = DATA.models.filter((m) => inClass(m, classId)).sort((a, b) => (b.eci ?? -1) - (a.eci ?? -1)).slice(0, ROYALE_MAX).map((m) => m.id); renderAll(); sfx.blip(true); } }, 'Fill with the top 8') : null].filter(Boolean)); // replaceChildren would print null
 }
 function renderAll() { renderBuilder(); renderMode(); renderClassChips(); renderRoster(); writeHash(); }
 

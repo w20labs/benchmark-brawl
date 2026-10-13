@@ -19,6 +19,7 @@ test('home shows the arena builder, weight classes and the roster', async ({ pag
   await page.goto(URL);
   await expect(page.locator('.fighter')).toHaveCount(data.models.length);
   await expect(page.locator('#roundChips .chip[aria-pressed="true"]')).toHaveCount(data.defaultRounds.length);
+  await expect(page.locator('body')).not.toContainText(/\bnull\b|\bundefined\b/);
   await page.getByRole('button', { name: /^Open weights/ }).click();
   await expect(page.locator('.fighter')).toHaveCount(data.models.filter((m) => m.open).length);
   expect(errors).toEqual([]);
@@ -65,11 +66,13 @@ test('a battle royale ranks every fighter and shares a replay link', async ({ pa
   await page.getByRole('button', { name: /Battle royale/ }).click();
   await page.click('#fillTop');
   await expect(page.locator('#vsLine')).toContainText('8/8');
+  await expect(page.locator('body')).not.toContainText(/\bnull\b|\bundefined\b/);
   await page.click('#fight');
   await expect(page.locator('#board .bf')).toHaveCount(8);
   await page.click('#skip');
   await expect(page.locator('#royaleResult')).toBeVisible({ timeout: 10_000 });
   await expect(page.locator('#rrows tr')).toHaveCount(8);
+  await expect(page.locator('#royaleResult')).not.toContainText(/\bnull\b|\bundefined\b/);
   await expect(page.locator('#rshare')).toContainText('#m=royale&f=');
   expect(errors).toEqual([]);
 });
