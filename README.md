@@ -1,130 +1,118 @@
 <p align="center">
-  <img src="assets/og.png" alt="Benchmark Brawl: two robots fight, an orbital laser hits one of them" width="100%">
+  <a href="https://w20labs.github.io/benchmark-brawl/"><img src="assets/og.png" alt="Benchmark Brawl: one robot throws a rubber chicken while the other calls down a meteor shower" width="100%"></a>
 </p>
 
 <p align="center">
+  <a href="https://w20labs.github.io/benchmark-brawl/"><img src="https://img.shields.io/badge/▶_play-benchmark_brawl-FF6B6B" alt="Play"></a>
   <a href="https://github.com/w20labs/benchmark-brawl/actions/workflows/ci.yml"><img src="https://github.com/w20labs/benchmark-brawl/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code-MIT-2EC4A6" alt="MIT license"></a>
-  <img src="https://img.shields.io/badge/scores-Epoch%20AI%20(CC%20BY)-F2B544" alt="Scores from Epoch AI">
+  <a href="https://epoch.ai/benchmarks"><img src="https://img.shields.io/badge/scores-Epoch%20AI%20(CC%20BY)-F2B544" alt="Scores from Epoch AI"></a>
 </p>
 
-**Benchmark Brawl turns AI benchmark tables into fights.** Pick two real models. Every round is a benchmark: the higher score lands the hit, and the bigger the gap, the bigger the weapon, from a machine gun up to an orbital laser. Scores are real, every number links to its source, and a round inside the margin of error is a tie.
+**Real AI models fight with real benchmark scores.** Every round is a benchmark: the higher score lands the hit, and the bigger the gap, the bigger the weapon, from a rubber chicken to an orbital laser. Every number links to its source, and a gap inside the margin of error is a tie.
 
-## What you can do
+### ▶ [Play Benchmark Brawl](https://w20labs.github.io/benchmark-brawl/)
+
+## What's in it
 
 | | |
 |---|---|
-| **Today** | Brawl #N: one official fight a day, the same for everyone. Each day's fight is decided once and saved with a snapshot of both fighters' scores, so later refreshes can't change its result, and a share link (`#today=12`) replays that brawl from its saved scores for 30 days (under the game's current rules). Call the winner, watch, share, keep your streak (saved only in your browser) |
-| **Free play** | Any two of ~70 models released in the last year, with real scores from Epoch AI |
-| **Build your arena** | Pick 3–7 rounds (Coding, Math, Science, Facts, Puzzles, Chess, Price) or a preset like *I write code* or *On a budget*. The fight answers "which model wins *for me*?" |
-| **Price round** | The cheaper model wins; every halving of price is worth a 10-point hit |
-| **Weight classes** | Closed vs open weights, and budget / mid / premium by price |
-| **Battle royale** | 3 to 8 models in one arena. Each round the best result fires at everyone else; last one standing wins |
-| **Tournament** | The top 8 of a weight class, seeded by Epoch Capabilities Index, fought out as a bracket |
-| **New challenger** | Every third daily brawl puts the newest model (last 30 days) against the best model from another lab |
-| **Claim check** | What each lab published about its own model, next to an independent test of the same benchmark: matches, lab higher, or independent higher |
-| **Arenas** | Every fight has its own arena, fixed by the matchup: Neon City, Server Farm, Moon Base, Synthwave, Dojo, Volcano, Deep Sea or Snow Peak |
-| **Share** | A Wordle-style result line, a 4:5 **share card** image, and a **fight clip** (MP4) recorded in your browser |
+| **Today** | One official fight a day, the same for everyone. Call the winner, keep a streak, share your result |
+| **Free play** | Any two of ~70 models from the last year, over 3–7 rounds you pick, or a preset like *I write code* |
+| **Battle royale** | Up to eight models in one arena. Each round, the best result fires at everyone else |
+| **Tournament** | The top eight of a weight class (open weights, budget, premium…) fought out as a bracket |
+| **Claim check** | What labs publish about their own models, next to independent tests of the same benchmark |
+| **Share** | A Wordle-style result line, a share card, or an MP4 fight clip recorded in your browser |
 
 <table>
   <tr>
-    <td width="50%"><img src="assets/readme/arena-builder.png" alt="Build your arena: presets and round chips"></td>
-    <td width="50%"><img src="assets/readme/bracket.png" alt="A tournament bracket"></td>
+    <td width="50%"><img src="assets/readme/fight.png" alt="A round: a rubber chicken against a meteor shower"></td>
+    <td width="50%"><img src="assets/readme/today.png" alt="Today's brawl: make your call, then fight"></td>
   </tr>
-  <tr><td colspan="2"><img src="assets/readme/scorecard.png" alt="The scorecard after a fight: every score with its benchmark, source, setting and margin of error"></td></tr>
+  <tr>
+    <td width="50%"><img src="assets/readme/royale.png" alt="A battle royale with a robot from each of eight labs"></td>
+    <td width="50%"><img src="assets/readme/claims.png" alt="Claim check: lab numbers next to independent results"></td>
+  </tr>
 </table>
+
+## How a fight works
+
+| | |
+|---|---|
+| **A round** | One benchmark: the first one in the round that both models have, so it's always like for like. Coding averages every coding benchmark the two share |
+| **A score** | Each model's best result across its reasoning settings; the scorecard says which |
+| **A hit** | 2 × the score gap, in whole HP |
+| **A tie** | Equal scores, or a gap inside the combined 95% margin of error. Both fighters are grazed for 3 HP (never a knockout) |
+| **Price** | Blended list price, (3 × input + output) / 4 per million tokens. Cheaper wins; within 15% is a tie |
+| **The winner** | A K.O. at 0 HP, or else the most HP **by decision**: unanimous if it also won more rounds, split if not |
+
+A round where the two share no benchmark is left out, rather than played empty. In a **battle royale**, each round uses the benchmark most fighters have; anyone inside the leader's margin dodges, and anyone without a result sits out. A **tournament** seeds the top eight by Epoch Capabilities Index (1 v 8, 4 v 5, 2 v 7, 3 v 6), and a draw goes to the higher seed.
+
+**Weapons** show the size of the gap. No weapon is used twice in a fight, and in a tie the two throw different things: one cheeky, one big.
+
+| Gap | Weapons |
+|---|---|
+| 1–4 | boxing glove, pie in the face, water balloon, rubber chicken, boomerang, slingshot, token spray |
+| 5–9 | rocket launcher, grenade, plasma ball, bowling ball, drone strike, cannonball |
+| 10–15 | meteor shower, lightning storm, missile swarm, piano drop, tornado |
+| 16+ | orbital laser, space anvil, black hole, giant foot |
+
+<img src="assets/readme/scorecard.png" alt="The scorecard: every score with its benchmark, source, setting and margin of error">
+
+The rules live in [`src/fight.ts`](src/fight.ts), [`src/royale.ts`](src/royale.ts) and [`src/league.ts`](src/league.ts), and are covered by tests.
+
+## The cast
+
+Each lab has its own robot, in colours close to its brand (no logos), and a signature move that plays on its biggest hit. Moves are just for fun: the damage is always what the scores say.
+
+| Lab | Robot | Signature move |
+|---|---|---|
+| Anthropic | Rides one wheel, wears reading glasses, carries a scroll | **I apologize for the confusion**, then throws the apology |
+| OpenAI | A sleek hovering capsule | **Em Dash Barrage**: it rains em dashes |
+| Google DeepMind | Twin bots, side by side | **Two Million Tokens**: a context window opens and a library falls out |
+| xAI | A rocket on mech legs, with shades and a cape | **Aura Farming**: strikes a pose; on a K.O., RATIO |
+| DeepSeek | A whale on robot legs | **Clearance Sale**: a giant 95% OFF tag, coins everywhere |
+| Alibaba (Qwen) | A walking stack of delivery boxes | **Release Day**: fourteen model sizes stampede across |
+| Moonshot (Kimi) | A lunar rover with a crescent moon | **Moonshot**: launches the moon |
+| Z.ai | A masked egg on a pogo spring | **Zorro Slash**: carves a giant Z |
+| MiniMax | A giant head on tiny legs | **Mini → MAX**: a giant version of itself stomps down |
+| Nvidia | A walking graphics card | **GPU Drop**: a graphics card falls from the sky, sold out |
+| Thinking Machines | A brain in a jar on a tripod | **Deep Thought**: thinks for 7.5 million years, throws 42 |
+| Meta | A four-legged llama mech | **Llama Spit** |
+| Mistral | A swirling wind cloud with a scarf | **Mistral**: the cold north wind |
+| Anyone else | The plain robot | **Hallucination**: summons an opponent that doesn't exist |
+
+Flagships are bigger and fast models smaller. Each fight takes place in one of eight arenas, picked by the matchup: Neon City, Server Farm, Moon Base, Synthwave, Dojo, Volcano, Deep Sea or Snow Peak. All of this is affectionate fun, not a claim about anyone.
 
 ## Claim check
 
-Labs publish benchmark numbers for their own models. Claim check puts each one next to an independent result for the **same benchmark and version** (Epoch AI's runs, or DeepSWE's own leaderboard, where every model runs in the same agent). If the gap is inside the independent result's margin of error, it's a match.
+Labs publish benchmark numbers for their own models. Claim check puts each one next to an independent result for the **same benchmark and version**, and calls it a match if the gap is inside the independent result's margin of error.
 
-- The lab numbers are in [`data/claims.json`](data/claims.json), copied by hand from each lab's own announcement, model card or system card, with a link and a short quote. We re-checked a sample against the source pages.
-- When a lab names its effort setting, the independent result at that same setting is used, otherwise the best one.
-- A gap is not an accusation. Labs often use their own agent setup, more attempts or a different prompt, and the page says so.
-- Claims on benchmarks we have no matching independent result for (for example newer Terminal-Bench versions) are left out.
-
-## Signature moves
-
-Every lab has a signature move. It plays in place of the weapon on a model's **biggest hit** of the fight. It's just for fun: the damage is always exactly what the scores say.
-
-| Lab | Move | |
-|---|---|---|
-| xAI | **Aura Farming** | Strikes a pose, shades drop, golden aura. On a K.O., RATIO |
-| Anthropic | **I apologize for the confusion** | Apologizes politely, then throws the apology |
-| OpenAI | **Em Dash Barrage** | It rains em dashes. Something about "delve" |
-| Google DeepMind | **Two Million Tokens** | Opens a huge context window; the whole library falls out |
-| DeepSeek | **Clearance Sale** | A giant 95% OFF tag, and coins everywhere |
-| Alibaba | **Release Day** | Fourteen model sizes stampede across the arena |
-| Moonshot | **Moonshot** | Launches the moon |
-| Z.ai | **Zorro Slash** | Carves a giant Z |
-| Thinking Machines | **Deep Thought** | Thinks for 7.5 million years, then throws 42 |
-| MiniMax | **Mini → MAX** | A giant version of itself stomps down |
-| Nvidia | **GPU Drop** | A graphics card falls from the sky. It's sold out |
-| Meta | **Llama Spit** | A llama pops up and spits |
-| Mistral | **Mistral** | The cold north wind, literally (ready for when Mistral models join the roster) |
-| Everyone else | **Hallucination** | Confidently summons an opponent that doesn't exist |
-
-Moves live in [`src/page/specials.js`](src/page/specials.js). They're affectionate jokes about each lab, not claims about anyone.
-
-## Lab characters
-
-Every lab has its own body, in colours close to its brand (no logos); models from the same lab share it, and no two labs do.
-
-| Lab | Body |
-|---|---|
-| Anthropic | A thoughtful robot on one wheel, with reading glasses and a scroll |
-| OpenAI | A sleek capsule that hovers, no legs |
-| Google DeepMind | Twin bots (Gemini) fighting side by side |
-| xAI | A rocket on mech legs, shades and a cape |
-| DeepSeek | A whale with robot legs, spouting |
-| Alibaba (Qwen) | A walking stack of delivery boxes |
-| Moonshot (Kimi) | A lunar rover with a crescent moon on its mast |
-| Z.ai | A masked egg on a pogo spring, with a Zorro hat |
-| MiniMax | A giant head on tiny legs |
-| Nvidia | A walking graphics card, fans spinning |
-| Thinking Machines | A brain in a jar, on a tripod |
-| Meta | A four-legged llama mech |
-| Mistral | A swirling wind cloud with a scarf |
-
-Flagships (Opus, Pro, Max…) are bigger and fast models (Flash, Haiku, Mini…) smaller; two models from the same lab get different shades.
-
-## The rules
-
-| Rule | Detail |
-|---|---|
-| One benchmark per round | A round lists benchmarks in order (Math: FrontierMath Tier 4, then Tiers 1–3, then OTIS Mock AIME). The fight uses the first one **both** models have, so it always compares like with like |
-| Coding is averaged | Coding averages the gap over **every** coding benchmark both models have (DeepSWE, SWE-bench Verified, MirrorCode, WeirdML v3), with their margins of error combined. One noisy benchmark can't decide it alone. In a battle royale, Coding uses the single benchmark most fighters have |
-| Best reported setting | Each model's best score across its reasoning settings (low, high, max…); the scorecard says which |
-| Damage | 2 × the score gap in percentage points, rounded to whole HP (at least 1). Coding's gap is the gap between the exact averages |
-| Ties | Equal scores, or a gap inside the combined 95% margin of error (compared before rounding), is a tie: the crossfire grazes **both** fighters for 3 HP. A graze never knocks anyone out (it stops at 1 HP) |
-| Price | Blended list price, (3 × input + output) / 4 per million tokens. Cheaper wins; within 15% is a tie |
-| Weapons | The size shows the gap. 1–4: boxing glove, pie in the face, water balloon, rubber chicken, boomerang, slingshot, token spray · 5–9: rocket launcher, grenade, plasma ball, bowling ball, drone strike, cannonball · 10–15: meteor shower, lightning storm, missile swarm, piano drop, tornado · 16+: orbital laser, space anvil, black hole, giant foot. **No weapon is used twice in a fight**, by either fighter; in a tie the two fighters throw *different* things at each other, one cheeky and one big (a rubber chicken against a meteor shower), taking turns with the big one |
-| Empty rounds | A round where the two have no benchmark in common is left out, not played empty: two full rounds beat five half-empty ones. The scorecard lists what was skipped |
-| Winner | K.O. at 0 HP. Otherwise the most HP wins **by decision**: *unanimous* if it also won more rounds, *split* if it won fewer or the same (its wins were bigger) |
-| Battle royale | Each round uses the round's benchmark most fighters have. The best result fires at everyone: 2 × their gap to it, a dodge inside the margin. A fighter without that result sits the round out. 0 HP is out; the last one standing, or the most HP, wins |
-| Tournament | Top 8 by Epoch Capabilities Index; 1 v 8, 4 v 5, 2 v 7, 3 v 6; a draw goes to the higher seed |
-
-The rules live in [`src/fight.ts`](src/fight.ts) and [`src/league.ts`](src/league.ts) and are covered by tests.
+- Lab numbers are in [`data/claims.json`](data/claims.json), copied by hand from each lab's announcement, model card or system card, each with a link and a short quote.
+- When a lab names its effort setting, the independent result at that setting is used. When it isn't available, the row says the settings differ.
+- A gap is not an accusation: labs often test with their own agent setup, more attempts or a different prompt.
 
 ## Where the numbers come from
 
 | Data | Source | Terms |
 |---|---|---|
-| Coding (SWE-bench Verified, MirrorCode), Math, Science, Facts, Puzzles, Chess, Capabilities Index, model metadata | [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks), Epoch's own runs | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
-| Coding: DeepSWE | [Datacurve](https://deepswe.datacurve.ai/), as republished by Epoch AI | Open-source benchmark ([Apache-2.0](https://github.com/datacurve-ai/deep-swe)); results credited to Datacurve |
-| Coding: WeirdML v3 | [Håvard Tveit Ihle](https://htihle.github.io/weirdml.html), as republished by Epoch AI. Each model runs in its maker's own coding agent | Credited to the author; no separate license published |
-| Claim check: lab claims | Each lab's own announcement, model card or system card (linked per claim) | Short factual quotes, credited |
+| Math, Science, Facts, Puzzles, Chess; Coding (SWE-bench Verified, MirrorCode); Capabilities Index | [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks), Epoch's own runs | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| Coding: DeepSWE | [Datacurve](https://deepswe.datacurve.ai/), as republished by Epoch AI | Open-source benchmark ([Apache-2.0](https://github.com/datacurve-ai/deep-swe)); results credited |
+| Coding: WeirdML v3 | [Håvard Tveit Ihle](https://htihle.github.io/weirdml.html), as republished by Epoch AI | Credited to the author |
 | Prices | Each lab's own API list price, via [models.dev](https://models.dev) | [MIT](https://github.com/sst/models.dev) |
+| Lab claims | Each lab's own pages, linked per claim | Short factual quotes, credited |
 
-**Changes we make to Epoch's data:** scores are shown as percentages, each model shows its best reasoning setting, and Coding averages the benchmarks two models share. Third-party hosts' prices are left out on purpose: they often undercut the lab for open-weight models.
+**What we change:** scores are shown as percentages, each model shows its best reasoning setting, and Coding averages the benchmarks two models share. Third-party hosts' prices are left out, as they often undercut the lab's own price for open-weight models.
 
-The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Before publishing, it checks every file's columns and the shape of the price list, treats blank cells as missing (never 0%), and refuses data where a round, the prices or the claims suddenly collapse; the site then keeps the last good data, which the deploy workflow saves (with the daily schedule) on the `data-state` branch. Malformed numbers (a score that isn't a number, a reversed confidence interval, a price given as text) are rejected or read correctly, never guessed. Scores and prices are never edited by hand; the only hand-entered numbers are Claim check's lab claims, each linked to its source. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
+**How it stays honest:**
 
-**Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). We don't use FrontierCode (its publisher's terms don't allow republishing) or Terminal-Bench (Epoch's copy is the older 2.0 version and stops in March 2026). There is no speed round: we found no free, independent speed data whose terms allow reuse.
+- The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Scores and prices are never edited by hand.
+- The build checks the sources' shape and values. If anything looks wrong (a missing column, a score that isn't a number, a round suddenly empty), it refuses, and the site keeps the last good data.
+- Each daily brawl is saved with a snapshot of both fighters, so a later refresh can't change its result. A `#today=12` link replays it for 30 days, under the current rules.
 
-Visits to the site are counted anonymously with [GoatCounter](https://www.goatcounter.com/) (no cookies, no personal data).
+**Honest limits:** benchmarks measure narrow skills, and the newest models aren't on every benchmark yet. There's no speed round: we found no free, independent speed data that allows reuse. We don't use FrontierCode (its terms don't allow republishing) or Terminal-Bench (Epoch's copy is an older version).
 
-Benchmark Brawl is independent and not affiliated with any AI lab, Epoch AI, Datacurve, WeirdML or models.dev.
+Spot a number that doesn't match its source? Please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
 
 ## Run it locally
 
@@ -139,9 +127,9 @@ open _site/index.html
 
 | Command | What it does |
 |---|---|
-| `npm run typecheck` / `npm test` | Type-check and unit tests (rules, league, data sanity) |
-| `npm run test:e2e` | Browser tests on desktop and phone sizes (`npx playwright install chromium` once) |
-| `node scripts/make-og.mjs` | Regenerates the link preview image from a real fight |
+| `npm run typecheck` · `npm test` | Type checks and unit tests: the rules, the data checks, the build on synthetic sources |
+| `npm run test:e2e` | Browser tests at desktop and phone sizes (`npx playwright install chromium` once) |
+| `npx tsx scripts/make-images.ts` | Regenerates the link preview and these screenshots from the built page |
 
 ## Contributing
 
@@ -149,4 +137,6 @@ Bug reports, wrong-number reports and ideas are welcome as [issues](https://gith
 
 ## License
 
-Code: [MIT](LICENSE). Scores: Epoch AI, CC BY 4.0, plus the terms of the original sources listed above.
+Code: [MIT](LICENSE). Scores: Epoch AI, CC BY 4.0, plus the terms of the original sources above.
+
+Benchmark Brawl is independent and not affiliated with any AI lab, Epoch AI, Datacurve, WeirdML or models.dev. Visits are counted anonymously with [GoatCounter](https://www.goatcounter.com/) (no cookies).
