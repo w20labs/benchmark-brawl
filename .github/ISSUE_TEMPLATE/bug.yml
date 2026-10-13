@@ -1,0 +1,11 @@
+name: Bug report
+description: Something doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes: { label: What happened, description: "What you did, what you expected, what happened instead" }
+    validations: { required: true }
+  - type: input
+    id: device
+    attributes: { label: Browser and device }

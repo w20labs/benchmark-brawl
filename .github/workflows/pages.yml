@@ -1,0 +1,41 @@
+name: Deploy Benchmark Brawl
+# Every push to main, and every morning with fresh scores and prices.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://w20labs.github.io/benchmark-brawl/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci
+      # Fresh data on every deploy; if a source is down, the committed data/brawl.json is used.
+      - name: Refresh scores and prices
+        run: npm run data || (echo "::warning::Data refresh failed; deploying the committed data" && git checkout -- data/brawl.json)
+      - run: npm test
+      - run: npm run build -- "$SITE_URL"
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

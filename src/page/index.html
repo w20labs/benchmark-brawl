@@ -1,0 +1,249 @@
+<title>Benchmark Brawl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0C14; --panel: #121626; --sunken: #0C0F1B; --line: #262D45; --text: #F3F4F8; --muted: #9AA3B8;
+  --lime: #D4F25C; --pink: #F28DB2; --sky: #7FD3F0; --amber: #F2B544; --red: #FF6B6B;
+  --arcade: 'Press Start 2P', ui-monospace, monospace; --ui: Inter, system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 var(--ui); }
+a { color: var(--sky); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 18px 16px 40px; display: grid; gap: 18px; }
+header { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+h1 { margin: 0; font: 400 26px/1.2 var(--arcade); }
+h1 span { color: var(--red); }
+h2 { margin: 0; font: 400 12px var(--arcade); color: var(--muted); }
+.pitch { margin: 6px 0 0; color: var(--muted); max-width: 64ch; }
+.updated { font: 600 11px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; white-space: nowrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; padding: 6px 14px; border-radius: 9px; background: var(--panel); border: 1px solid var(--line); color: var(--text); font: 600 14px var(--ui); cursor: pointer; text-decoration: none; }
+.btn:hover { border-color: #3a4364; }
+.btn.go { background: var(--red); border-color: var(--red); color: #1a0606; font-family: var(--arcade); font-size: 12px; padding: 10px 18px; }
+.btn.go:disabled { opacity: .35; cursor: not-allowed; }
+.btn.small { min-height: 30px; padding: 3px 11px; font-size: 12.5px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font: 600 13px var(--ui); cursor: pointer; }
+.chip[aria-pressed="true"] { color: #12160a; background: var(--lime); border-color: var(--lime); }
+.chip.round[aria-pressed="true"] { background: var(--amber); border-color: var(--amber); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 12px; }
+.fine { font-size: 12.5px; color: var(--muted); margin: 0; }
+[hidden] { display: none !important; }
+
+/* featured fight */
+.featured { position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr auto 1fr auto; gap: 14px; align-items: center; padding: 16px; border-radius: 14px; border: 2px solid var(--red); background: linear-gradient(90deg, rgba(255,107,107,.14), rgba(242,181,68,.08)); }
+.featured .tag { font: 400 10px var(--arcade); color: var(--red); }
+.featured .nm { font: 400 13px/1.4 var(--arcade); }
+.featured .sub { font: 500 11.5px var(--mono); color: var(--muted); }
+.featured .vs { font: 400 18px var(--arcade); color: var(--amber); }
+.featured .r { text-align: right; }
+
+/* roster */
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.toolbar .chips { flex-wrap: nowrap; }
+.search { min-height: 36px; padding: 6px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--sunken); color: var(--text); font: 14px var(--ui); width: min(260px, 100%); }
+select.sort { min-height: 36px; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--sunken); color: var(--text); font: 14px var(--ui); }
+.roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.fighter { position: relative; border: 2px solid var(--line); border-radius: 12px; background: var(--sunken); padding: 10px; cursor: pointer; text-align: left; color: var(--text); font: inherit; display: grid; gap: 6px; align-content: start; }
+.fighter:hover, .fighter.cursor { border-color: var(--c); }
+.fighter.cursor { outline: 3px dashed var(--c); outline-offset: 2px; }
+.fighter[data-slot] { border-color: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 30%, transparent); }
+.fighter[data-slot]::after { content: attr(data-slot); position: absolute; top: -9px; right: 8px; background: var(--c); color: #12160a; font: 400 9px var(--arcade); padding: 4px 6px; border-radius: 6px; }
+.fighter .top { display: flex; gap: 8px; align-items: center; }
+.fighter canvas { width: 44px; height: 52px; flex: none; }
+.fighter .nm { font: 400 10.5px/1.45 var(--arcade); color: var(--c); }
+.fighter .meta { font: 500 11px var(--mono); color: var(--muted); }
+.badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.badge { font: 700 9.5px var(--mono); letter-spacing: .05em; padding: 1px 6px; border-radius: 4px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+.badge.new { color: #1a0606; background: var(--red); border-color: var(--red); }
+.badge.open { color: var(--lime); border-color: rgba(212,242,92,.4); }
+.bars { display: grid; gap: 2px; }
+.bars div { display: grid; grid-template-columns: 62px 1fr 34px; gap: 6px; align-items: center; font: 500 10.5px var(--mono); color: var(--muted); }
+.bars i { height: 5px; border-radius: 4px; background: var(--panel); overflow: hidden; display: block; }
+.bars i b { display: block; height: 100%; background: var(--c); }
+.bars span:last-child { text-align: right; color: var(--text); }
+.ready { position: sticky; bottom: 0; z-index: 3; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 14px; background: rgba(10,12,20,.94); border: 1px solid var(--line); border-radius: 12px; backdrop-filter: blur(6px); }
+.vs-line { font: 400 11px/1.5 var(--arcade); color: var(--muted); }
+.vs-line b { font-weight: 400; }
+
+/* arena */
+.arena { position: relative; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #070910; }
+.arena canvas { display: block; width: 100%; height: auto; aspect-ratio: 960 / 440; }
+.hud { position: absolute; inset: 0 0 auto 0; display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: start; padding: 12px 14px; pointer-events: none; }
+.side { display: grid; gap: 5px; min-width: 0; }
+.side.r { text-align: right; }
+.side .who { font: 400 11px var(--arcade); color: var(--c); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hp { height: 16px; border: 2px solid #F3F4F8; border-radius: 4px; background: #2a0f14; overflow: hidden; position: relative; }
+.hp b { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(#ffe066, #f2b544); transition: width .45s cubic-bezier(.3,.8,.4,1); }
+.hp i { position: absolute; inset: 0 auto 0 0; width: 100%; background: var(--red); transition: width .9s .35s ease; }
+.side.r .hp b, .side.r .hp i { inset: 0 0 0 auto; }
+.hpn { font: 700 11px var(--mono); color: var(--muted); }
+.mid { text-align: center; display: grid; gap: 6px; justify-items: center; }
+.pips { display: flex; gap: 5px; }
+.pips span { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #3a4364; }
+.timer { font: 400 10px var(--arcade); color: var(--muted); }
+.banner { position: absolute; left: 50%; top: 34%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; display: grid; gap: 10px; width: 92%; }
+.banner .big { font: 400 clamp(18px, 4.4vw, 40px)/1.2 var(--arcade); text-shadow: 0 4px 0 #000, 0 0 24px rgba(255,107,107,.6); }
+.banner .sub { font: 600 clamp(12px, 1.8vw, 15px) var(--ui); color: var(--muted); }
+.banner.ko .big { color: var(--red); font-size: clamp(34px, 9vw, 84px); }
+.arena.recording .hud, .arena.recording .banner { visibility: hidden; }
+.rec { position: absolute; top: 56px; right: 14px; font: 700 12px var(--mono); color: #fff; background: #c92a2a; padding: 3px 8px; border-radius: 6px; }
+.roundbar { display: grid; grid-template-columns: 1fr minmax(0, 2.4fr) 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel); }
+.rs { display: grid; gap: 2px; justify-items: start; min-width: 0; }
+.rs.r { justify-items: end; text-align: right; }
+.rs b { font: 400 clamp(18px, 3.6vw, 28px) var(--arcade); transition: color .2s, transform .2s; }
+.rs.won b { color: var(--c); transform: scale(1.1); }
+.rs span { font: 500 11px var(--mono); color: var(--muted); }
+.rmid { text-align: center; display: grid; gap: 3px; min-width: 0; }
+.rname { font: 400 clamp(10px, 1.6vw, 13px) var(--arcade); color: var(--amber); }
+.rtest { font-size: 13px; color: var(--muted); }
+.rres { font: 700 13.5px var(--mono); min-height: 1.4em; }
+.arena-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 14px 10px; background: var(--panel); flex-wrap: wrap; }
+.note { font: 500 11px var(--mono); color: var(--muted); }
+.controls { display: flex; gap: 6px; }
+
+/* results */
+.verdict { font: 400 clamp(14px, 2.6vw, 20px)/1.4 var(--arcade); }
+.verdict b { font-weight: 400; color: var(--c); }
+table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14px; }
+th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 11.5px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+td.num { font: 700 14px var(--mono); white-space: nowrap; }
+td.win { color: var(--c); }
+td .t { display: block; font-size: 12px; color: var(--muted); font-weight: 400; font-family: var(--ui); }
+tr:last-child td { border-bottom: 0; }
+pre.share { margin: 0; background: var(--sunken); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font: 13px/1.6 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.acts { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* tournament */
+.bracket { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: center; }
+.bcol { display: grid; gap: 12px; }
+.bcol h3 { margin: 0; font: 400 10px var(--arcade); color: var(--muted); }
+.match { border: 1px solid var(--line); border-radius: 10px; background: var(--sunken); padding: 8px 10px; display: grid; gap: 4px; cursor: pointer; text-align: left; color: var(--text); font: inherit; }
+.match:hover { border-color: #3a4364; }
+.match .p { display: flex; justify-content: space-between; gap: 8px; font: 600 13px var(--ui); color: var(--muted); }
+.match .p.w { color: var(--text); }
+.match .p.w .n::before { content: '▶ '; color: var(--c); }
+.match .p .hp2 { font: 700 12px var(--mono); }
+.match .note2 { font: 500 11px var(--mono); color: var(--muted); }
+.champ { font: 400 clamp(14px, 2.4vw, 18px)/1.5 var(--arcade); }
+.champ b { font-weight: 400; color: var(--c); }
+
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--lime); border-radius: 10px; padding: 9px 14px; font-size: 14px; z-index: 10; }
+footer { display: grid; gap: 6px; }
+@media (max-width: 760px) {
+  .featured { grid-template-columns: 1fr; text-align: center; }
+  .featured .r { text-align: center; }
+  .hud { padding: 8px 10px; gap: 8px; }
+  .side .who { font-size: 8px; }
+  .hp { height: 11px; }
+  .rtest { font-size: 11.5px; }
+  .rres { font-size: 12px; }
+  td .t { display: none; }
+  th, td { padding: 8px; }
+  .bracket { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>BENCHMARK <span>BRAWL</span></h1>
+      <p class="pitch">Real AI models fight with real benchmark scores. Every round is a benchmark: the higher score lands the hit, and the bigger the gap, the bigger the weapon.</p>
+    </div>
+    <span class="updated" id="updated"></span>
+  </header>
+
+  <div id="featured"></div>
+
+  <section class="box" id="builder" aria-label="Build your arena">
+    <h2>1 · Build your arena</h2>
+    <div class="chips" id="presets"></div>
+    <div class="chips" id="roundChips"></div>
+    <p class="fine" id="roundHelp"></p>
+  </section>
+
+  <section class="box" id="select" aria-label="Choose fighters">
+    <div class="toolbar">
+      <h2>2 · Choose two fighters <span style="color:var(--text)">· click, or ← → and Enter</span></h2>
+      <div class="chips">
+        <input class="search" id="search" type="search" placeholder="Search models or labs" aria-label="Search fighters">
+        <select class="sort" id="sort" aria-label="Sort fighters">
+          <option value="eci">Most capable</option>
+          <option value="new">Newest</option>
+          <option value="cheap">Cheapest</option>
+        </select>
+      </div>
+    </div>
+    <div class="chips" id="classChips" aria-label="Weight class"></div>
+    <div class="roster" id="roster"></div>
+    <p class="fine" id="rosterEmpty" hidden>No fighters match. Clear the search or pick another weight class.</p>
+  </section>
+
+  <div class="ready" id="ready">
+    <div class="vs-line" id="vsLine"></div>
+    <div class="acts">
+      <button class="btn" id="tourneyBtn" title="Top 8 of this weight class by Epoch Capabilities Index">🏆 Tournament</button>
+      <button class="btn go" id="fight" disabled>FIGHT!</button>
+    </div>
+  </div>
+
+  <section class="arena" id="arena" hidden aria-label="Fight">
+    <canvas id="cv" width="960" height="440" aria-hidden="true"></canvas>
+    <div class="hud" id="hud">
+      <div class="side" id="s1"><span class="who" id="n1"></span><div class="hp"><i id="hl1"></i><b id="h1"></b></div><span class="hpn" id="hn1">100 HP</span></div>
+      <div class="mid"><div class="pips" id="pips"></div><span class="timer" id="roundNo"></span></div>
+      <div class="side r" id="s2"><span class="who" id="n2"></span><div class="hp"><i id="hl2"></i><b id="h2"></b></div><span class="hpn" id="hn2">100 HP</span></div>
+    </div>
+    <div class="banner" id="banner" aria-live="polite"></div>
+    <span class="rec" id="rec" hidden>● REC</span>
+    <div class="roundbar" aria-live="polite">
+      <div class="rs" id="rs1"><b id="sc1">–</b><span id="sl1"></span></div>
+      <div class="rmid"><div class="rname" id="rname"></div><div class="rtest" id="rtest"></div><div class="rres" id="rres"></div></div>
+      <div class="rs r" id="rs2"><b id="sc2">–</b><span id="sl2"></span></div>
+    </div>
+    <div class="arena-foot">
+      <span class="note">Damage = 2 × score gap · bigger gap, bigger weapon · within the margin of error = tie</span>
+      <div class="controls">
+        <button class="btn small" id="soundBtn" aria-pressed="true">♪ On</button>
+        <button class="btn small" id="skip">Skip ⏭</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="box" id="result" hidden aria-label="Result">
+    <div class="verdict" id="verdict"></div>
+    <table>
+      <thead><tr><th>Round</th><th id="th1"></th><th id="th2"></th><th>Hit</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <pre class="share" id="share"></pre>
+    <div class="acts">
+      <button class="btn go" id="rematch">REMATCH</button>
+      <button class="btn" id="copy">Copy result + link</button>
+      <button class="btn" id="clip">🎬 Save fight clip</button>
+      <button class="btn" id="backToBracket" hidden>← Back to bracket</button>
+      <button class="btn" id="again">Pick new fighters</button>
+    </div>
+    <p class="fine" id="clipHelp">The clip is recorded in your browser as you watch, with sound if it's on. Nothing is uploaded.</p>
+  </section>
+
+  <section class="box" id="tourney" hidden aria-label="Tournament">
+    <div class="toolbar"><h2 id="tourneyTitle"></h2><button class="btn small" id="tourneyClose">← Back</button></div>
+    <div class="champ" id="champ"></div>
+    <div class="bracket" id="bracket"></div>
+    <pre class="share" id="tshare"></pre>
+    <div class="acts">
+      <button class="btn go" id="watchFinal">WATCH THE FINAL</button>
+      <button class="btn" id="tcopy">Copy bracket + link</button>
+    </div>
+    <p class="fine">Seeded by Epoch Capabilities Index: 1 v 8, 4 v 5, 2 v 7, 3 v 6. A drawn fight goes to the higher seed. Click any match to watch it.</p>
+  </section>
+
+  <footer>
+    <p class="fine"><b>How it works.</b> Each round compares the two models on one benchmark, using the first benchmark in the round that both have a result for. Scores are each model's best reported result across reasoning settings. Damage is 2 × the gap in percentage points. If the gap is inside the combined margin of error (95%), the round is a tie. In the price round the cheaper model wins: every halving of price is worth a 10-point win. A fight ends on a K.O. or on HP after the last round. Benchmarks measure narrow skills; treat this as a fun way to read them, not a verdict.</p>
+    <p class="fine" id="credits"></p>
+  </footer>
+</div>
+<div class="toast" id="toast" hidden></div>

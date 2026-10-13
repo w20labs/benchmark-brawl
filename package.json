@@ -1,0 +1,25 @@
+{
+  "name": "benchmark-brawl",
+  "private": true,
+  "type": "module",
+  "description": "AI models fight, one benchmark per round. Real scores from Epoch AI; the bigger the gap, the bigger the weapon.",
+  "scripts": {
+    "data": "tsx scripts/build-data.ts",
+    "build": "tsx scripts/build-site.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^26.6.5",
+    "esbuild": "^0.28.2",
+    "fflate": "^0.8.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

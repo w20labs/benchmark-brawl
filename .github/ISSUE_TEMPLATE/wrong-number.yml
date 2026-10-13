@@ -1,0 +1,20 @@
+name: Wrong number
+description: A score or price in the game doesn't match its source
+labels: [data]
+body:
+  - type: input
+    id: fight
+    attributes: { label: Link to the fight, description: "Copy it from the result screen" }
+    validations: { required: true }
+  - type: input
+    id: model
+    attributes: { label: Model and round }
+    validations: { required: true }
+  - type: input
+    id: shown
+    attributes: { label: Number shown in the game }
+    validations: { required: true }
+  - type: input
+    id: source
+    attributes: { label: "Number at the source, with a link" }
+    validations: { required: true }
