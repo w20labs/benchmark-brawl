@@ -720,7 +720,7 @@ const ITEMS = {
   chicken: { motion: 'arc', dur: 0.65, arc: 80, n: 1, pose: 'win', hit: 'squeak' },
   boomerang: { motion: 'boomerang', dur: 0.5, arc: 70, n: 1, pose: 'win', hit: 'bonk' },
   pebble: { motion: 'line', dur: 0.2, n: 3, every: 0.22, pose: 'win', hit: 'ping' },
-  tokens: { motion: 'line', dur: 0.4, n: 9, every: 0.07, pose: 'win', hit: 'tick' },
+  tokens: { motion: 'line', dur: 0.45, n: 7, every: 0.11, pose: 'idle', hit: 'tick', from: 'mouth' },
   bowling: { motion: 'roll', dur: 0.85, n: 1, pose: 'idle', hit: 'strike' },
   drone: { motion: 'drone', dur: 1.2, n: 1, pose: 'summon', hit: 'boom' },
   cannon: { motion: 'arc', dur: 0.8, arc: 160, n: 1, pose: 'win', hit: 'boom' },
@@ -737,7 +737,9 @@ const ease = (k) => 1 - (1 - k) ** 3;
 /** A flying item. `from` is the thrower's hand, `to` the target's chest, `floor` the ground line. */
 function makeItem(style, from, to, { delay = 0, s = 1, floor = FLOOR, onLand }) {
   const d = ITEMS[style];
-  return { style, d, x0: from.x, y0: from.y, x1: to.x, y1: to.y, x: from.x, y: from.y, a: 0, t: -delay - (d.wait || 0), dur: d.dur, s, floor, onLand, landed: false, word: TOKEN_WORDS[Math.floor(Math.random() * TOKEN_WORDS.length)] };
+  const spread = style === 'tokens' || style === 'pebble' || style === 'balloon' ? 1 : 0;
+  return { style, d, x0: from.x, y0: from.y, x1: to.x, y1: to.y + spread * (Math.random() - 0.5) * 50 * s, x: from.x, y: from.y, a: 0, t: -delay - (d.wait || 0), dur: d.dur, s, floor, onLand, landed: false,
+    word: TOKEN_WORDS[Math.floor(Math.random() * TOKEN_WORDS.length)], col: ['#9BE36D', '#7FD3F0', '#F28DB2', '#F2B544'][Math.floor(Math.random() * 4)] };
 }
 /** Moves an item; calls onLand once on arrival. Returns true when it can be removed. */
 function stepItem(it, dt) {
@@ -775,7 +777,7 @@ function itemImpact(it, x, y, last) {
     case 'splash': noise({ dur: 0.35, vol: 1, freq: 3000, to: 600, type: 'bandpass' }); blob(18, '#7FD3F0', 240, 6); if (last) say('SPLASH!', '#7FD3F0'); break;
     case 'squeak': tone(1500, { to: 2100, dur: 0.12, type: 'triangle', vol: 0.3 }); tone(1900, { at: 0.13, to: 1300, dur: 0.15, type: 'triangle', vol: 0.3 }); burstSparks(x, y, 8, '#F2E85C'); say('SQUEAK!', '#F2E85C'); break;
     case 'ping': tone(2600, { dur: 0.08, type: 'sine', vol: 0.25 }); burstSparks(x, y, 4, '#C9CFDC'); break;
-    case 'tick': tone(1100 + Math.random() * 400, { dur: 0.03, vol: 0.1 }); burstSparks(x, y, 2, '#C9CFDC'); break;
+    case 'tick': tone(1100 + Math.random() * 400, { dur: 0.04, vol: 0.12 }); burstSparks(x, y, 5, it.col); if (last) say('TL;DR', '#9BE36D'); break;
     case 'strike': noise({ dur: 0.5, vol: 1.5, freq: 1800, to: 300 }); for (let i = 0; i < 5; i++) tone(500 + i * 90, { at: i * 0.03, dur: 0.06, type: 'square', vol: 0.12 }); say('STRIKE!'); explode(x, y, false, 0); break;
     case 'klong': [98, 147, 196, 247].forEach((f) => tone(f, { dur: 1.1, type: 'square', vol: 0.18 })); noise({ dur: 0.5, vol: 1.2, freq: 500 }); say('KLONNG!'); explode(x, y, true, 0.2); break;
     case 'whirl': noise({ dur: 0.6, vol: 0.9, freq: 400, to: 2000, type: 'bandpass' }); explode(x, y, false, 0); break;
@@ -808,14 +810,37 @@ function drawItem(c, it, t) {
     }
     case 'pie': c.translate(x, y); c.scale(s, s); c.rotate(dir * -0.4); c.fillStyle = '#C98B4A'; c.beginPath(); c.ellipse(0, 4, 18, 7, 0, 0, Math.PI * 2); c.fill(); c.fillStyle = '#FFF6E0'; c.beginPath(); c.ellipse(0, 0, 16, 7, 0, 0, Math.PI * 2); c.fill(); c.fillStyle = '#E03131'; c.beginPath(); c.arc(0, -5, 3, 0, Math.PI * 2); c.fill(); break;
     case 'balloon': c.translate(x, y); c.scale(s, s); c.fillStyle = '#4DABF7'; c.beginPath(); c.ellipse(0, 0, 12, 14, 0, 0, Math.PI * 2); c.fill(); c.fillStyle = '#1C7ED6'; c.beginPath(); c.moveTo(-3, 14); c.lineTo(3, 14); c.lineTo(0, 19); c.fill(); c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.ellipse(-4, -5, 3, 5, -0.4, 0, Math.PI * 2); c.fill(); break;
-    case 'chicken': c.translate(x, y); c.scale(dir * s, s); c.rotate(it.t * 12);
-      c.fillStyle = '#F2E85C'; c.beginPath(); c.ellipse(0, 0, 18, 7, 0, 0, Math.PI * 2); c.fill(); c.beginPath(); c.arc(18, -2, 6, 0, Math.PI * 2); c.fill();
-      c.fillStyle = '#E03131'; c.fillRect(16, -10, 6, 4); c.fillStyle = '#FF922B'; c.beginPath(); c.moveTo(23, -2); c.lineTo(29, 0); c.lineTo(23, 2); c.fill(); c.fillStyle = INK; c.fillRect(18, -4, 2, 2);
-      c.strokeStyle = '#FF922B'; c.lineWidth = 2; c.beginPath(); c.moveTo(-16, 2); c.lineTo(-24, 8); c.moveTo(-14, 3); c.lineTo(-20, 11); c.stroke(); break;
+    case 'chicken': {
+      const flop = Math.sin(it.t * 18) * 0.35;
+      c.translate(x, y); c.scale(dir * s * 1.25, s * 1.25); c.rotate(it.t * 9);
+      const skin = '#F7E27A', shade = '#D9BE4F';
+      c.strokeStyle = '#F2994A'; c.lineWidth = 3; c.lineCap = 'round';
+      for (const [lx, sw] of [[-6, flop], [4, -flop]]) {
+        c.save(); c.translate(lx, 8); c.rotate(sw); c.beginPath(); c.moveTo(0, 0); c.lineTo(0, 20); c.stroke();
+        c.beginPath(); c.moveTo(0, 20); c.lineTo(-5, 25); c.moveTo(0, 20); c.lineTo(0, 26); c.moveTo(0, 20); c.lineTo(5, 25); c.stroke(); c.restore();
+      }
+      c.fillStyle = skin; c.beginPath(); c.ellipse(0, 0, 20, 12, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = shade; c.beginPath(); c.ellipse(-2, 5, 14, 5, 0, 0, Math.PI); c.fill();
+      c.fillStyle = skin; c.beginPath(); c.moveTo(-18, -4); c.lineTo(-28, -10); c.lineTo(-24, 0); c.lineTo(-28, 6); c.lineTo(-18, 4); c.fill();
+      c.save(); c.translate(16, -4); c.rotate(-0.5 + flop);
+      c.strokeStyle = skin; c.lineWidth = 8; c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(10, -6, 16, -16); c.stroke();
+      c.translate(17, -19); c.fillStyle = skin; c.beginPath(); c.arc(0, 0, 8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#E03131'; for (const cx of [-5, 0, 5]) { c.beginPath(); c.arc(cx, -8, 3.2, 0, Math.PI * 2); c.fill(); }
+      c.beginPath(); c.ellipse(6, 7, 2.5, 4, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#F2994A'; c.beginPath(); c.moveTo(6, -2); c.lineTo(15, 1); c.lineTo(6, 4); c.fill();
+      c.strokeStyle = INK; c.lineWidth = 1.6; c.beginPath(); c.moveTo(0, -3); c.lineTo(3, 0); c.moveTo(3, -3); c.lineTo(0, 0); c.stroke();
+      c.restore(); break;
+    }
     case 'boomerang': c.translate(x, y); c.scale(s, s); c.rotate(it.t * 18); c.strokeStyle = '#B07A3F'; c.lineWidth = 7; c.lineCap = 'round'; c.beginPath(); c.moveTo(-16, -10); c.lineTo(0, 4); c.lineTo(16, -10); c.stroke(); break;
     case 'pebble': c.fillStyle = '#8a8f9e'; c.beginPath(); c.arc(x, y, 6 * s, 0, Math.PI * 2); c.fill(); c.strokeStyle = 'rgba(200,205,220,.5)'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, y); c.lineTo(x - dir * 20 * s, y); c.stroke(); break;
-    case 'tokens': { c.font = `700 ${Math.round(13 * Math.max(0.8, s))}px "JetBrains Mono", monospace`; c.textAlign = 'center'; const w = c.measureText(it.word).width + 10;
-      c.fillStyle = 'rgba(10,12,20,.85)'; roundRect(c, x - w / 2, y - 10, w, 18, 5); c.fill(); c.strokeStyle = '#9BE36D'; c.lineWidth = 1.5; c.stroke(); c.fillStyle = '#9BE36D'; c.fillText(it.word, x, y + 4); break; }
+    case 'tokens': {
+      const px = Math.round(14 * Math.max(0.8, s)), col = it.col;
+      c.font = `700 ${px}px "JetBrains Mono", monospace`; c.textAlign = 'center';
+      const w = c.measureText(it.word).width + 14, hgt = px + 10;
+      c.fillStyle = '#0E1120'; roundRect(c, x - w / 2, y - hgt / 2, w, hgt, hgt / 2); c.fill();
+      c.strokeStyle = col; c.lineWidth = 2; c.stroke();
+      c.fillStyle = col; c.fillText(it.word, x, y + px * 0.36); break;
+    }
     case 'bowling': c.translate(x, y); c.rotate(it.a); c.fillStyle = '#1b1f2b'; c.beginPath(); c.arc(0, 0, 15 * s, 0, Math.PI * 2); c.fill(); c.fillStyle = '#4a4f63'; for (const [hx, hy] of [[-4, -6], [3, -7], [-1, -1]]) { c.beginPath(); c.arc(hx * s, hy * s, 2.2 * s, 0, Math.PI * 2); c.fill(); } break;
     case 'drone': {
       c.save(); c.translate(it.dx ?? x, it.dy ?? y); c.scale(1.7 * s, 1.7 * s);
@@ -881,17 +906,25 @@ function startFx(R) {
   return fx;
 }
 /** Thrown items: the winner throws at the loser, or in a tie both throw and the items collide in the middle. */
+/** Where a thrown item starts, for fighter k: its hand, its mouth, or the floor in front of it. */
+function throwFrom(d, x, dir, size, s = 1) {
+  return d.motion === 'punch' ? { x: x + dir * 54 * size * s, y: FLOOR - 100 * size * s }
+    : d.motion === 'roll' ? { x: x + dir * 40 * s, y: FLOOR - 15 * s }
+    : d.from === 'mouth' ? { x: x + dir * 22 * size * s, y: FLOOR - 136 * size * s }
+    : { x: x + dir * 24 * size * s, y: FLOOR - 176 * size * s };
+}
+/** The middle of a fighter's body, allowing for its size (flagships are taller). */
+const bodyOf = (k) => ({ x: F.x[k], y: FLOOR - 92 * (F.looks[k].size || 1) });
 function startItems(fx, R) {
-  const d = ITEMS[fx.style], w = R.winner, tie = w === -1, mid = (F.x[0] + F.x[1]) / 2;
+  const d = ITEMS[fx.style], w = R.winner, tie = w === -1;
   Object.assign(fx, { mode: 'items', items: [], gear: 'none', hits: d.n, landed: 0 });
   for (const k of tie ? [0, 1] : [w]) {
     F.pose[k] = d.pose;
-    const from = d.motion === 'punch' ? { x: F.x[k] + dirOf(k) * 54, y: FLOOR - 100 } : d.motion === 'roll' ? { x: F.x[k] + dirOf(k) * 40, y: FLOOR - 15 } : { x: F.x[k] + dirOf(k) * 24, y: FLOOR - 176 };
-    const to = tie ? { x: mid, y: FLOOR - 112 } : { x: F.x[1 - k] - dirOf(k) * 10, y: FLOOR - 105 };
+    const l = 1 - k, body = bodyOf(l), to = { x: body.x - dirOf(k) * 8, y: body.y };
     for (let i = 0; i < d.n; i++) {
       const last = i === d.n - 1;
-      fx.items.push(makeItem(fx.style, from, to, { delay: 0.25 + i * (d.every || 0), onLand: (it) => {
-        if (tie) { if (k === 0) itemImpact(it, mid, to.y, last); return; }
+      fx.items.push(makeItem(fx.style, throwFrom(d, F.x[k], dirOf(k), F.looks[k].size || 1), to, { delay: 0.25 + i * (d.every || 0), onLand: (it) => {
+        if (tie) { itemImpact(it, it.x, it.y, last); F.flash[l] = 0.08; F.pose[l] = 'hurt'; return; } // the graze lands once both have hit
         fx.itemHit = it; landHit(fx, R, it.x, it.y, last ? 'mid' : 'small');
       } }));
     }
@@ -1422,7 +1455,7 @@ function rStartFx(R) {
   if (top === 'laser') sfx.lock();
 }
 const orbOf = (k) => ({ x: F.x[k] + (F.x[k] < W / 2 ? 1 : -1) * 24 * F.s, y: FLOOR - 24 * F.s - 176 * F.s });
-const chestOf = (k) => ({ x: F.x[k], y: FLOOR - 90 * F.s });
+const chestOf = (k) => ({ x: F.x[k], y: FLOOR - 92 * F.s * (F.looks[k].size || 1) });
 function rLand(R, hit, last, size, it = null) {
   const k = hit.target;
   if (it) itemImpact(it, chestOf(k).x, chestOf(k).y, last);
@@ -1456,7 +1489,7 @@ function rFire(R, hit) {
   const st = hit.style || hit.weapon;
   if (ITEMS[st]) {
     const d = ITEMS[st], dir = Math.sign(c.x - F.x[L]) || 1;
-    const from = d.motion === 'punch' ? { x: F.x[L] + dir * 40 * F.s, y: FLOOR - 100 * F.s } : d.motion === 'roll' ? { x: F.x[L] + dir * 30 * F.s, y: FLOOR - 15 * F.s } : o;
+    const from = d.motion === 'punch' || d.motion === 'roll' || d.from === 'mouth' ? throwFrom(d, F.x[L], dir, F.looks[L].size || 1, F.s) : o;
     for (let i = 0; i < d.n; i++) F.shots.push({ kind: 'item', it: makeItem(st, from, c, { delay: i * (d.every || 0), s: F.s, onLand: (it) => rLand(R, hit, i === d.n - 1, i === d.n - 1 ? 'mid' : 'small', it) }) });
   } else if (st === 'plasma') {
     F.shots.push({ kind: 'plasma', x: o.x, y: o.y, tx: c.x, ty: c.y, v: 900, onLand: () => rLand(R, hit, true, 'mid') });
