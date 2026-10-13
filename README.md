@@ -23,6 +23,7 @@
 | **Tournament** | The top 8 of a weight class, seeded by Epoch Capabilities Index, fought out as a bracket |
 | **New challenger** | Every third daily brawl puts the newest model (last 30 days) against the best model from another lab |
 | **Claim check** | What each lab published about its own model, next to an independent test of the same benchmark: matches, lab higher, or independent higher |
+| **Arenas** | Every fight has its own arena, fixed by the matchup: Neon City, Server Farm, Moon Base, Synthwave, Dojo, Volcano, Deep Sea or Snow Peak |
 | **Share** | A Wordle-style result line, a 4:5 **share card** image, and a **fight clip** (MP4) recorded in your browser |
 
 <table>

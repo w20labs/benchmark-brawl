@@ -539,7 +539,7 @@ function startFight(opts = {}) {
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, opts.rounds || rounds);
   if (!plan.rounds.length) return toast(`${a.name} and ${b.name} have no benchmark in common in these rounds. Try other rounds.`);
-  F = { daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
+  F = { arena: opts.daily ? arenaFor(`daily|${opts.daily.no}`) : arenaFor(`${a.id}|${b.id}`), daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
   setView('arena');
   $('arena').classList.remove('royale');
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
@@ -1119,38 +1119,156 @@ function draw(t) {
   drawSmoke();
   drawFx(F.fx, t);
   drawParticles();
+  if (!F.recording) drawArenaLabel(g, F.arena, H - 12);
   if (F.recording) drawClipOverlay(t);
 }
 /** Sky, city, floor; darkened for meteors and laser lock-ons. Leaves the screen-shake transform on. */
 function drawBackdrop(t, fx) {
   const sx = F.shake ? (Math.random() - 0.5) * F.shake : 0, sy = F.shake ? (Math.random() - 0.5) * F.shake : 0;
   g.setTransform(1, 0, 0, 1, 0, 0);
-  drawCity(g, W, H, FLOOR, t, () => {
+  drawArena(F.arena || 'city', g, W, H, FLOOR, t, () => {
     g.translate(sx, sy);
   }, () => {
     if (fx?.kind === 'meteor') { g.fillStyle = `rgba(120,30,20,${Math.min(0.45, fx.t * 0.6)})`; g.fillRect(0, 0, W, FLOOR); }
     if (fx?.kind === 'laser' && fx.t < 1.15) { g.fillStyle = `rgba(0,0,0,${Math.min(0.45, fx.t * 0.5)})`; g.fillRect(0, 0, W, H); }
   });
 }
-/** Sky, city and floor on any canvas. `afterSky` runs before the buildings, `beforeFloor` before the floor. */
-function drawCity(c, w, hgt, floor, t, afterSky, beforeFloor) {
-  const sky = c.createLinearGradient(0, 0, 0, hgt); sky.addColorStop(0, '#0d1022'); sky.addColorStop(1, '#170d1a');
-  c.fillStyle = sky; c.fillRect(0, 0, w, hgt);
+// ---------- arenas: a different place for every fight ----------
+/** Each arena paints the sky and scenery, then the floor. `afterSky` and `beforeFloor` let a fight add shake and weapon tints. */
+const ARENAS = [
+  { id: 'city', name: 'Neon City' }, { id: 'servers', name: 'Server Farm' }, { id: 'moon', name: 'Moon Base' }, { id: 'synth', name: 'Synthwave' },
+  { id: 'dojo', name: 'Dojo' }, { id: 'volcano', name: 'Volcano' }, { id: 'sea', name: 'Deep Sea' }, { id: 'snow', name: 'Snow Peak' },
+];
+/** The arena for a fight, fixed by its seed (the matchup), so replays and share links look the same. */
+function arenaFor(seed) { return ARENAS[hash(`arena|${seed}`) % ARENAS.length].id; }
+const arenaName = (id) => ARENAS.find((a) => a.id === id)?.name ?? 'Neon City';
+/** Deterministic "random" numbers for scenery: the same every frame, no flicker. */
+const rnd01 = (i, salt = 0) => { const x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453; return x - Math.floor(x); };
+function gradient(c, hgt, stops) { const gr = c.createLinearGradient(0, 0, 0, hgt); stops.forEach((col, i) => gr.addColorStop(i / (stops.length - 1), col)); return gr; }
+function stars(c, w, top, n, t, tw = true) {
+  for (let i = 0; i < n; i++) { const a = tw && !reduced ? 0.4 + 0.6 * Math.abs(Math.sin(t * (0.5 + rnd01(i, 3)) + i)) : 0.7; c.globalAlpha = a; c.fillStyle = '#F3F4F8'; c.fillRect(rnd01(i, 1) * w, rnd01(i, 2) * top, rnd01(i, 4) < 0.15 ? 2.5 : 1.5, rnd01(i, 4) < 0.15 ? 2.5 : 1.5); }
+  c.globalAlpha = 1;
+}
+const SCENES = {
+  city(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, hgt, ['#0d1022', '#170d1a']); c.fillRect(0, 0, w, hgt);
+    return () => {
+      for (let i = 0; i < Math.ceil(w / 84) + 1; i++) {
+        const x = i * 84 - 10, top = floor - 260 + (i % 3) * 16;
+        c.fillStyle = '#12162a'; c.fillRect(x, top, 64, floor - top);
+        for (let j = 0; j < 9; j++) {
+          const on = (Math.sin(t * (1.3 + (i * 7 + j) % 5) + i * j) > 0.2) && !reduced || (i + j) % 3 === 0;
+          c.fillStyle = on ? ((i + j) % 4 === 0 ? '#D4F25C' : '#7FD3F0') : '#1d2440';
+          c.fillRect(x + 8 + (j % 3) * 18, top + 14 + Math.floor(j / 3) * 26, 8, 4);
+        }
+      }
+    };
+  },
+  servers(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, hgt, ['#070b16', '#0c1428']); c.fillRect(0, 0, w, hgt);
+    return () => {
+      c.fillStyle = '#1b2440'; for (let x = 0; x < w; x += 140) { c.fillRect(x, 20, 120, 6); for (let k = 0; k < 4; k++) c.fillRect(x + 10 + k * 30, 26, 3, 18); }
+      for (let i = 0; i < Math.ceil(w / 74) + 1; i++) {
+        const x = i * 74 - 6, top = floor - 250;
+        c.fillStyle = '#121a30'; c.fillRect(x, top, 62, floor - top);
+        c.fillStyle = '#0b1122'; for (let r = 0; r < 11; r++) c.fillRect(x + 4, top + 8 + r * 21, 54, 16);
+        for (let r = 0; r < 11; r++) for (let l = 0; l < 3; l++) {
+          const on = reduced ? (i + r + l) % 3 === 0 : Math.sin(t * (2 + rnd01(i * 33 + r * 3 + l) * 6) + i + r) > 0.3;
+          c.fillStyle = on ? ['#2EC4A6', '#7FD3F0', '#F2B544'][(i + r + l) % 3] : '#1a2440';
+          c.fillRect(x + 42 + l * 5, top + 14 + r * 21, 3, 3);
+        }
+      }
+    };
+  },
+  moon(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, hgt, ['#03040a', '#0b0e1c']); c.fillRect(0, 0, w, hgt);
+    stars(c, w, floor - 40, 120, t);
+    return () => {
+      const ex = w * 0.8, ey = floor * 0.28, er = Math.min(60, w * 0.06);
+      c.fillStyle = '#2f6fd6'; c.beginPath(); c.arc(ex, ey, er, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#3fa36b'; c.beginPath(); c.ellipse(ex - er * 0.3, ey - er * 0.1, er * 0.35, er * 0.5, 0.4, 0, Math.PI * 2); c.fill(); c.beginPath(); c.ellipse(ex + er * 0.35, ey + er * 0.3, er * 0.25, er * 0.3, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(0,0,0,.35)'; c.beginPath(); c.arc(ex + er * 0.35, ey, er, -Math.PI / 2, Math.PI / 2); c.fill();
+      c.fillStyle = '#2a2d38'; c.beginPath(); c.moveTo(0, floor); for (let x = 0; x <= w; x += 40) c.lineTo(x, floor - 40 - Math.abs(Math.sin(x * 0.012)) * 50 - rnd01(x) * 14); c.lineTo(w, floor); c.fill();
+    };
+  },
+  synth(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, floor, ['#12052b', '#3b0d4f', '#b8336a']); c.fillRect(0, 0, w, floor);
+    stars(c, w, floor * 0.4, 50, t);
+    return () => {
+      const sx = w / 2, sy = floor - 30, sr = Math.min(150, w * 0.17);
+      const sun = c.createLinearGradient(0, sy - sr, 0, sy); sun.addColorStop(0, '#FFE066'); sun.addColorStop(1, '#FF4F8B');
+      c.fillStyle = sun; c.beginPath(); c.arc(sx, sy, sr, Math.PI, 0); c.fill();
+      c.fillStyle = '#b8336a'; for (let i = 0; i < 6; i++) { const yy = sy - sr * 0.5 + i * sr * 0.1; c.fillRect(sx - sr, yy, sr * 2, 2 + i * 1.5); }
+      c.fillStyle = '#2a0a3e'; c.beginPath(); c.moveTo(0, floor); for (let x = 0; x <= w; x += 60) c.lineTo(x, floor - 30 - Math.abs(Math.sin(x * 0.009 + 1)) * 80); c.lineTo(w, floor); c.fill();
+    };
+  },
+  dojo(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, hgt, ['#1d120c', '#2a1810']); c.fillRect(0, 0, w, hgt);
+    return () => {
+      for (let x = -20; x < w; x += 150) {
+        c.fillStyle = '#4a3324'; c.fillRect(x, floor - 280, 130, 280);
+        c.fillStyle = '#e8dcc3'; c.globalAlpha = 0.22; c.fillRect(x + 8, floor - 270, 114, 262); c.globalAlpha = 1;
+        c.strokeStyle = '#3a2618'; c.lineWidth = 3; for (let k = 1; k < 3; k++) { c.beginPath(); c.moveTo(x + 8 + k * 38, floor - 270); c.lineTo(x + 8 + k * 38, floor - 8); c.stroke(); } for (let k = 1; k < 6; k++) { c.beginPath(); c.moveTo(x + 8, floor - 270 + k * 44); c.lineTo(x + 122, floor - 270 + k * 44); c.stroke(); }
+      }
+      for (let i = 0; i < Math.ceil(w / 300); i++) { const lx = 150 + i * 300, ly = 70 + Math.sin(t * 1.5 + i) * 3; c.strokeStyle = '#3a2618'; c.lineWidth = 2; c.beginPath(); c.moveTo(lx, 0); c.lineTo(lx, ly - 22); c.stroke(); c.fillStyle = '#c0392b'; c.beginPath(); c.ellipse(lx, ly, 18, 24, 0, 0, Math.PI * 2); c.fill(); c.fillStyle = 'rgba(255,200,120,.25)'; c.beginPath(); c.arc(lx, ly, 46, 0, Math.PI * 2); c.fill(); }
+      c.fillStyle = '#F7B6C8'; for (let i = 0; i < 26; i++) { const px = (rnd01(i, 7) * w + (reduced ? 0 : t * 30)) % w, py = (rnd01(i, 8) * floor + (reduced ? 0 : t * (25 + rnd01(i) * 25))) % floor; c.beginPath(); c.ellipse(px, py, 4, 2.5, t + i, 0, Math.PI * 2); c.fill(); }
+    };
+  },
+  volcano(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, floor, ['#0a0505', '#2a0b08', '#5a1a0c']); c.fillRect(0, 0, w, floor);
+    return () => {
+      const vx = w * 0.5;
+      c.fillStyle = '#1a0d0a'; c.beginPath(); c.moveTo(vx - w * 0.45, floor); c.lineTo(vx - 70, floor - 230); c.lineTo(vx + 70, floor - 230); c.lineTo(vx + w * 0.45, floor); c.fill();
+      const glow = c.createRadialGradient(vx, floor - 230, 0, vx, floor - 230, 160); glow.addColorStop(0, 'rgba(255,140,40,.7)'); glow.addColorStop(1, 'rgba(255,80,20,0)'); c.fillStyle = glow; c.fillRect(vx - 160, floor - 390, 320, 320);
+      c.strokeStyle = '#FF6B1A'; c.lineWidth = 5; c.lineCap = 'round'; for (const dx of [-40, 10, 45]) { c.beginPath(); c.moveTo(vx + dx * 0.6, floor - 230); c.quadraticCurveTo(vx + dx, floor - 170, vx + dx * 1.6, floor - 110); c.stroke(); }
+      for (let i = 0; i < 30; i++) { const ex = vx + (rnd01(i, 5) - 0.5) * 260, ey = floor - 230 - ((rnd01(i, 6) * 300 + (reduced ? 0 : t * (40 + rnd01(i) * 60))) % 300); c.fillStyle = rnd01(i, 9) < 0.5 ? '#FFA94D' : '#FF6B6B'; c.globalAlpha = 0.8; c.fillRect(ex, ey, 3, 3); }
+      c.globalAlpha = 1;
+    };
+  },
+  sea(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, hgt, ['#0b3a5c', '#071d33', '#040d1a']); c.fillRect(0, 0, w, hgt);
+    return () => {
+      c.fillStyle = 'rgba(160,220,255,.06)'; for (let i = 0; i < 5; i++) { const x = (i + 0.3) * w / 5 + Math.sin(t * 0.4 + i) * 20; c.beginPath(); c.moveTo(x - 20, 0); c.lineTo(x + 30, 0); c.lineTo(x + 120, floor); c.lineTo(x + 40, floor); c.fill(); }
+      c.strokeStyle = 'rgba(200,235,255,.5)'; c.lineWidth = 1.5; for (let i = 0; i < 24; i++) { const bx = rnd01(i, 2) * w + Math.sin(t * 2 + i) * 6, by = floor - ((rnd01(i, 3) * floor + (reduced ? 0 : t * (30 + rnd01(i) * 40))) % floor); c.beginPath(); c.arc(bx, by, 2 + rnd01(i, 4) * 4, 0, Math.PI * 2); c.stroke(); }
+      for (let i = 0; i < Math.ceil(w / 90); i++) { const x = 30 + i * 90 + rnd01(i, 9) * 30; c.strokeStyle = '#1f6b4a'; c.lineWidth = 6; c.lineCap = 'round'; c.beginPath(); c.moveTo(x, floor); for (let k = 1; k <= 6; k++) c.lineTo(x + Math.sin(t * 1.5 + i + k * 0.7) * 8 * (k / 6), floor - k * 18); c.stroke(); }
+    };
+  },
+  snow(c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, floor, ['#070b1c', '#152241', '#2a3c66']); c.fillRect(0, 0, w, floor);
+    stars(c, w, floor * 0.45, 60, t);
+    return () => {
+      c.fillStyle = '#E8EEF8'; c.beginPath(); c.arc(w * 0.18, floor * 0.22, 26, 0, Math.PI * 2); c.fill();
+      for (const [col, peak, off] of [['#3b4f7a', 250, 0], ['#566c99', 180, 120]]) {
+        c.fillStyle = col; c.beginPath(); c.moveTo(0, floor); for (let x = 0; x <= w; x += 30) c.lineTo(x, floor - peak * (0.5 + 0.5 * Math.abs(Math.sin((x + off) * 0.006)))); c.lineTo(w, floor); c.fill();
+      }
+      c.fillStyle = '#F3F4F8'; for (let i = 0; i < 70; i++) { const sx = (rnd01(i, 1) * w + Math.sin(t + i) * 10 + (reduced ? 0 : t * 12)) % w, sy = (rnd01(i, 2) * floor + (reduced ? 0 : t * (20 + rnd01(i) * 30))) % floor; c.globalAlpha = 0.5 + rnd01(i, 5) * 0.5; c.beginPath(); c.arc(sx, sy, 1 + rnd01(i, 6) * 2, 0, Math.PI * 2); c.fill(); }
+      c.globalAlpha = 1;
+    };
+  },
+};
+const FLOORS = {
+  city: ['#2a2140', '#0a0c14', '#FF6B6B'], servers: ['#1a2238', '#080b16', '#2EC4A6'], moon: ['#4a4d58', '#16171d', '#C9CFDC'], synth: ['#1a0730', '#06020d', '#FF4F8B'],
+  dojo: ['#6b4428', '#2a180c', '#C9A227'], volcano: ['#2a120c', '#0a0505', '#FF6B1A'], sea: ['#6b5a3a', '#2a2214', '#7FD3F0'], snow: ['#b9c6dc', '#56627e', '#E8EEF8'],
+};
+/** Paints an arena: sky and scenery, a dark veil so fighters stand out, then the floor. */
+function drawArena(id, c, w, hgt, floor, t, afterSky, beforeFloor) {
+  const scenery = (SCENES[id] || SCENES.city)(c, w, hgt, floor, t);
   afterSky?.();
-  for (let i = 0; i < Math.ceil(w / 84) + 1; i++) {
-    const x = i * 84 - 10, top = floor - 260 + (i % 3) * 16;
-    c.fillStyle = '#12162a'; c.fillRect(x, top, 64, floor - top);
-    for (let j = 0; j < 9; j++) {
-      const on = (Math.sin(t * (1.3 + (i * 7 + j) % 5) + i * j) > 0.2) && !reduced || (i + j) % 3 === 0;
-      c.fillStyle = on ? ((i + j) % 4 === 0 ? '#D4F25C' : '#7FD3F0') : '#1d2440';
-      c.fillRect(x + 8 + (j % 3) * 18, top + 14 + Math.floor(j / 3) * 26, 8, 4);
-    }
-  }
-  c.fillStyle = 'rgba(10,12,20,.55)'; c.fillRect(0, 0, w, hgt);
+  scenery();
+  c.fillStyle = id === 'synth' || id === 'snow' ? 'rgba(10,12,20,.35)' : 'rgba(10,12,20,.5)'; c.fillRect(0, 0, w, hgt);
   beforeFloor?.();
-  const fl = c.createLinearGradient(0, floor, 0, hgt); fl.addColorStop(0, '#2a2140'); fl.addColorStop(1, '#0a0c14');
-  c.fillStyle = fl; c.fillRect(0, floor, w, hgt - floor);
-  c.fillStyle = '#FF6B6B'; c.fillRect(0, floor, w, 3);
+  const [top, bottom, edge] = FLOORS[id] || FLOORS.city;
+  c.fillStyle = gradient(c, hgt - floor, [top, bottom]); c.save(); c.translate(0, floor); c.fillRect(0, 0, w, hgt - floor); c.restore();
+  if (id === 'synth') { c.strokeStyle = 'rgba(255,79,139,.55)'; c.lineWidth = 1.5; for (let i = 1; i < 8; i++) { const y = floor + (hgt - floor) * (i / 8) ** 1.6; c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); } for (let i = -10; i <= 10; i++) { c.beginPath(); c.moveTo(w / 2 + i * 30, floor); c.lineTo(w / 2 + i * 160, hgt); c.stroke(); } }
+  if (id === 'servers') { c.strokeStyle = 'rgba(127,211,240,.12)'; c.lineWidth = 1; for (let x = 0; x < w; x += 48) { c.beginPath(); c.moveTo(x, floor); c.lineTo(x, hgt); c.stroke(); } }
+  if (id === 'dojo') { c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 2; for (let y = floor + 12; y < hgt; y += 14) { c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); } }
+  if (id === 'volcano') { c.strokeStyle = 'rgba(255,107,26,.6)'; c.lineWidth = 2; for (let i = 0; i < 8; i++) { const x = rnd01(i, 4) * w; c.beginPath(); c.moveTo(x, floor + 6); c.lineTo(x + 30, floor + 20 + rnd01(i) * 20); c.lineTo(x + 70, floor + 30); c.stroke(); } }
+  if (id === 'moon') { c.fillStyle = 'rgba(0,0,0,.25)'; for (let i = 0; i < 6; i++) { c.beginPath(); c.ellipse(rnd01(i, 8) * w, floor + 14 + rnd01(i, 9) * (hgt - floor - 20), 26, 6, 0, 0, Math.PI * 2); c.fill(); } }
+  c.fillStyle = edge; c.fillRect(0, floor, w, 3);
+}
+/** "📍 Moon Base", bottom left of the arena. */
+function drawArenaLabel(c, id, y) {
+  c.save(); c.globalAlpha = 0.65; c.font = '600 12px "JetBrains Mono", monospace'; c.textAlign = 'left'; c.fillStyle = '#F3F4F8'; c.fillText(`📍 ${arenaName(id)}`, 12, y); c.restore();
 }
 function drawSmoke() {
   for (const s of F.sparks) if (s.kind === 'smoke') { g.globalAlpha = Math.max(0, Math.min(0.5, s.life * 0.5)); g.fillStyle = s.c; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); }
@@ -1273,7 +1391,7 @@ function drawVictory(cv, p, looks) {
   const phone = matchMedia('(max-width: 760px)').matches, [w, hgt] = phone ? [780, 520] : [1200, 400];
   if (cv.width !== w) { cv.width = w; cv.height = hgt; }
   const c = cv.getContext('2d'), floor = hgt - 50, s = phone ? 1.05 : 1.1;
-  drawCity(c, w, hgt, floor, 1);
+  drawArena(F?.arena || 'city', c, w, hgt, floor, 1);
   p.fighters.forEach((m, k) => {
     const pose = p.winner === k ? 'win' : p.winner < 0 ? 'idle' : p.ko ? 'down' : 'hurt';
     c.save(); c.translate(w * (k ? 0.68 : 0.32), floor); c.scale(s, s); drawBot(c, 0, 0, k ? -1 : 1, looks[k], pose, k); c.restore();
@@ -1389,7 +1507,7 @@ function startRoyale() {
   const plan = planRoyale(DATA, ms, rounds), n = ms.length;
   const gap = (W - 80) / n;
   const looks = looksFor(ms);
-  F = { royale: true, plan, n, looks, colors: looks.map((l) => l.ui), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
+  F = { royale: true, arena: arenaFor(ms.map((m) => m.id).join('|')), plan, n, looks, colors: looks.map((l) => l.ui), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
     pose: ms.map(() => 'idle'), flash: ms.map(() => 0), dodge: ms.map(() => 0), hp: ms.map(() => 100), shown: ms.map(() => null),
     i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false, moveTitle: null,
     // per fighter, its biggest hit as leader: where its signature move plays
@@ -1623,6 +1741,7 @@ function drawRoyale(t) {
   if (F.moveTitle && F.moveTitle.t < 1.5) drawTitle(F.moveTitle.text, F.moveTitle.c, Math.min(1, F.moveTitle.t * 6) * Math.min(1, (1.5 - F.moveTitle.t) * 3), 1, 70);
   else if (F.fx?.title && F.fx.t < 1.2) drawTitle(F.fx.title, F.fx.titleC, Math.min(1, F.fx.t * 6) * Math.min(1, (1.2 - F.fx.t) * 3), 1, 70);
   drawParticles();
+  drawArenaLabel(g, F.arena, 20);
 }
 
 // ---------- royale result ----------
@@ -1797,7 +1916,7 @@ function startToday() {
   const c = cv2.getContext('2d'), floor = hgt - (phone ? 150 : 100), s = phone ? 1.25 : 1.3, looks = looksFor([DAILY.a, DAILY.b]);
   const loop = (now) => {
     const t = now / 1000;
-    drawCity(c, w, hgt, floor, t);
+    drawArena(arenaFor(`daily|${DAILY.no}`), c, w, hgt, floor, t);
     [DAILY.a, DAILY.b].forEach((m, k) => { c.save(); c.translate(w * (k ? 0.72 : 0.28), floor); c.scale(s, s); drawBot(c, 0, 0, k ? -1 : 1, looks[k], 'idle', t + k); c.restore(); });
     c.font = `400 ${phone ? 40 : 48}px "Press Start 2P", monospace`; c.textAlign = 'center';
     c.fillStyle = '#000'; c.fillText('VS', w / 2 + 5, floor - 120 + 5); c.fillStyle = '#F2B544'; c.fillText('VS', w / 2, floor - 120);
@@ -1820,7 +1939,7 @@ async function shareOrCopy(text, done) {
 async function shareCard(p, looks, rec, brawl) {
   const cv2 = document.createElement('canvas'); cv2.width = 1080; cv2.height = 1350;
   const c = cv2.getContext('2d'), floor = 760;
-  drawCity(c, 1080, 1350, floor, 2);
+  drawArena(brawl ? arenaFor(`daily|${brawl.no}`) : F?.arena || 'city', c, 1080, 1350, floor, 2);
   c.fillStyle = '#0A0C14'; c.fillRect(0, floor + 3, 1080, 1350 - floor);
   p.fighters.forEach((m, k) => { const pose = p.winner === k ? 'win' : p.winner < 0 ? 'idle' : p.ko ? 'down' : 'hurt'; c.save(); c.translate(k ? 740 : 340, floor); c.scale(1.9, 1.9); drawBot(c, 0, 0, k ? -1 : 1, looks[k], pose, k); c.restore(); });
   const txt2 = (t, x, y, px, col, font = 'arcade') => { c.font = font === 'arcade' ? `400 ${px}px "Press Start 2P", monospace` : `700 ${px}px Inter, sans-serif`; c.textAlign = 'center'; c.fillStyle = '#000'; c.fillText(t, x + 5, y + 5); c.fillStyle = col; c.fillText(t, x, y); };
