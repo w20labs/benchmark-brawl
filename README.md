@@ -31,6 +31,28 @@
   <tr><td colspan="2"><img src="assets/readme/scorecard.png" alt="The scorecard after a fight: every score with its benchmark, source, setting and margin of error"></td></tr>
 </table>
 
+## Signature moves
+
+Every lab has a signature move. It plays in place of the weapon on a model's **biggest hit** of the fight. It's just for fun: the damage is always exactly what the scores say.
+
+| Lab | Move | |
+|---|---|---|
+| xAI | **Aura Farming** | Strikes a pose, shades drop, golden aura. On a K.O., RATIO |
+| Anthropic | **I apologize for the confusion** | Apologizes politely, then throws the apology |
+| OpenAI | **Em Dash Barrage** | It rains em dashes. Something about "delve" |
+| Google DeepMind | **Two Million Tokens** | Opens a huge context window; the whole library falls out |
+| DeepSeek | **Clearance Sale** | A giant 95% OFF tag, and coins everywhere |
+| Alibaba | **Release Day** | Fourteen model sizes stampede across the arena |
+| Moonshot | **Moonshot** | Launches the moon |
+| Z.ai | **Zorro Slash** | Carves a giant Z |
+| Thinking Machines | **Deep Thought** | Thinks for 7.5 million years, then throws 42 |
+| MiniMax | **Mini → MAX** | A giant version of itself stomps down |
+| Nvidia | **GPU Drop** | A graphics card falls from the sky. It's sold out |
+| Mistral · Meta | **Mistral** · **Llama Spit** | Ready for when their models join the roster |
+| Everyone else | **Hallucination** | Confidently summons an opponent that doesn't exist |
+
+Moves live in [`src/page/specials.js`](src/page/specials.js). They're affectionate jokes about each lab, not claims about anyone.
+
 ## The rules
 
 | Rule | Detail |

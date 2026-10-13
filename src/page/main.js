@@ -1,6 +1,7 @@
 // Benchmark Brawl page. The rules live in ../fight.ts and ../league.ts; this file draws and plays them.
 import { formatValue, planFight, weaponName } from '../fight.ts';
 import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
+import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
 import { CLASSES, featuredFight, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 
 /** @type {import('../types.ts').BrawlData} */
@@ -308,7 +309,7 @@ function startFight(opts = {}) {
   const [a, b] = picks.map((id) => byId.get(id));
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, rounds);
-  F = { plan, colors: fightColors(a, b), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null };
+  F = { plan, colors: fightColors(a, b), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: bigHits(plan) };
   for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
   $('arena').hidden = false;
   $('arena').classList.remove('royale');
@@ -366,7 +367,7 @@ function resultLine(R) {
   if (R.winner === -1) return 'Dead even. Crossfire, no damage.';
   const w = R.winner === 0 ? a : b;
   const by = R.bench.kind === 'price' ? `${(Math.max(...R.values) / Math.min(...R.values)).toFixed(1)}× cheaper` : `by ${R.points} point${R.points === 1 ? '' : 's'}`;
-  return `${weaponName(R.weapon)}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
+  return `${F.special?.[R.winner] === F.plan.rounds.indexOf(R) ? moveNameFor(w.org) : weaponName(R.weapon)}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
 }
 function enterPhase() {
   const R = F.plan.rounds[F.i];
@@ -439,7 +440,7 @@ function step(dt) {
   }
   if (name === 'attack' && F.fx) updateFx(F.fx, R, dt);
   if (name === 'after') { F.fx = null; F.pose = F.pose.map((p) => (p === 'aim' || p === 'summon' ? 'idle' : p)); }
-  const attackLen = R.weapon === 'mg' || R.weapon === 'tie' ? 1.5 : R.weapon === 'rocket' ? 1.7 : 2.25;
+  const attackLen = F.fx?.kind === 'special' ? F.fx.sp.len : R.weapon === 'mg' || R.weapon === 'tie' ? 1.5 : R.weapon === 'rocket' ? 1.7 : 2.25;
   if (F.t >= (name === 'attack' ? attackLen : len)) nextPhase();
 }
 function endFight() {
@@ -450,11 +451,34 @@ function endFight() {
 }
 
 // ---------- weapons ----------
+/** What a signature move needs from the page. */
+const moveKit = () => ({ tone, noise, sfx, burstSparks, explode, drawBot, roundRect, floats: F.floats });
+/** A big centred title (weapon or move name), shrunk to fit. */
+function drawTitle(text, color, alpha, scale = 1, y = 96) {
+  g.save(); g.globalAlpha = alpha; g.textAlign = 'center';
+  let size = 30; g.font = `400 ${size}px "Press Start 2P", monospace`;
+  while (g.measureText(text).width * scale > W - 60 && size > 12) { size -= 2; g.font = `400 ${size}px "Press Start 2P", monospace`; }
+  g.translate(W / 2, y); g.scale(scale, scale);
+  g.fillStyle = '#000'; g.fillText(text, 4, 4); g.fillStyle = color; g.fillText(text, 0, 0);
+  g.restore();
+}
+/** Per fighter, the round of its biggest hit: that's where its signature move plays. */
+function bigHits(plan) {
+  return [0, 1].map((k) => { let best = -1, d = 0; plan.rounds.forEach((R, i) => { if (R.winner === k && R.dmg > d) { d = R.dmg; best = i; } }); return best; });
+}
 const dirOf = (k) => (k === 0 ? 1 : -1);
 function startFx(R) {
   const w = R.winner, kind = R.weapon;
   const fx = { kind, t: 0, shots: [], rockets: [], meteors: [], hits: 0, landed: 0, fired: 0, nextShot: 0.25, muzzle: [0, 0], title: weaponName(kind), titleC: w >= 0 ? F.colors[w] : '#F3F4F8' };
   if (kind === 'tie') { F.pose = ['aim', 'aim']; fx.toFire = 7; return fx; }
+  if (F.special[w] === F.i) {
+    const l = 1 - w, m = F.plan.fighters[w];
+    F.pose[w] = 'summon';
+    Object.assign(fx, { kind: 'special', hits: 1, title: moveNameFor(m.org) });
+    fx.sp = startMove(m.org, { ...moveKit(), ax: F.x[w] + dirOf(w) * 24, ay: FLOOR - 176, x: F.x[w], tx: F.x[l], ty: FLOOR - 100, floor: FLOOR, s: 1, dir: dirOf(w), color: F.colors[w], ko: R.hpAfter[l] === 0,
+      land: () => landHit(fx, R, F.x[l], FLOOR - 100, 'big') });
+    return fx;
+  }
   F.pose[w] = kind === 'meteor' || kind === 'laser' ? 'summon' : 'aim';
   fx.hits = kind === 'mg' ? 10 : kind === 'rocket' ? (R.points >= 7 ? 2 : 1) : kind === 'meteor' ? 6 : 1;
   fx.toFire = fx.hits;
@@ -472,7 +496,7 @@ function landHit(fx, R, x, y, size) {
   F.shake = reduced ? 0 : Math.max(F.shake, size === 'big' ? 18 : size === 'mid' ? 10 : 4);
   if (size !== 'small') explode(x, y, size === 'big', fx.kind === 'laser' ? 0.85 : undefined);
   else burstSparks(x, y, 6, '#FFE066');
-  if (fx.landed >= fx.hits) F.floats.push({ x: F.x[l], y: FLOOR - 200, text: `−${R.dmg}`, c: '#FF6B6B', life: 1.3 });
+  if (fx.landed >= fx.hits) F.floats.push({ x: F.x[l], y: FLOOR - 200, text: `−${R.hpBefore[l] - R.hpAfter[l]}`, c: '#FF6B6B', life: 1.3 });
 }
 function burstSparks(x, y, n, c) {
   if (reduced) n = Math.ceil(n / 3);
@@ -494,6 +518,7 @@ function updateFx(fx, R, dt) {
   fx.t += dt;
   fx.muzzle = fx.muzzle.map((m) => Math.max(0, m - dt));
   const w = R.winner, l = 1 - w;
+  if (fx.kind === 'special') { updateMove(fx.sp, dt); return; }
   if (fx.kind === 'mg' || fx.kind === 'tie') {
     const shooters = fx.kind === 'tie' ? [0, 1] : [w];
     if (fx.fired < fx.toFire && fx.t >= fx.nextShot) {
@@ -552,13 +577,8 @@ function updateFx(fx, R, dt) {
 }
 function drawFx(fx, t) {
   if (!fx) return;
-  if (fx.t < 1.1) {
-    const a = Math.min(1, fx.t * 6) * Math.min(1, (1.1 - fx.t) * 3), sc = 1 + Math.max(0, 0.25 - fx.t) * 2;
-    g.save(); g.globalAlpha = a; g.translate(W / 2, 96); g.scale(sc, sc);
-    g.font = '400 30px "Press Start 2P", monospace'; g.textAlign = 'center';
-    g.fillStyle = '#000'; g.fillText(fx.title, 4, 4); g.fillStyle = fx.titleC; g.fillText(fx.title, 0, 0);
-    g.restore();
-  }
+  if (fx.t < 1.1) drawTitle(fx.title, fx.titleC, Math.min(1, fx.t * 6) * Math.min(1, (1.1 - fx.t) * 3), 1 + Math.max(0, 0.25 - fx.t) * 2);
+  if (fx.kind === 'special') drawMove(fx.sp, g, t);
   for (const b of fx.shots) {
     g.save(); g.shadowColor = '#FFE066'; g.shadowBlur = 10; g.strokeStyle = '#FFF3B0'; g.lineWidth = 3;
     g.beginPath(); g.moveTo(b.x, b.y); g.lineTo(b.x - Math.sign(b.vx) * 26, b.y); g.stroke(); g.restore();
@@ -652,7 +672,7 @@ function drawParticles() {
   }
   g.globalAlpha = 1;
   for (const f of F.floats) {
-    g.font = '400 26px "Press Start 2P", monospace'; g.textAlign = 'center'; g.globalAlpha = Math.min(1, f.life * 2);
+    g.font = `400 ${f.size || 26}px "Press Start 2P", monospace`; g.textAlign = 'center'; g.globalAlpha = Math.min(1, f.life * 2);
     g.fillStyle = '#000'; g.fillText(f.text, f.x + 3, f.y + 3); g.fillStyle = f.c; g.fillText(f.text, f.x, f.y);
   }
   g.globalAlpha = 1;
@@ -846,7 +866,9 @@ function startRoyale() {
   const gap = (W - 80) / n;
   F = { royale: true, plan, n, colors: royaleColors(ms), x: ms.map((_, i) => 40 + gap * (i + 0.5)), s: n >= 6 ? 0.6 : n >= 4 ? 0.74 : 0.9, gap,
     pose: ms.map(() => 'idle'), flash: ms.map(() => 0), dodge: ms.map(() => 0), hp: ms.map(() => 100), shown: ms.map(() => null),
-    i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false };
+    i: 0, phase: 0, t: 0, sparks: [], floats: [], booms: [], shots: [], fx: null, shake: 0, white: 0, over: false, done: false, moveTitle: null,
+    // per fighter, its biggest hit as leader: where its signature move plays
+    special: ms.map((_, k) => { let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
   for (const id of ['builder', 'select', 'ready', 'result', 'tourney', 'featured', 'royaleResult']) $(id).hidden = true;
   $('arena').hidden = false; $('arena').classList.add('royale'); $('rec').hidden = true;
   $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
@@ -911,7 +933,7 @@ function rLand(R, hit, last, size) {
   F.shake = reduced ? 0 : Math.max(F.shake, size === 'big' ? 14 : size === 'mid' ? 8 : 4);
   if (size !== 'small') explode(chestOf(k).x, chestOf(k).y, size === 'big', size === 'big' ? 0.25 : 0);
   else burstSparks(chestOf(k).x, chestOf(k).y, 8, '#FFE066');
-  F.floats.push({ x: F.x[k], y: FLOOR - 200 * F.s - 30, text: `−${hit.dmg}`, c: '#FF6B6B', life: 1.3, size: 18 });
+  F.floats.push({ x: F.x[k], y: FLOOR - 200 * F.s - 30, text: `−${R.hpBefore[k] - R.hpAfter[k]}`, c: '#FF6B6B', life: 1.3, size: 18 });
   renderBoard();
 }
 function rFire(R, hit) {
@@ -921,6 +943,14 @@ function rFire(R, hit) {
     F.shots.push({ kind: 'bullet', x: o.x, y: o.y, tx: c.x, ty: c.y - 70 * F.s, v: 1500, onLand: () => {} });
     F.floats.push({ x: F.x[k], y: FLOOR - 200 * F.s - 30, text: 'DODGE', c: '#7FD3F0', life: 1.1, size: 13 });
     sfx.shot(); sfx.ricochet();
+    return;
+  }
+  const sp = F.special[L];
+  if (sp && sp.i === F.i && sp.target === k) {
+    const m = F.plan.fighters[L];
+    F.moveTitle = { text: moveNameFor(m.org), c: F.colors[L], t: 0 };
+    F.shots.push({ kind: 'move', sp: startMove(m.org, { ...moveKit(), ax: o.x, ay: o.y, x: F.x[L], tx: c.x, ty: c.y, floor: FLOOR, s: F.s, dir: Math.sign(c.x - F.x[L]) || 1, color: F.colors[L], ko: R.hpAfter[k] === 0,
+      land: () => rLand(R, hit, true, 'big') }) });
     return;
   }
   const w = hit.weapon;
@@ -942,8 +972,10 @@ function stepRoyale(dt) {
   F.t += dt;
   stepParticles(dt);
   F.dodge = F.dodge.map((v) => Math.max(0, v - dt));
+  if (F.moveTitle) F.moveTitle.t += dt;
   for (const s of F.shots) {
     if (s.delay > 0) { s.delay -= dt; continue; }
+    if (s.kind === 'move') { if (updateMove(s.sp, dt)) s.done = true; continue; }
     if (s.kind === 'bullet' || s.kind === 'meteor') {
       const dx = s.tx - s.x, dy = s.ty - s.y, d = Math.hypot(dx, dy), st = s.v * dt;
       if (s.kind === 'meteor' && !reduced) F.sparks.push({ kind: 'fire', x: s.x, y: s.y, vx: 0, vy: -20, r: s.r * 0.8, life: 0.22, c: Math.random() < 0.5 ? '#FFA94D' : '#FF6B6B' });
@@ -1041,13 +1073,11 @@ function drawRoyale(t) {
     if (s.kind === 'bullet') { g.save(); g.shadowColor = '#FFE066'; g.shadowBlur = 10; g.strokeStyle = '#FFF3B0'; g.lineWidth = 3; g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(s.x - Math.cos(s.a || 0) * 22, s.y - Math.sin(s.a || 0) * 22); g.stroke(); g.restore(); }
     else if (s.kind === 'rocket') { g.save(); g.translate(s.x, s.y); g.fillStyle = '#d9dde8'; roundRect(g, -12, -5, 24, 10, 4); g.fill(); g.fillStyle = '#FF6B6B'; g.beginPath(); g.arc(12, 0, 5, 0, Math.PI * 2); g.fill(); g.restore(); }
     else if (s.kind === 'meteor') { g.save(); g.shadowColor = '#FF8A3D'; g.shadowBlur = 20; g.fillStyle = '#7a3b22'; g.beginPath(); g.arc(s.x, s.y, s.r, 0, Math.PI * 2); g.fill(); g.fillStyle = '#FFB36B'; g.beginPath(); g.arc(s.x - s.r * 0.3, s.y - s.r * 0.3, s.r * 0.45, 0, Math.PI * 2); g.fill(); g.restore(); }
+    else if (s.kind === 'move') drawMove(s.sp, g, t);
     else if (s.kind === 'beam') { const k = s.t / 0.6, wd = 44 * (1 - k * 0.6); g.save(); g.globalAlpha = 1 - k * 0.8; const gr = g.createLinearGradient(s.x - wd, 0, s.x + wd, 0); gr.addColorStop(0, 'rgba(127,211,240,0)'); gr.addColorStop(0.5, '#7FD3F0'); gr.addColorStop(1, 'rgba(127,211,240,0)'); g.fillStyle = gr; g.fillRect(s.x - wd, 0, wd * 2, FLOOR + 10); g.fillStyle = '#fff'; g.fillRect(s.x - wd * 0.18, 0, wd * 0.36, FLOOR + 10); g.restore(); }
   }
-  if (F.fx?.title && F.fx.t < 1.2) {
-    const a = Math.min(1, F.fx.t * 6) * Math.min(1, (1.2 - F.fx.t) * 3);
-    g.save(); g.globalAlpha = a; g.font = '400 26px "Press Start 2P", monospace'; g.textAlign = 'center';
-    g.fillStyle = '#000'; g.fillText(F.fx.title, W / 2 + 4, 74); g.fillStyle = F.fx.titleC; g.fillText(F.fx.title, W / 2, 70); g.restore();
-  }
+  if (F.moveTitle && F.moveTitle.t < 1.5) drawTitle(F.moveTitle.text, F.moveTitle.c, Math.min(1, F.moveTitle.t * 6) * Math.min(1, (1.5 - F.moveTitle.t) * 3), 1, 70);
+  else if (F.fx?.title && F.fx.t < 1.2) drawTitle(F.fx.title, F.fx.titleC, Math.min(1, F.fx.t * 6) * Math.min(1, (1.2 - F.fx.t) * 3), 1, 70);
   drawParticles();
 }
 
