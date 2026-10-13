@@ -119,6 +119,17 @@ select.sort { min-height: 36px; padding: 6px 10px; border-radius: 9px; border: 1
 .tablewrap table { min-width: 560px; }
 th .t { display: block; text-transform: none; letter-spacing: 0; font-weight: 500; }
 
+/* claim check */
+.verdict-pill { display: inline-block; font: 700 11.5px var(--mono); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.verdict-pill.match { background: rgba(46,196,166,.15); color: #2EC4A6; }
+.verdict-pill.lab { background: rgba(242,181,68,.15); color: var(--amber); }
+.verdict-pill.ind { background: rgba(127,211,240,.15); color: var(--sky); }
+.stat { font: 600 13px var(--ui); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; }
+.stat b { color: var(--text); }
+#claims td { white-space: normal; }
+#claims td.num { min-width: 120px; }
+#claims td:first-child { min-width: 110px; }
+
 /* results */
 .verdict { font: 400 clamp(14px, 2.6vw, 20px)/1.4 var(--arcade); }
 .verdict b { font-weight: 400; color: var(--c); }
@@ -201,6 +212,7 @@ footer { display: grid; gap: 6px; }
   <div class="ready" id="ready">
     <div class="vs-line" id="vsLine"></div>
     <div class="acts">
+      <button class="btn" id="claimsBtn" title="What labs say about their own models, next to independent tests">🔎 Claim check</button>
       <button class="btn" id="tourneyBtn" title="Top 8 of this weight class by Epoch Capabilities Index">🏆 Tournament</button>
       <button class="btn go" id="fight" disabled>FIGHT!</button>
     </div>
@@ -260,6 +272,20 @@ footer { display: grid; gap: 6px; }
       <button class="btn" id="ragain">Pick new fighters</button>
     </div>
     <p class="fine">Each round, the best result on the round's benchmark fires at everyone else: 2 × their gap in damage, bigger gap, bigger weapon. Inside the margin of error is a dodge. A fighter without a result for that benchmark sits the round out. At 0 HP it's out.</p>
+  </section>
+
+  <section class="box" id="claims" hidden aria-label="Claim check">
+    <div class="toolbar"><h2>🔎 Claim check</h2><button class="btn small" id="claimsClose">← Back</button></div>
+    <p class="pitch" style="margin:0">What each lab published about its own model, next to what an independent tester measured on the same benchmark. Inside the margin of error counts as a match.</p>
+    <div class="chips" id="claimSummary"></div>
+    <div class="chips"><select class="sort" id="claimLab" aria-label="Filter by lab"></select></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Model</th><th>Benchmark</th><th>Lab says</th><th>Independent</th><th>Verdict</th></tr></thead>
+      <tbody id="claimRows"></tbody>
+    </table></div>
+    <pre class="share" id="claimShare"></pre>
+    <div class="acts"><button class="btn" id="claimCopy">Copy summary + link</button></div>
+    <p class="fine">A gap doesn't mean anyone fudged a number. Labs often test with their own agent setup, more attempts, a different prompt or effort level, and benchmarks get updated. Some labs quote DeepSWE straight from Datacurve's leaderboard, so those match by design. Each lab number links to the page it comes from; we copied them by hand, so if one is wrong, <a href="https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml">tell us</a>.</p>
   </section>
 
   <section class="box" id="tourney" hidden aria-label="Tournament">

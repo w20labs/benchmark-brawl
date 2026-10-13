@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-13T05:58:01.459Z",
+ "generatedAt": "2026-10-13T06:07:42.829Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -4198,6 +4198,728 @@
      "se": 4.61,
      "setting": "max"
     }
+   }
+  }
+ ],
+ "claims": [
+  {
+   "modelId": "claudeopus5",
+   "bench": "deepswe",
+   "claimed": 68.8,
+   "version": "1.1",
+   "conditions": "113 tasks, average over 5 trials, adaptive thinking at max effort",
+   "url": "https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf",
+   "quote": "Claude Opus 5 scored an average of 68.8% over five trials.",
+   "published": "2026-07-24",
+   "indep": {
+    "v": 73.6,
+    "se": 1.98,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "claudefable5",
+   "bench": "deepswe",
+   "claimed": 69.7,
+   "version": "1.1",
+   "conditions": "comparison column in Opus 5 system card and launch post",
+   "url": "https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf",
+   "quote": "DeepSWE v1.1 68.8 59.0 69.7 72.7",
+   "published": "2026-07-24",
+   "indep": {
+    "v": 69.9,
+    "se": 1.66,
+    "setting": "xhigh",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "claudeopus48",
+   "bench": "gpqa",
+   "claimed": 93.6,
+   "version": null,
+   "conditions": "198-question Diamond set, averaged over 25 trials, adaptive thinking at max effort",
+   "url": "https://www-cdn.anthropic.com/0b4915911bb0d19eca5b5ee635c80fef830a37ea.pdf",
+   "quote": "Opus 4.8 achieved 93.6% on GPQA Diamond, averaged over 25 trials.",
+   "published": "2026-05-28",
+   "indep": {
+    "v": 91,
+    "se": 1.92,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "claudeopus48",
+   "bench": "deepswe",
+   "claimed": 59,
+   "version": "1.1",
+   "conditions": "comparison column in Opus 5 system card and launch post",
+   "url": "https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf",
+   "quote": "DeepSWE v1.1 68.8 59.0 69.7 72.7",
+   "published": "2026-07-24",
+   "indep": {
+    "v": 59,
+    "se": 0.9,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "claudeopus47",
+   "bench": "swebench",
+   "claimed": 87.6,
+   "version": null,
+   "conditions": "500-problem subset, average over 5 trials, adaptive thinking at max effort",
+   "url": "https://www-cdn.anthropic.com/037f06850df7fbe871e206dad004c3db5fd50340.pdf",
+   "quote": "SWE-bench Verified (OpenAI) is a 500-problem subset ... Claude Opus 4.7 achieves 87.6%.",
+   "published": "2026-04-16",
+   "indep": {
+    "v": 83.5,
+    "se": 1.69,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "claudeopus47",
+   "bench": "gpqa",
+   "claimed": 94.2,
+   "version": null,
+   "conditions": "198-question Diamond set, averaged over 10 trials, adaptive thinking at max effort",
+   "url": "https://www-cdn.anthropic.com/037f06850df7fbe871e206dad004c3db5fd50340.pdf",
+   "quote": "Claude Opus 4.7 achieved 94.2% on GPQA Diamond, averaged over 10 trials.",
+   "published": "2026-04-16",
+   "indep": {
+    "v": 86.4,
+    "se": 2.45,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "claudeopus46",
+   "bench": "swebench",
+   "claimed": 80.8,
+   "version": null,
+   "conditions": "averaged over 25 trials; adaptive thinking, max effort, 500 problems (system card gives 80.84%)",
+   "url": "https://www.anthropic.com/news/claude-opus-4-6",
+   "quote": "SWE-bench Verified: Our score was averaged over 25 trials.",
+   "published": "2026-02-05",
+   "indep": {
+    "v": 78.7,
+    "se": 1.86,
+    "setting": "default",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "claudeopus46",
+   "bench": "swebench",
+   "claimed": 81.42,
+   "version": null,
+   "conditions": "same eval with a prompt modification",
+   "url": "https://www.anthropic.com/news/claude-opus-4-6",
+   "quote": "With a prompt modification, we saw a score of 81.42%.",
+   "published": "2026-02-05",
+   "indep": {
+    "v": 78.7,
+    "se": 1.86,
+    "setting": "default",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "claudeopus46",
+   "bench": "gpqa",
+   "claimed": 91.31,
+   "version": null,
+   "conditions": "198 Diamond questions, averaged over 5 trials, adaptive thinking, max effort (launch post shows 91.3%)",
+   "url": "https://www-cdn.anthropic.com/6a5fa276ac68b9aeb0c8b6af5fa36326e0e166dd/Claude%20Opus%204.6%20System%20Card.pdf",
+   "quote": "Claude Opus 4.6 achieved a score of 91.31% on GPQA Diamond, averaged over 5 trials",
+   "published": "2026-02-05",
+   "indep": {
+    "v": 88.4,
+    "se": 2.28,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gpt6astra",
+   "bench": "gpqa",
+   "claimed": 96,
+   "version": null,
+   "conditions": "appendix table; 'Evaluation scores are the maximum at any effort.'",
+   "url": "https://openai.com/index/gpt-6-astra/",
+   "quote": "GPT‑6 Astra reaches a new high in the comparison shown at 96.0%.",
+   "published": "2026-09-03",
+   "indep": {
+    "v": 95.8,
+    "se": 1.37,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt6astra",
+   "bench": "gpqa",
+   "claimed": 94.9,
+   "version": null,
+   "conditions": "lower-cost setting (effort not named); stated only in prose",
+   "url": "https://openai.com/index/gpt-6-astra/",
+   "quote": "At a lower-cost setting, it also exceeds GPT‑5.6 Sol's best score—94.9% versus 94.6%",
+   "published": "2026-09-03",
+   "indep": {
+    "v": 95.8,
+    "se": 1.37,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt6astra",
+   "bench": "frontiermath-t4",
+   "claimed": 97.6,
+   "version": "v2",
+   "conditions": "appendix table; maximum at any effort (prose rounds to 98%)",
+   "url": "https://openai.com/index/gpt-6-astra/",
+   "quote": "FrontierMath Tier 4 (v2) 97.6% 83.0%",
+   "published": "2026-09-03",
+   "indep": {
+    "v": 97.6,
+    "se": 2.44,
+    "setting": "medium",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt6astra",
+   "bench": "deepswe",
+   "claimed": 74.1,
+   "version": "1.1",
+   "conditions": "appendix table; maximum at any effort (xhigh per later GPT-6 Sol/Luna charts)",
+   "url": "https://openai.com/index/gpt-6-astra/",
+   "quote": "DeepSWE v1.1 74.1% 72.7%",
+   "published": "2026-09-03",
+   "indep": {
+    "v": 74.1,
+    "se": 1.46,
+    "setting": "xhigh",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gpt56sol",
+   "bench": "gpqa",
+   "claimed": 94.6,
+   "version": null,
+   "conditions": "appendix table; effort not stated (Astra page lists same value as max at any effort)",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "GPQA Diamond 94.6% 92.9% 92.3% 93.6%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 93.5,
+    "se": 1.57,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gpt56sol",
+   "bench": "frontiermath",
+   "claimed": 89,
+   "version": "v2",
+   "conditions": "appendix table; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "FrontierMath Tier 1-3 (v2) 89% 84.9% 78.6% 85.3%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 89.1,
+    "se": 1.85,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt56sol",
+   "bench": "frontiermath-t4",
+   "claimed": 83,
+   "version": "v2",
+   "conditions": "appendix table; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "FrontierMath Tier 4 (v2) 83% 68.3% 58.5% 72.5%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 82.9,
+    "se": 5.95,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt56sol",
+   "bench": "deepswe",
+   "claimed": 72.7,
+   "version": "1.1",
+   "conditions": "appendix table; max effort per GPT-6 Sol/Luna chart",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "DeepSWE v1.1 72.7% — 69.6% 67.2% 67%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 72.7,
+    "se": 1.44,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gpt56terra",
+   "bench": "gpqa",
+   "claimed": 92.9,
+   "version": null,
+   "conditions": "appendix table; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "GPQA Diamond 94.6% 92.9% 92.3% 93.6%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 93.3,
+    "se": 1.54,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt56terra",
+   "bench": "frontiermath",
+   "claimed": 84.9,
+   "version": "v2",
+   "conditions": "appendix table; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "FrontierMath Tier 1-3 (v2) 89% 84.9% 78.6% 85.3%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 86,
+    "se": 2.06,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt56terra",
+   "bench": "frontiermath-t4",
+   "claimed": 68.3,
+   "version": "v2",
+   "conditions": "appendix table; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "FrontierMath Tier 4 (v2) 83% 68.3% 58.5% 72.5%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 70.7,
+    "se": 7.19,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt56terra",
+   "bench": "deepswe",
+   "claimed": 69.6,
+   "version": "1.1",
+   "conditions": "appendix table; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "DeepSWE v1.1 72.7% — 69.6% 67.2% 67%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 69.6,
+    "se": 1.3,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt55",
+   "bench": "gpqa",
+   "claimed": 93.6,
+   "version": null,
+   "conditions": "xhigh reasoning effort; research environment",
+   "url": "https://openai.com/index/introducing-gpt-5-5/",
+   "quote": "GPQA Diamond 93.6% 92.8% - 94.4%",
+   "published": "2026-04-23",
+   "indep": {
+    "v": 94,
+    "se": 1.55,
+    "setting": "xhigh",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gpt55",
+   "bench": "frontiermath",
+   "claimed": 85.3,
+   "version": "v2",
+   "conditions": "comparison column on GPT-5.6 page; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "FrontierMath Tier 1-3 (v2) 89% 84.9% 78.6% 85.3%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 85.3,
+    "se": 2.1,
+    "setting": "xhigh",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt55",
+   "bench": "frontiermath-t4",
+   "claimed": 72.5,
+   "version": "v2",
+   "conditions": "comparison column on GPT-5.6 page; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "FrontierMath Tier 4 (v2) 83% 68.3% 58.5% 72.5%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 72.5,
+    "se": 7.15,
+    "setting": "xhigh",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt55",
+   "bench": "deepswe",
+   "claimed": 67,
+   "version": "1.1",
+   "conditions": "comparison column on GPT-5.6 page; effort not stated",
+   "url": "https://openai.com/index/gpt-5-6/",
+   "quote": "DeepSWE v1.1 72.7% — 69.6% 67.2% 67%",
+   "published": "2026-07-09",
+   "indep": {
+    "v": 67,
+    "se": 3.3,
+    "setting": "xhigh",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gpt54pro",
+   "bench": "gpqa",
+   "claimed": 94.4,
+   "version": null,
+   "conditions": "xhigh reasoning effort unless specified; research environment",
+   "url": "https://openai.com/index/introducing-gpt-5-4/",
+   "quote": "GPQA Diamond 92.8% 94.4% 92.6% 92.4% 93.2%",
+   "published": "2026-03-05",
+   "indep": {
+    "v": 94.6,
+    "se": 1.6,
+    "setting": "xhigh",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gpt54",
+   "bench": "gpqa",
+   "claimed": 92.8,
+   "version": null,
+   "conditions": "xhigh reasoning effort; research environment",
+   "url": "https://openai.com/index/introducing-gpt-5-4/",
+   "quote": "GPQA Diamond 92.8% 94.4% 92.6% 92.4% 93.2%",
+   "published": "2026-03-05",
+   "indep": {
+    "v": 93.3,
+    "se": 1.8,
+    "setting": "xhigh",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gemini38flash",
+   "bench": "deepswe",
+   "claimed": 73.7,
+   "version": "1.1",
+   "conditions": "pass@1; self-computed; mini-swe-agent harness, high thinking (per eval methodology PDF)",
+   "url": "https://deepmind.google/models/model-cards/gemini-3-8-flash/",
+   "quote": "DeepSWE v1.1 ... Long-horizon software engineering ... 73.7%",
+   "published": "2026-09-02",
+   "indep": {
+    "v": 73.8,
+    "se": 0.72,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gemini37flash",
+   "bench": "deepswe",
+   "claimed": 65.3,
+   "version": "1.1",
+   "conditions": "pass@1; self-computed; mini-swe-agent harness with LiteLLM 1.96, high thinking (methodology PDF)",
+   "url": "https://deepmind.google/models/model-cards/gemini-3-7-flash/",
+   "quote": "DeepSWE v1.1 ... 65.3%",
+   "published": "2026-08-13",
+   "indep": {
+    "v": 65.3,
+    "se": 0.91,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gemini31pro",
+   "bench": "gpqa",
+   "claimed": 94.3,
+   "version": null,
+   "conditions": "Thinking (High); no tools; pass@1; self-computed; gemini-3.1-pro-preview",
+   "url": "https://deepmind.google/models/model-cards/gemini-3-1-pro/",
+   "quote": "GPQA Diamond ... No tools ... 94.3%",
+   "published": "2026-02-19",
+   "indep": {
+    "v": 94.4,
+    "se": 1.63,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "gemini31pro",
+   "bench": "swebench",
+   "claimed": 80.6,
+   "version": null,
+   "conditions": "Thinking (High), single attempt",
+   "url": "https://deepmind.google/models/model-cards/gemini-3-1-pro/",
+   "quote": "SWE-Bench Verified ... Single attempt ... 80.6%",
+   "published": "2026-02-19",
+   "indep": {
+    "v": 75.6,
+    "se": 1.95,
+    "setting": "default",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gemini31pro",
+   "bench": "deepswe",
+   "claimed": 12,
+   "version": "1.1",
+   "conditions": "comparison column in Gemini 3.6 Flash card; not stated",
+   "url": "https://deepmind.google/models/model-cards/gemini-3-6-flash/",
+   "quote": "DeepSWE v1.1 ... long-horizon software engineering ... 12%",
+   "published": "2026-07-21",
+   "indep": {
+    "v": 11.7,
+    "se": 0.76,
+    "setting": "high",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "gemini35flash",
+   "bench": "deepswe",
+   "claimed": 37,
+   "version": "1.1",
+   "conditions": "comparison column in Gemini 3.6 Flash card; not stated",
+   "url": "https://deepmind.google/models/model-cards/gemini-3-6-flash/",
+   "quote": "DeepSWE v1.1 ... 37%",
+   "published": "2026-07-21",
+   "indep": {
+    "v": 37.4,
+    "se": 0.91,
+    "setting": "medium",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "grok46",
+   "bench": "deepswe",
+   "claimed": 65.9,
+   "version": "1.1",
+   "conditions": "high thinking effort; mini-swe-agent harness; pass@1; Datacurve-conducted",
+   "url": "https://media.x.ai/v1/website/card-4p6-4cd2dc57.pdf",
+   "quote": "Grok 4.6 scores 65.9% at high thinking effort and 67.0% at xhigh thinking effort.",
+   "published": "2026-08-12",
+   "indep": {
+    "v": 65.2,
+    "se": 0.78,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "grok46",
+   "bench": "deepswe",
+   "claimed": 67,
+   "version": "1.1",
+   "conditions": "xhigh thinking effort; mini-swe-agent harness; pass@1; Datacurve-conducted",
+   "url": "https://media.x.ai/v1/website/card-4p6-4cd2dc57.pdf",
+   "quote": "Grok 4.6 scores 65.9% at high thinking effort and 67.0% at xhigh thinking effort.",
+   "published": "2026-08-12",
+   "indep": {
+    "v": 66.7,
+    "se": 1.11,
+    "setting": "xhigh",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "grok46",
+   "bench": "deepswe",
+   "claimed": 65.2,
+   "version": "1.1",
+   "conditions": "high effort; comparison column on Grok 4.7 page (mini-SWE-agent, pass@1, Datacurve per 4.7 card)",
+   "url": "https://x.ai/news/grok-4-7",
+   "quote": "DeepSWE v1.1 ... 65.2%",
+   "published": "2026-09-21",
+   "indep": {
+    "v": 65.2,
+    "se": 0.78,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "grok45",
+   "bench": "deepswe",
+   "claimed": 53,
+   "version": "1.1",
+   "conditions": "high; pass@1; mini-swe-agent harness run by Datacurve",
+   "url": "https://x.ai/news/grok-4-5",
+   "quote": "DeepSWE 1.1 (mini-swe-agent harness run by Datacurve)",
+   "published": "2026-07-16",
+   "indep": {
+    "v": 53.8,
+    "se": 1.16,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "grok45",
+   "bench": "deepswe",
+   "claimed": 54,
+   "version": "1.1",
+   "conditions": "high effort; comparison column on Grok 4.6 page",
+   "url": "https://x.ai/news/grok-4-6",
+   "quote": "DeepSWE v1.1 ... 54%",
+   "published": "2026-08-12",
+   "indep": {
+    "v": 53.8,
+    "se": 1.16,
+    "setting": "high",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "kimik3",
+   "bench": "gpqa",
+   "claimed": 93.5,
+   "version": null,
+   "conditions": "reasoning effort max, temperature 1.0, top-p 0.95 (single-step), no tools",
+   "url": "https://huggingface.co/moonshotai/Kimi-K3",
+   "quote": "GPQA Diamond | 93.5",
+   "published": "2026-07-16",
+   "indep": {
+    "v": 93.1,
+    "se": 1.49,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "kimik3",
+   "bench": "deepswe",
+   "claimed": 67.5,
+   "version": "1.1",
+   "conditions": "reasoning effort max, temperature 1.0, top-p 1.0, Kimi Code harness (headline table value)",
+   "url": "https://huggingface.co/moonshotai/Kimi-K3",
+   "quote": "DeepSWE | 67.5",
+   "published": "2026-07-16",
+   "indep": {
+    "v": 68.5,
+    "se": 2.31,
+    "setting": "max",
+    "sameSetting": true
+   }
+  },
+  {
+   "modelId": "kimik3",
+   "bench": "deepswe",
+   "claimed": 67.3,
+   "version": "1.1",
+   "conditions": "mini-SWE-agent harness (footnote; alternative harness)",
+   "url": "https://huggingface.co/moonshotai/Kimi-K3",
+   "quote": "under which Kimi K3 attains 67.3 with the mini-SWE-agent harness.",
+   "published": "2026-07-16",
+   "indep": {
+    "v": 68.5,
+    "se": 2.31,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "qwen38max",
+   "bench": "gpqa",
+   "claimed": 92.6,
+   "version": null,
+   "conditions": "not stated (from Qwen3.8-2.4T-A95B open-weights card, Qwen3.8-Max column)",
+   "url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
+   "quote": "GPQA Diamond ... 92.6 (Qwen3.8-Max column)",
+   "published": "2026-08-03",
+   "indep": {
+    "v": 92.7,
+    "se": 1.69,
+    "setting": "xhigh",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "qwen38max",
+   "bench": "deepswe",
+   "claimed": 56.6,
+   "version": "1.1",
+   "conditions": "Claude Code and mini-SWE-agent harnesses, temp 1.0, top_p 0.95; higher of the two harnesses reported",
+   "url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
+   "quote": "Evaluated with the Claude Code and mini-SWE-agent harnesses, temp=1.0, top_p=0.95",
+   "published": "2026-08-03",
+   "indep": {
+    "v": 57.5,
+    "se": 1.36,
+    "setting": "xhigh",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "glm53",
+   "bench": "deepswe",
+   "claimed": 66.9,
+   "version": "1.1",
+   "conditions": "mini-swe-agent harness, temperature 0.95, top_p 1.0, timeout 6h, 400K context; runs not stated",
+   "url": "https://huggingface.co/zai-org/GLM-5.3",
+   "quote": "We run DeepSWE using the mini-swe-agent harness with temperature=0.95, top_p=1.0, timeout=6h and 400K context.",
+   "published": null,
+   "indep": {
+    "v": 69,
+    "se": 1.54,
+    "setting": "max",
+    "sameSetting": false
+   }
+  },
+  {
+   "modelId": "deepseekv41flash",
+   "bench": "gpqa",
+   "claimed": 90.9,
+   "version": null,
+   "conditions": "pass@1, max reasoning effort (reasoning_effort=100), temperature 1.0, top_p 0.95",
+   "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+   "quote": "GPQA Diamond (Pass@1) ... 90.9",
+   "published": "2026-09-10",
+   "indep": {
+    "v": 89.8,
+    "se": 1.73,
+    "setting": "max",
+    "sameSetting": true
    }
   }
  ]

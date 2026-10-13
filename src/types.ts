@@ -58,6 +58,22 @@ export type Model = {
   scores: Record<string, Score>;
 };
 
+/** A number a lab published about its own model, next to the independent result for the same benchmark. */
+export type Claim = {
+  modelId: string;
+  bench: string;
+  /** What the lab published, in percent. */
+  claimed: number;
+  version: string | null;
+  /** What the lab says about how it ran it (effort, tools, harness…). */
+  conditions: string;
+  url: string;
+  quote: string;
+  published: string | null;
+  /** The independent result: at the same reasoning setting when the lab names one, else the best. */
+  indep: { v: number; se: number | null; setting: string; sameSetting: boolean };
+};
+
 export type BrawlData = {
   generatedAt: string;
   benchmarks: Benchmark[];
@@ -65,4 +81,6 @@ export type BrawlData = {
   /** Round ids of the default arena. */
   defaultRounds: string[];
   models: Model[];
+  /** Claim check: labs' own published numbers next to independent results. */
+  claims: Claim[];
 };

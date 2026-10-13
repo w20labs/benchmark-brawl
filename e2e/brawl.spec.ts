@@ -76,3 +76,16 @@ test('a battle royale ranks every fighter and shares a replay link', async ({ pa
   await expect(page.locator('#rshare')).toContainText('#m=royale&f=');
   expect(errors).toEqual([]);
 });
+
+test('claim check lists lab claims next to independent results, with sources', async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto(URL);
+  await page.click('#claimsBtn');
+  await expect(page.locator('#claimRows tr')).toHaveCount(data.claims.length);
+  await expect(page.locator('#claimRows a').first()).toHaveAttribute('href', /^https:/);
+  await expect(page.locator('#claims')).not.toContainText(/\bnull\b|\bundefined\b|NaN/);
+  await page.selectOption('#claimLab', 'Anthropic');
+  await expect(page).toHaveURL(/#claims=Anthropic$/);
+  await expect(page.locator('#claimShare')).toContainText('#claims=Anthropic');
+  expect(errors).toEqual([]);
+});

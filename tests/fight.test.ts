@@ -18,6 +18,7 @@ const data = (models: Model[]): BrawlData => ({
   ],
   defaultRounds: ['r1', 'r2'],
   models,
+  claims: [],
 });
 const s = (v: number, se: number | null = null): Score => ({ v, se, setting: 'max' });
 const model = (id: string, scores: Record<string, Score>, extra: Partial<Model> = {}): Model =>

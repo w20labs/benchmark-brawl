@@ -343,7 +343,7 @@ function pick(id) {
 $('search').addEventListener('input', (e) => { query = e.target.value; cursor = 0; renderRoster(); });
 $('sort').addEventListener('change', (e) => { sortBy = e.target.value; renderRoster(); });
 addEventListener('keydown', (e) => {
-  if (!$('arena').hidden || !$('tourney').hidden || e.target.closest?.('input, select, textarea')) return;
+  if (!$('arena').hidden || !$('tourney').hidden || !$('claims').hidden || e.target.closest?.('input, select, textarea')) return;
   if (e.target.closest?.('button, a') && !e.target.closest('.fighter')) return;
   const list = visibleModels(), n = list.length;
   if (!n) return;
@@ -843,7 +843,7 @@ function showResult() {
 }
 function backHome() {
   cancelAnimationFrame(raf);
-  for (const id of ['arena', 'result', 'tourney', 'royaleResult']) $(id).hidden = true;
+  for (const id of ['arena', 'result', 'tourney', 'royaleResult', 'claims']) $(id).hidden = true;
   for (const id of ['builder', 'select', 'ready', 'featured']) $(id).hidden = false;
   fromBracket = false;
   renderAll();
@@ -1202,11 +1202,56 @@ $('rrematch').addEventListener('click', startRoyale);
 $('rcopy').addEventListener('click', () => { track('share-royale'); copyText(royaleText(), 'Copied royale and link'); });
 $('ragain').addEventListener('click', backHome);
 
+// ---------- claim check ----------
+const VERDICTS = { match: '✅ Matches', lab: '🔺 Lab higher', ind: '🔻 Independent higher' };
+function verdictOf(c) {
+  const margin = c.indep.se != null ? 1.96 * c.indep.se : 1, diff = c.claimed - c.indep.v;
+  return { margin, diff, kind: Math.abs(diff) <= margin ? 'match' : diff > 0 ? 'lab' : 'ind' };
+}
+let claimLab = 'all';
+function openClaims(lab = 'all') {
+  claimLab = lab;
+  for (const id of ['builder', 'select', 'ready', 'featured', 'arena', 'result', 'royaleResult', 'tourney']) $(id).hidden = true;
+  $('claims').hidden = false;
+  history.replaceState(null, '', `#claims${lab === 'all' ? '' : `=${encodeURIComponent(lab)}`}`);
+  track('claims');
+  renderClaims();
+  $('claims').scrollIntoView({ block: 'start' });
+}
+function claimList() { return DATA.claims.filter((c) => claimLab === 'all' || byId.get(c.modelId).org === claimLab); }
+function renderClaims() {
+  const labs = [...new Set(DATA.claims.map((c) => byId.get(c.modelId).org))].sort();
+  $('claimLab').replaceChildren(h('option', { value: 'all' }, 'All labs'), ...labs.map((l) => h('option', { value: l, selected: l === claimLab ? '' : null }, l)));
+  const list = claimList().map((c) => ({ c, m: byId.get(c.modelId), b: benchById.get(c.bench), v: verdictOf(c) }))
+    .sort((x, y) => (y.m.eci ?? 0) - (x.m.eci ?? 0) || x.b.name.localeCompare(y.b.name));
+  const n = { match: 0, lab: 0, ind: 0 }; for (const x of list) n[x.v.kind]++;
+  $('claimSummary').replaceChildren(h('span', { class: 'stat' }, h('b', null, list.length), ' claims checked'),
+    ...Object.entries(VERDICTS).map(([k, label]) => h('span', { class: 'stat' }, `${label}: `, h('b', null, n[k]))));
+  $('claimRows').replaceChildren(...list.map(({ c, m, b, v }) => h('tr', null,
+    h('td', { style: `color:${colorOf(m)};font-weight:700` }, m.name, h('span', { class: 't' }, m.org)),
+    h('td', null, b.name, h('span', { class: 't' }, c.version && !/not stated/.test(c.version) ? `version ${c.version}` : '')),
+    h('td', { class: 'num' }, `${c.claimed.toFixed(1)}%`, h('span', { class: 't', title: c.conditions }, h('a', { href: c.url, target: '_blank', rel: 'noopener' }, 'source'), ` · ${c.conditions.length > 60 ? `${c.conditions.slice(0, 58).replace(/[\s,;·]+\S*$/, '')}…` : c.conditions}`)),
+    h('td', { class: 'num' }, `${c.indep.v.toFixed(1)}%`, h('span', { class: 't' }, `±${v.margin.toFixed(1)} · ${c.indep.setting} setting${c.indep.sameSetting ? ' (same as lab)' : ''} · `,
+      h('a', { href: b.source.url, target: '_blank', rel: 'noopener' }, b.epochRun ? 'Epoch AI' : b.source.name.replace(/ by .*$/, '').replace(/, via Epoch AI$/, '')))),
+    h('td', null, h('span', { class: `verdict-pill ${v.kind}` }, VERDICTS[v.kind]), v.kind === 'match' ? '' : h('span', { class: 't' }, `${v.diff > 0 ? '+' : ''}${v.diff.toFixed(1)} points`)))));
+  $('claimShare').textContent = claimText(n, list.length);
+}
+function claimText(n, total) {
+  return [`🔎 Benchmark Brawl claim check${claimLab === 'all' ? '' : ` · ${claimLab}`}`, `${total} lab claims vs independent tests`,
+    `✅ ${n.match} match · 🔺 ${n.lab} lab higher · 🔻 ${n.ind} independent higher`, `${SITE_URL}#claims${claimLab === 'all' ? '' : `=${encodeURIComponent(claimLab)}`}`].join('\n');
+}
+$('claimsBtn').addEventListener('click', () => openClaims());
+$('claimsClose').addEventListener('click', backHome);
+$('claimLab').addEventListener('change', (e) => openClaims(e.target.value));
+$('claimCopy').addEventListener('click', () => { track('share-claims'); copyText($('claimShare').textContent, 'Copied claim check and link'); });
+
 // ---------- start ----------
-const shared = readHash();
+const claimsHash = location.hash.match(/^#claims(?:=(.+))?$/);
+const shared = claimsHash ? false : readHash();
 renderFeatured();
 renderAll();
-if (wantTourney) openTournament();
+if (claimsHash) openClaims(claimsHash[1] ? decodeURIComponent(claimsHash[1]) : 'all');
+else if (wantTourney) openTournament();
 else if (shared && mode === 'royale') {
   toast(`Shared battle royale: ${picks.length} fighters. Press FIGHT!`);
   $('ready').scrollIntoView({ block: 'end' });

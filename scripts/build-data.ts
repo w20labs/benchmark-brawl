@@ -10,7 +10,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { unzipSync, strFromU8 } from 'fflate';
 import { parseCsv } from '../src/csv.ts';
-import type { Benchmark, BrawlData, Model, Price, Round, Score } from '../src/types.ts';
+import type { Benchmark, BrawlData, Claim, Model, Price, Round, Score } from '../src/types.ts';
 
 const EPOCH_ZIP = 'https://epoch.ai/data/benchmark_data.zip';
 const MODELS_DEV = 'https://models.dev/api.json';
@@ -91,7 +91,7 @@ async function main() {
   const groupOf = (version: string, row: Record<string, string>) => meta.get(version)?.model_group || meta.get(version.replace(SETTING, ''))?.model_group || row['Name'] || version.replace(SETTING, '');
   const settingOf = (version: string, row: Record<string, string>) => row['Reasoning effort'] || version.match(SETTING)?.[1] || 'default';
 
-  type Acc = { name: string; org: string; released: string; access: string; scores: Record<string, Score> };
+  type Acc = { name: string; org: string; released: string; access: string; scores: Record<string, Score>; bySetting: Record<string, Record<string, Score>> };
   const groups = new Map<string, Acc>();
   for (const spec of SPECS) {
     for (const row of csv(spec.file)) {
@@ -100,7 +100,7 @@ async function main() {
       if (!version || !Number.isFinite(raw)) continue;
       const name = groupOf(version, row);
       const m = meta.get(version) ?? meta.get(version.replace(SETTING, ''));
-      const g = groups.get(name) ?? { name, org: row['Organization'] || m?.organization || '', released: row['Release date'] || m?.date || '', access: m?.accessibility || '', scores: {} };
+      const g = groups.get(name) ?? { name, org: row['Organization'] || m?.organization || '', released: row['Release date'] || m?.date || '', access: m?.accessibility || '', scores: {}, bySetting: {} };
       if (!g.released && row['Release date']) g.released = row['Release date'];
       if (!g.access && m?.accessibility) g.access = m.accessibility;
       groups.set(name, g);
@@ -108,10 +108,11 @@ async function main() {
       const se = spec.seFrom === 'stderr' && row['stderr'] ? Number(row['stderr']) * 100
         : spec.seFrom === 'ci95' && row['95% CI half-width'] ? (Number(row['95% CI half-width']) * 100) / 1.96
         : spec.seFrom === 'ciBounds' && row['Score 95% CI high'] ? ((Number(row['Score 95% CI high']) - Number(row['Score 95% CI low'])) * 100) / 2 / 1.96 : null;
+      const score: Score = { v, se: se != null && Number.isFinite(se) ? Math.round(se * 100) / 100 : null, setting: settingOf(version, row), ...(row['Log viewer'] ? { log: row['Log viewer'] } : {}) };
       const prev = g.scores[spec.id];
-      if (!prev || v > prev.v) {
-        g.scores[spec.id] = { v, se: se != null && Number.isFinite(se) ? Math.round(se * 100) / 100 : null, setting: settingOf(version, row), ...(row['Log viewer'] ? { log: row['Log viewer'] } : {}) };
-      }
+      if (!prev || v > prev.v) g.scores[spec.id] = score;
+      const at = (g.bySetting[spec.id] ??= {});
+      if (!at[score.setting] || v > at[score.setting].v) at[score.setting] = score;
     }
   }
 
@@ -149,17 +150,33 @@ async function main() {
     }))
     .sort((a, b) => (b.eci ?? 0) - (a.eci ?? 0) || b.released.localeCompare(a.released));
 
+  // Claim check: labs' own numbers (data/claims.json, copied by hand from their pages, each with a link) next to
+  // the independent result for the same benchmark, at the same reasoning setting when the lab names one.
+  const claimsIn = JSON.parse(readFileSync('data/claims.json', 'utf8')) as { model: string; bench: string; claimed: number; version: string | null; conditions: string; url: string; quote: string; published: string | null }[];
+  const claims: Claim[] = [];
+  for (const c of claimsIn) {
+    const m = models.find((x) => x.name === c.model), g = groups.get(c.model);
+    const best = m?.scores[c.bench];
+    if (!m || !g || !best) continue;
+    const named = c.conditions.toLowerCase().match(/\b(max|xhigh|high|medium|low)\b/)?.[1];
+    const same = named ? g.bySetting[c.bench]?.[named] : undefined;
+    const s = same ?? best;
+    claims.push({ modelId: m.id, bench: c.bench, claimed: c.claimed, version: c.version, conditions: c.conditions, url: c.url, quote: c.quote, published: c.published,
+      indep: { v: s.v, se: s.se, setting: s.setting, sameSetting: !!same } });
+  }
+
   const data: BrawlData = {
     generatedAt: now.toISOString(),
     benchmarks: [...SPECS.map(({ file: _f, scoreCol: _c, seFrom: _s, ...b }) => b), PRICE],
     rounds: ROUNDS,
     defaultRounds: DEFAULT_ROUNDS,
     models,
+    claims,
   };
   mkdirSync('data', { recursive: true });
   writeFileSync('data/brawl.json', `${JSON.stringify(data, null, 1)}\n`);
   const priced = models.filter((m) => m.price).length;
-  console.log(`Wrote data/brawl.json: ${models.length} fighters (${priced} with prices), ${data.benchmarks.length} rounds.`);
+  console.log(`Wrote data/brawl.json: ${models.length} fighters (${priced} with prices), ${data.benchmarks.length} benchmarks, ${claims.length} checkable claims.`);
   for (const id of DEFAULT_ROUNDS) console.log(`  ${id}: ${models.filter((m) => hasRound(m.scores, id)).length}/${models.length}`);
 }
 

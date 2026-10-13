@@ -21,6 +21,7 @@
 | **Battle royale** | 3 to 8 models in one arena. Each round the best result fires at everyone else; last one standing wins |
 | **Tournament** | The top 8 of a weight class, seeded by Epoch Capabilities Index, fought out as a bracket |
 | **New challenger** | The newest model (last 30 days) against the champion, on the front page |
+| **Claim check** | What each lab published about its own model, next to an independent test of the same benchmark: matches, lab higher, or independent higher |
 | **Share** | A Wordle-style result line with a link that replays the same fight, and a **fight clip** (MP4) recorded in your browser |
 
 <table>
@@ -30,6 +31,15 @@
   </tr>
   <tr><td colspan="2"><img src="assets/readme/scorecard.png" alt="The scorecard after a fight: every score with its benchmark, source, setting and margin of error"></td></tr>
 </table>
+
+## Claim check
+
+Labs publish benchmark numbers for their own models. Claim check puts each one next to an independent result for the **same benchmark and version** (Epoch AI's runs, or DeepSWE's own leaderboard, where every model runs in the same agent). If the gap is inside the independent result's margin of error, it's a match.
+
+- The lab numbers are in [`data/claims.json`](data/claims.json), copied by hand from each lab's own announcement, model card or system card, with a link and a short quote. We re-checked a sample against the source pages.
+- When a lab names its effort setting, the independent result at that same setting is used, otherwise the best one.
+- A gap is not an accusation. Labs often use their own agent setup, more attempts or a different prompt, and the page says so.
+- Claims on benchmarks we have no matching independent result for (for example newer Terminal-Bench versions) are left out.
 
 ## Signature moves
 
@@ -82,11 +92,12 @@ The rules live in [`src/fight.ts`](src/fight.ts) and [`src/league.ts`](src/leagu
 | Coding (SWE-bench Verified, MirrorCode), Math, Science, Facts, Puzzles, Chess, Capabilities Index, model metadata | [Epoch AI Benchmarking Hub](https://epoch.ai/benchmarks), Epoch's own runs | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
 | Coding: DeepSWE | [Datacurve](https://deepswe.datacurve.ai/), as republished by Epoch AI | Open-source benchmark ([Apache-2.0](https://github.com/datacurve-ai/deep-swe)); results credited to Datacurve |
 | Coding: WeirdML v3 | [Håvard Tveit Ihle](https://htihle.github.io/weirdml.html), as republished by Epoch AI. Each model runs in its maker's own coding agent | Credited to the author; no separate license published |
+| Claim check: lab claims | Each lab's own announcement, model card or system card (linked per claim) | Short factual quotes, credited |
 | Prices | Each lab's own API list price, via [models.dev](https://models.dev) | [MIT](https://github.com/sst/models.dev) |
 
 **Changes we make to Epoch's data:** scores are shown as percentages, each model shows its best reasoning setting, and Coding averages the benchmarks two models share. Third-party hosts' prices are left out on purpose: they often undercut the lab for open-weight models.
 
-The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Numbers are never edited by hand. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
+The data is rebuilt every morning by [`scripts/build-data.ts`](scripts/build-data.ts). Scores and prices are never edited by hand; the only hand-entered numbers are Claim check's lab claims, each linked to its source. If you spot one that doesn't match its source, please [report it](https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml).
 
 **Honest limits.** Benchmarks measure narrow skills, and the newest models aren't on every benchmark yet (a round with no shared benchmark is skipped). We don't use FrontierCode (its publisher's terms don't allow republishing) or Terminal-Bench (Epoch's copy is the older 2.0 version and stops in March 2026). There is no speed round: we found no free, independent speed data whose terms allow reuse.
 

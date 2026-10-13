@@ -7,7 +7,7 @@ import type { BrawlData, Model } from '../src/types.ts';
 const data: BrawlData = JSON.parse(readFileSync('data/brawl.json', 'utf8'));
 
 const bench = { id: 'b', name: 'B', what: '', kind: 'score' as const, source: { name: '', url: '', license: '' }, epochRun: true };
-const mini: BrawlData = { generatedAt: '', benchmarks: [bench], rounds: [{ id: 'r', name: 'R', benches: ['b'] }], defaultRounds: ['r'], models: [] };
+const mini: BrawlData = { generatedAt: '', benchmarks: [bench], rounds: [{ id: 'r', name: 'R', benches: ['b'] }], defaultRounds: ['r'], models: [], claims: [] };
 const bot = (id: string, v: number | null, se: number | null = null): Model =>
   ({ id, name: id, org: id, released: '2026-01-01', open: false, eci: null, price: null, scores: v == null ? {} : { b: { v, se, setting: 'high' } } });
 
