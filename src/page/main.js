@@ -1885,7 +1885,8 @@ let historyBelt = 'all';
 function renderBelts() {
   $('beltCards').replaceChildren(...OPEN_BELTS.map((belt) => {
     const id = TITLE_ST.champions[belt], reign = TITLE_ST.reigns.findLast((r) => r.belt === belt);
-    const night = nextNight(belt), booked = night && TITLE_LOG.find((e) => e.day === night && e.belt === belt);
+    // that night's fight or quiet night (a vacated entry can come first on the same night, when the champion has left)
+    const night = nextNight(belt), booked = night && TITLE_LOG.find((e) => e.day === night && e.belt === belt && e.kind !== 'vacated');
     const next = h('div', { class: 'next' }, h('span', { class: 'fine' }, night ? `Next title night: ${night === TODAY_DAY ? 'tonight' : fmtDate(night)}` : 'Next title night: not scheduled'),
       night === TODAY_DAY && booked && fightersOf(booked) ? h('button', { type: 'button', class: 'linkbtn', onclick: () => openTab('today') }, `${fightersOf(booked).map((m) => m.name).join(' vs ')}: watch it in Today`)
       : night && booked?.kind === 'quiet' ? h('span', null, 'No challenger this time: a normal daily brawl')
@@ -1910,6 +1911,7 @@ function renderBelts() {
       if (!e.blocked.length) return 'No ranked contender to challenge.';
       return [met.length ? `${list(met)} already fought the champion on these scores.` : '', far.length ? `${list(far)} ${far.length > 1 ? "don't" : "doesn't"} share 3 comparable rounds with the champion.` : ''].join(' ').trim();
     }
+    if (e.reason === 'vacant: fewer than two ranked contenders') return 'Vacant, and fewer than two ranked contenders are eligible.';
     if (e.pairs) return `Vacant, and no two contenders can fight yet: ${e.pairs.met} pairs already met, ${e.pairs['not comparable']} share too few rounds.`;
     return '';
   };

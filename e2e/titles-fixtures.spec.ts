@@ -29,11 +29,20 @@ const html = readFileSync(resolve('_preview/index.html'), 'utf8');
 const [, json] = html.match(/<script type="application\/json" id="brawl-data">([\s\S]*?)<\/script>/)!;
 function pageFor(d: BrawlData, name: string) {
   const file = resolve(`_preview/fixture-${name}.html`); // beside the preview, so its relative links still work; same content from every worker
-  writeFileSync(`${file}.tmp`, html.replace(json, () => JSON.stringify(d).replace(/</g, '\\u003c')));
-  renameSync(`${file}.tmp`, file);
+  const tmp = `${file}.${process.pid}.tmp`; // each worker writes its own copy, then swaps it in whole
+  writeFileSync(tmp, html.replace(json, () => JSON.stringify(d).replace(/</g, '\\u003c')));
+  renameSync(tmp, file);
   return `file://${file}`;
 }
-const PAGES = { draw: pageFor(draw, 'draw'), decisive: pageFor(decisive, 'decisive'), archived: pageFor(archived, 'archived') };
+/** Fixture 1, the champion, has left the roster by title night: the belt is vacated, then a vacant-title fight or a quiet night. */
+function vacated(models: Model[]): BrawlData {
+  const d = { ...base, models };
+  return { ...d, titles: advanceTitles(d, opening, '2026-10-18', '2026-10-14') as TitleLog };
+}
+const vacancy = vacated(eight.slice(1));
+const lone = vacated([eight[1]]); // only one ranked contender left
+const PAGES = { draw: pageFor(draw, 'draw'), decisive: pageFor(decisive, 'decisive'), archived: pageFor(archived, 'archived'),
+  vacancy: pageFor(vacancy, 'vacancy'), lone: pageFor(lone, 'lone') };
 
 async function open(page: Page, url: string, day: string, hash = '') {
   const errors: string[] = [];
@@ -178,5 +187,29 @@ test('a replay with a fighter who left the roster leaves Free play and Royale wo
   await page.locator('.fighter', { hasText: 'Fixture 5' }).click();
   await page.click('#fight');
   await skipToResult(page, '#royaleResult');
+  expect(errors).toEqual([]);
+});
+
+test("when the champion leaves, the belt card shows that night's vacant-title fight", async ({ page }) => {
+  const [, fight] = vacancy.titles!.events.slice(-2);
+  expect(vacancy.titles!.events.slice(-2).map((e) => e.kind)).toEqual(['vacated', 'vacant']);
+  if (fight.kind !== 'vacant') throw new Error();
+  const errors = await open(page, PAGES.vacancy, '2026-10-18', '#belts');
+  const card = page.locator('.beltcard').first();
+  await expect(card).toContainText('Next title night: tonight');
+  await expect(card).not.toContainText('picked the day before');
+  await card.getByRole('button', { name: `${fight.a.name} vs ${fight.b.name}: watch it in Today` }).click();
+  await expect(page.locator('#brawlNo')).toContainText('TITLE NIGHT');
+  await expect(page.locator('#nmA')).toHaveText(fight.a.name);
+  expect(errors).toEqual([]);
+});
+
+test('a vacant belt with fewer than two ranked contenders says so in the history', async ({ page }) => {
+  expect(lone.titles!.events.at(-1)).toMatchObject({ kind: 'quiet', reason: 'vacant: fewer than two ranked contenders' });
+  const errors = await open(page, PAGES.lone, '2026-10-18', '#belts');
+  const quiet = page.locator('#history li', { hasText: 'no title fight' }).first();
+  await expect(quiet).toContainText('Vacant, and fewer than two ranked contenders are eligible.');
+  await expect(quiet).not.toContainText('pairs already met');
+  await expect(page.locator('.beltcard').first()).toContainText('No challenger this time');
   expect(errors).toEqual([]);
 });
