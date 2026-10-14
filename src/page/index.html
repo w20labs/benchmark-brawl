@@ -58,6 +58,8 @@ body[data-view="arena"] .wrap { max-width: 1400px; }
 .calls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
 .callbtn { flex: 1 1 200px; max-width: 300px; min-height: 52px; border-radius: 12px; border: 2px solid var(--c); background: var(--panel); color: var(--c); font: 800 15px var(--ui); cursor: pointer; }
 .callbtn[aria-pressed="true"] { background: var(--c); color: #0A0C14; box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 30%, transparent); }
+.callbtn.draw { --c: #C9CFDC; flex: none; width: min(300px, 100%); min-height: 44px; font-size: 14px; }
+#drawNote { margin: -4px 0 0; }
 .btn.go.huge { font-size: 20px; padding: 18px 44px; box-shadow: 0 6px 0 #9b2f2f; }
 .btn.go.huge:active { transform: translateY(3px); box-shadow: 0 3px 0 #9b2f2f; }
 .linkbtn { background: none; border: 0; color: var(--muted); font: 600 13px var(--ui); text-decoration: underline; cursor: pointer; }
@@ -302,6 +304,8 @@ footer { display: grid; gap: 6px; }
     <div class="call" id="callBox">
       <div class="q">WHO WINS? <span style="color:var(--muted)">make your call</span></div>
       <div class="calls"><button type="button" class="callbtn" id="callA" aria-pressed="false"></button><button type="button" class="callbtn" id="callB" aria-pressed="false"></button></div>
+      <button type="button" class="callbtn draw" id="callDraw" aria-pressed="false" hidden>Draw</button>
+      <p class="fine" id="drawNote" hidden></p>
       <p class="fine" id="roundsToday"></p>
       <button type="button" class="btn go huge" id="todayFight" disabled>FIGHT!</button>
       <button type="button" class="linkbtn" id="justWatch">or just watch, no call</button>

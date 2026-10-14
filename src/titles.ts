@@ -7,7 +7,7 @@
  * always worked out by replaying the log, never from live scores.
  */
 import { judgeRound, planFight, type FightResult } from './fight.ts';
-import { runTournament, snapshotFighters } from './league.ts';
+import { onRosterOn, runTournament, snapshotFighters } from './league.ts';
 import type { BrawlData, Model } from './types.ts';
 
 export const TITLE_RULES = 'v1.1';
@@ -140,8 +140,9 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
     const base = { day, rules: TITLE_RULES, dataDate };
 
     // openings: 8 eligible models, every pair comparable and not yet met; the highest-ranked such field
-    // only models released by that day: a catch-up run must not put a later model into an earlier fight
-    const roster = data.models.filter((m) => m.released <= day);
+    // the roster as it is on that day: released by then (a catch-up run must not put a later model into an earlier
+    // fight) and not yet past the one-year cutoff (a booking made a day ahead must match that day's own build)
+    const roster = data.models.filter((m) => onRosterOn(m, day));
     for (const belt of BELTS) {
       if (st.opened[belt.id]) continue;
       const pool = roster.filter((m) => eligibleFor(data, belt.id, m));
