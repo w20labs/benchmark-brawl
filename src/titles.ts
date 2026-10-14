@@ -42,7 +42,13 @@ export type TitleEvent =
       winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number]; champion: string }
   | { kind: 'vacated'; belt: BeltId; day: string; rules: string; dataDate: string; model: string; reason: string }
   /** A title night with no fight. Kept so the log remembers who was already eligible: they aren't new challengers later. */
-  | { kind: 'quiet'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; reason: string };
+  | { kind: 'quiet'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; reason: string;
+      /** Title night: why each top contender wasn't booked against the champion. */
+      blocked?: { id: string; why: Blocked }[];
+      /** Vacant belt: how many ranked pairs were ruled out, and why. */
+      pairs?: Record<Blocked, number> };
+/** Why a pairing can't be booked: they already met on these scores, or fewer than MIN_SHARED rounds can be compared. */
+export type Blocked = 'met' | 'not comparable';
 export type TitleLog = { through: string | null; events: TitleEvent[] };
 
 // ---------- eligibility, comparability, fingerprints ----------
@@ -123,6 +129,7 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
   const events = [...log.events], dataDate = data.generatedAt.slice(0, 10);
   const first = log.through && log.through >= seasonStart ? addDays(log.through, 1) : seasonStart;
   const fightable = (a: Model, b: Model) => sharedRounds(data, a, b) >= MIN_SHARED;
+  const blockedWhy = (a: Model, b: Model): Blocked => (fightable(a, b) ? 'met' : 'not comparable');
   for (let day = first; day <= today; day = addDays(day, 1)) {
     let st = standings(data, events);
     const base = { day, rules: TITLE_RULES, dataDate };
@@ -160,7 +167,13 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
       let pair: [Model, Model] | null = null;
       for (let i = 0; i < order.length && !pair; i++) for (let j = i + 1; j < order.length && !pair; j++)
         if (fightable(order[i], order[j]) && !st.met.has(pairKey(data, order[i], order[j]))) pair = [order[i], order[j]];
-      if (!pair) { events.push({ kind: 'quiet', belt, ...base, eligible, reason: 'vacant: no two contenders can be compared yet' }); continue; }
+      if (!pair) {
+        const pairs: Record<Blocked, number> = { met: 0, 'not comparable': 0 };
+        order.forEach((x, i) => order.slice(i + 1).forEach((y) => pairs[blockedWhy(x, y)]++));
+        events.push({ kind: 'quiet', belt, ...base, eligible, pairs,
+          reason: order.length < 2 ? 'vacant: fewer than two ranked contenders' : 'vacant: no pair meets the vacant-title booking rules' });
+        continue;
+      }
       const fight = planFight(data, pair[0], pair[1], CHAMPIONSHIP_ROUNDS), [a, b] = snap(data, pair[0], pair[1]);
       events.push({ kind: 'vacant', belt, ...base, eligible, a, b, winner: fight.winner, decision: fight.decision, hp: fight.hp, roundsWon: fight.roundsWon, champion: (fight.winner === 1 ? b : a).id });
       continue;
@@ -171,7 +184,12 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
     const top = new Set(ranked(pool.filter((m) => m.id !== holder.id && m.eci != null)).slice(0, TOP_CONTENDERS).map((m) => m.id));
     const contenders = ranked(pool.filter((m) => top.has(m.id) && fightable(holder, m) && !st.met.has(pairKey(data, holder, m))));
     const ch = contenders.find((m) => !seen.has(m.id)) ?? contenders[0];
-    if (!ch) { events.push({ kind: 'quiet', belt, ...base, eligible, reason: 'no challenger: every top contender has fought the champion on current scores' }); continue; } // the normal daily brawl runs
+    if (!ch) { // the normal daily brawl runs
+      const blocked = [...top].map((id) => ({ id, why: blockedWhy(holder, pool.find((m) => m.id === id)!) }));
+      events.push({ kind: 'quiet', belt, ...base, eligible, blocked,
+        reason: top.size ? 'no challenger: no top contender meets the booking rules' : 'no challenger: no ranked contenders' });
+      continue;
+    }
     const fight = planFight(data, holder, ch, CHAMPIONSHIP_ROUNDS), [c, x] = snap(data, holder, ch);
     events.push({ kind: 'title', belt, ...base, eligible, why: seen.has(ch.id) ? 'top contender' : 'new challenger',
       champion: c, challenger: x, winner: fight.winner, decision: fight.decision, hp: fight.hp, roundsWon: fight.roundsWon });

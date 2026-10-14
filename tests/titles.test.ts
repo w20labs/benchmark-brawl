@@ -179,4 +179,22 @@ describe('title log', () => {
     const next = run(roster([...eight, a, b]), '2026-01-18', log);
     expect(titles(next).at(-1)).toMatchObject({ day: '2026-01-18', challenger: { id: 'b' }, why: 'new challenger' });
   });
+
+  it('explains a night with no fight accurately, per contender', () => {
+    // Jan 11: m2 and m4 met m1 in the opening, m3 met it on Jan 4, and a can't be compared with it
+    const aPartial = model('a', 149.5, { weirdml: 10, aime: 10, gpqa: 10, simpleqa: 10 }, { released: '2026-01-05' });
+    const log = run(roster([...eight, aPartial]), '2026-01-11', run(roster(eight), '2026-01-04'));
+    expect(log.events.at(-1)).toMatchObject({ kind: 'quiet', reason: 'no challenger: no top contender meets the booking rules',
+      blocked: [{ id: 'a', why: 'not comparable' }, { id: 'm2', why: 'met' }, { id: 'm3', why: 'met' }] });
+  });
+
+  it('explains a vacant belt that stays vacant with the real reason', () => {
+    // m1 leaves; the only ranked models left all met each other in the opening bracket or can't be compared
+    const few = [eight[1], eight[2]]; // m2 and m3 met in the opening semi-final, and are comparable
+    const log = run(roster(eight), '2026-01-10');
+    const after = run(roster(few), '2026-01-11', log);
+    expect(after.events.at(-1)).toMatchObject({ kind: 'quiet', reason: 'vacant: no pair meets the vacant-title booking rules', pairs: { met: 1, 'not comparable': 0 } });
+    const solo = run(roster([eight[1]]), '2026-01-11', log);
+    expect(solo.events.at(-1)).toMatchObject({ kind: 'quiet', reason: 'vacant: fewer than two ranked contenders' });
+  });
 });
