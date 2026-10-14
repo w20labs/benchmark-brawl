@@ -26,7 +26,9 @@ export const seasonOn = (day: string, start: string | null | undefined = SEASON_
 export function pageSeasonStart(override?: string): string | null {
   if (override === undefined) return SEASON_START;
   if (override === '') return null;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(override) || Number.isNaN(Date.parse(override))) throw new Error(`BRAWL_SEASON_START must be YYYY-MM-DD or empty, not "${override}"`);
+  // a real calendar day: Date.parse would quietly roll Feb 30 over to Mar 2, so the day must read back unchanged
+  const real = /^\d{4}-\d{2}-\d{2}$/.test(override) && !Number.isNaN(Date.parse(override)) && new Date(Date.parse(override)).toISOString().slice(0, 10) === override;
+  if (!real) throw new Error(`BRAWL_SEASON_START must be YYYY-MM-DD or empty, not "${override}"`);
   return override;
 }
 /** Every title fight uses these rounds, in this order. */

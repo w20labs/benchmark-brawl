@@ -46,5 +46,9 @@ describe('the site build', { timeout: 60_000 }, () => {
     expect(pageSeasonStart('')).toBeNull();
     expect(() => pageSeasonStart('2026-13-45')).toThrow();
     expect(() => pageSeasonStart('17/10/2026')).toThrow();
+    expect(() => pageSeasonStart('2026-02-30')).toThrow(); // would roll over to Mar 2
+    expect(() => pageSeasonStart('2025-02-29')).toThrow(); // not a leap year
+    expect(pageSeasonStart('2028-02-29')).toBe('2028-02-29'); // a leap year
+    expect(pageSeasonStart('2026-12-31')).toBe('2026-12-31');
   });
 });
