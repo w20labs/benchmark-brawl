@@ -47,6 +47,7 @@ test('on its arrival day, a new fighter is announced with its sourced scores, an
   await expect(page.locator('#newcomers h3').first()).toHaveText('🆕 NEW CHALLENGER: Lowbie enters the arena'); // same day: by id
   const nb = card(page, 'Newbie');
   await expect(nb).toContainText('Newbie Lab · closed weights · rounds: Coding, Math, Science, Facts, Puzzles');
+  await nb.getByText('Sourced scores').click();
   await expect(nb).toContainText('GPQA Diamond 95.0 high setting · ±1.0');
   await expect(nb.getByRole('link', { name: 'GPQA Diamond' })).toHaveAttribute('rel', 'noopener');
   expect(await nb.getByRole('link').evaluateAll((as) => as.every((a) => (a as HTMLAnchorElement).protocol === 'https:'))).toBe(true);
@@ -125,8 +126,11 @@ for (const width of [1280, 390, 320]) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const errors = await open(page, pageOn('2026-10-17'), '2026-10-17');
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+    const summary = card(page, 'Newbie').locator('summary');
+    await summary.focus();
+    await page.keyboard.press('Enter'); // opens the sourced scores
     const link = card(page, 'Newbie').getByRole('link').first();
-    await link.focus();
+    await page.keyboard.press('Tab');
     await expect(link).toBeFocused();
     const box = await card(page, 'Newbie').boundingBox();
     expect(box!.x).toBeGreaterThanOrEqual(0);

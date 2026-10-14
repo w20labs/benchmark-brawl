@@ -2049,8 +2049,9 @@ function renderNewcomers() {
       h('div', { class: 'body' },
         h('h3', null, `🆕 NEW CHALLENGER: ${m.name} enters the arena`),
         h('p', { class: 'fine' }, `${m.org} · ${m.open ? 'open weights' : 'closed weights'} · rounds: ${rounds.map((r) => r.name).join(', ')}`),
-        h('ul', { class: 'ncscores' }, ...rounds.map((r) => h('li', null, h('span', { class: 'rn' }, r.name), h('ul', null, ...r.benches.filter((id) => m.scores[id]).map(score))))),
-        shot ? h('p', { class: 'shot' }, `🏅 Title shot: ${fmtDate(shot.day)}${shot.day === TODAY_DAY ? ' (tonight)' : ''} vs ${rival.name} for the ${shot.kind === 'vacant' ? 'vacant ' : ''}${beltName(shot.belt)} belt.`) : null));
+        shot ? h('p', { class: 'shot' }, `🏅 Title shot: ${fmtDate(shot.day)}${shot.day === TODAY_DAY ? ' (tonight)' : ''} vs ${rival.name} for the ${shot.kind === 'vacant' ? 'vacant ' : ''}${beltName(shot.belt)} belt.`) : null,
+        h('details', null, h('summary', { class: 'fine' }, 'Sourced scores'),
+          h('ul', { class: 'ncscores' }, ...rounds.map((r) => h('li', null, h('span', { class: 'rn' }, r.name), h('ul', null, ...r.benches.filter((id) => m.scores[id]).map(score))))))));
   }));
 }
 function renderToday() {
@@ -2061,6 +2062,7 @@ function renderToday() {
   $('streakChip').textContent = st.streak ? `🔥 ${st.streak}-day streak` : '🔥 Start a streak';
   [[DAILY.a, 'A', 0], [DAILY.b, 'B', 1]].forEach(([m, k, i]) => {
     $(`tag${k}`).textContent = DAILY.title ? (DAILY.title.kind === 'vacant' ? 'CONTENDER' : i ? (newChallenger(DAILY.title) ? '🆕 NEW CHALLENGER' : 'CHALLENGER') : 'CHAMPION') : DAILY.featured ? (i ? 'TOP CONTENDER' : 'NEW CHALLENGER') : (i ? 'BLUE CORNER' : 'RED CORNER');
+    $(`tag${k}`).classList.toggle('nc', !!DAILY.title && i === 1 && newChallenger(DAILY.title));
     $(`tag${k}`).style.color = i ? 'var(--sky)' : 'var(--red)';
     $(`nm${k}`).textContent = m.name; $(`nm${k}`).style.color = looks[i].ui;
     $(`sub${k}`).textContent = `${m.org}${m.eci != null ? ` · ECI ${m.eci.toFixed(0)}` : ''}`;

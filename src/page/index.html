@@ -54,8 +54,12 @@ body[data-view="arena"] .wrap { max-width: 1400px; }
 .newcomer .ncscores ul li + li::before { content: ' · '; color: var(--muted); }
 .newcomer .rn { font-weight: 800; margin-right: 6px; }
 .newcomer .t { color: var(--muted); font-size: 12px; }
-.newcomer .shot { margin: 2px 0 0; font-weight: 800; color: #F2B544; }
+.newcomer .shot { margin: 0; font-weight: 800; color: #F2B544; }
+.newcomer summary { cursor: pointer; width: max-content; }
+.newcomer details[open] summary { margin-bottom: 6px; }
 @media (max-width: 420px) { .newcomer { grid-template-columns: 1fr; } .newcomer canvas { display: none; } }
+.stage .tag.nc { white-space: nowrap; }
+@media (max-width: 420px) { .stage .tag.nc { font-size: 8px; } }
 .stage { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #070910; }
 .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 460; }
 .stage .top { position: absolute; inset: 14px 16px auto 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
