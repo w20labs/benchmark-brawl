@@ -93,7 +93,7 @@ describe('Sigma Sam', () => {
         expect(t).toContain(R.parts ? `Averages: A ${formatValue(R.bench, R.values[0])}, B ${formatValue(R.bench, R.values[1])}` : `A ${formatValue(R.bench, R.values[0])} (`);
         if (R.winner === 0 || R.winner === 1) expect(t).toContain(`${R.dmg} damage`);
         if (R.winner === -1) expect(t).toMatch(/a tie\./);
-        if (R.margin != null && R.tie !== 'exact') expect(t).toMatch(new RegExp(`±${R.margin.toFixed(1).replace('.', '\\.')}( |\\))`));
+        if (R.margin != null && R.tie !== 'exact') expect(t).toMatch(new RegExp(`±${R.margin.toFixed(1).replace('.', '\\.')}0?( |\\))`)); // ±4.90 at an exact boundary
         // the stated doubled gap rounds to the damage dealt (or is the 1 HP minimum)
         const twice = t.match(/Twice the gap is (just (?:under|over) )?([\d.]+)/);
         if (twice && !twice[1] && R.winner !== -1 && Math.round(Number(twice[2])) >= 1) expect(Math.round(Number(twice[2]))).toBe(R.dmg);
@@ -121,6 +121,14 @@ describe('Sigma Sam', () => {
     const t = line(sam(a, b).lines, 'Coding');
     expect(t).toContain("DeepSWE: A 60.0 (max), B 50.0 (low); SWE-bench Verified: A 80.0 (max), B 70.0 (max).");
     expect(t).toContain("No margin of error is published for A's DeepSWE result, so only equal averages would count as a tie.");
+  });
+
+  it('at an exact boundary, says the unrounded gap is a hair past the margin instead of printing equal numbers', () => {
+    // the engine: a gap of 4.900000000000006 against a margin of 4.9 (1.96 × √(1.5² + 2²)), so A wins the round
+    const { p, lines } = sam(model('A', { ...all(80), swebench: S(80, 1.5) }), model('B', { ...all(80), swebench: S(75.1, 2) }));
+    expect(p.rounds[0]).toMatchObject({ winner: 0 });
+    expect(line(lines, 'Coding')).toContain('A leads by 4.90 points, just outside the ±4.90 margin of error. Unrounded, the gap is a hair larger than the margin, though both show as 4.90.');
+    expect(line(lines, 'Coding')).not.toMatch(/\d\.\d{5,}/);
   });
 });
 

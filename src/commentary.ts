@@ -50,24 +50,26 @@ function roundLine(p: FightResult, R: RoundResult): string {
   const both = R.parts
     ? `Averaged over the ${n} benchmarks both have: ${benches.map((x) => `${x.name}: ${one(x)}`).join('; ')}. Averages: ${name(0)} ${formatValue(b, R.values[0])}, ${name(1)} ${formatValue(b, R.values[1])}.`
     : `${one(b)} on ${b.name}.`;
-  // a margin shown with enough decimals to explain the call; its usual one-decimal form alongside
+  // a margin shown with enough decimals to explain the call; its usual one-decimal form alongside. At an exact
+  // boundary (4.900000000000006 against 4.9) no decimals tell them apart, so it says so in words
   const shownMargin = (win: boolean) => {
-    for (let d = 1; d <= 6; d++) {
+    for (let d = 1; d <= 4; d++) {
       const g = Number(gap.toFixed(Math.max(2, d))), m = Number(exact!.toFixed(d));
-      if (win ? g > m : g <= m) return { gap: gap.toFixed(Math.max(2, d)), margin: d === 1 ? `±${exact!.toFixed(1)}` : `±${exact!.toFixed(d)} (±${exact!.toFixed(1)} rounded)` };
+      if (win ? g > m : g <= m) return { gap: gap.toFixed(Math.max(2, d)), margin: d === 1 ? `±${exact!.toFixed(1)}` : `±${exact!.toFixed(d)} (±${exact!.toFixed(1)} rounded)`, edge: '' };
     }
-    return { gap: gap.toFixed(6), margin: `±${exact!.toFixed(6)}` };
+    const both = gap.toFixed(2);
+    return { gap: both, margin: `±${exact!.toFixed(2)}`, edge: ` Unrounded, the gap is a hair ${win ? 'larger' : 'smaller'} than the margin, though both show as ${both}.` };
   };
   const missing = benches.flatMap((x) => ([0, 1] as const).filter((k) => score(k, x.id).se == null).map((k) => (R.parts ? `${name(k)}'s ${x.name} result` : name(k))));
   const noMargin = `No margin of error is published for ${list(missing)}, so only equal ${R.parts ? 'averages' : 'scores'} would count as a tie.`;
   if (R.winner === -1) {
     const graze = R.graze[0] === R.graze[1] ? `Both lose ${R.graze[0]} HP` : `${name(0)} loses ${R.graze[0]} HP and ${name(1)} ${R.graze[1]}`;
-    const why = R.tie === 'exact' ? `Equal ${R.parts ? 'averages' : 'scores'}: a tie.` : (() => { const s = shownMargin(false); return `The gap of ${points(s.gap)} is inside the ${s.margin} margin of error: a tie.`; })();
+    const why = R.tie === 'exact' ? `Equal ${R.parts ? 'averages' : 'scores'}: a tie.` : (() => { const s = shownMargin(false); return `The gap of ${points(s.gap)} is ${s.edge ? 'just ' : ''}inside the ${s.margin} margin of error: a tie.${s.edge}`; })();
     const capped = R.graze.some((g) => g < TIE_GRAZE) ? ' (a tie never takes anyone below 1 HP)' : '';
     return `${both} ${why} ${graze}${capped}.`;
   }
   const w = R.winner as 0 | 1, l = (1 - w) as 0 | 1, twice = gap * DAMAGE_PER_POINT;
-  const lead = exact != null ? (() => { const s = shownMargin(true); return `${name(w)} leads by ${points(s.gap)}, outside the ${s.margin} margin of error.`; })()
+  const lead = exact != null ? (() => { const s = shownMargin(true); return `${name(w)} leads by ${points(s.gap)}, ${s.edge ? 'just ' : ''}outside the ${s.margin} margin of error.${s.edge}`; })()
     : `${name(w)} leads by ${points(gap.toFixed(2))}. ${noMargin}`;
   const rounding = Math.round(twice) >= 1 ? `Twice the gap is ${twoDp(twice)}; rounded to whole HP, that's ${R.dmg} damage.`
     : `Twice the gap is ${twoDp(twice)}, which rounds to 0, but a won round always does at least 1 HP.`;
