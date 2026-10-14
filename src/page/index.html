@@ -58,6 +58,20 @@ body[data-view="arena"] .wrap { max-width: 1400px; }
 .newcomer summary { cursor: pointer; width: max-content; }
 .newcomer details[open] summary { margin-bottom: 6px; }
 @media (max-width: 420px) { .newcomer { grid-template-columns: 1fr; } .newcomer canvas { display: none; } }
+/* the Context Window: a browser-style frame around Season 2 title fights (visual only); never a token count */
+.cw-bar { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 12px; background: #1B2035; border-bottom: 1px solid #3A4466; min-width: 0; }
+.cw-bar[hidden] { display: none; }
+.cw-bar .dots { display: flex; gap: 6px; flex: none; }
+.cw-bar .dots i { width: 10px; height: 10px; border-radius: 50%; background: #3A4466; }
+.cw-bar .dots i:first-child { background: var(--red); } .cw-bar .dots i:nth-child(2) { background: var(--amber); } .cw-bar .dots i:last-child { background: #2EC4A6; }
+.cw-bar .cw-tab { font: 600 12px var(--ui); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 auto; }
+.cw-bar .cw-url { font: 500 11px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; max-width: 45%; }
+.arena.cw, .stage.cw { border-color: #3A4466; box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+.arena.cw .hud { top: 34px; }
+.arena.cw .banner { top: calc(34% + 17px); }
+.arena.cw .rec { top: 90px; }
+.stage.cw .top { top: 48px; }
+@media (max-width: 420px) { .cw-bar .cw-url { display: none; } }
 .stage .tag.nc { white-space: nowrap; }
 @media (max-width: 420px) { .stage .tag.nc { font-size: 8px; } }
 .stage { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #070910; }
@@ -312,6 +326,7 @@ footer { display: grid; gap: 6px; }
   <section class="today" id="today" aria-label="Today's brawl">
     <div class="newcomers" id="newcomers" hidden></div>
     <div class="stage">
+      <div class="cw-bar" hidden><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="cw-tab"></span><span class="cw-url"></span></div>
       <canvas id="todayCv" width="1200" height="460" aria-hidden="true"></canvas>
       <div class="top"><span class="brawlno" id="brawlNo"></span><span class="streak" id="streakChip"></span></div>
       <div class="names">
@@ -375,6 +390,7 @@ footer { display: grid; gap: 6px; }
   </div>
 
   <section class="arena" id="arena" hidden aria-label="Fight">
+    <div class="cw-bar" hidden><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="cw-tab"></span><span class="cw-url"></span></div>
     <canvas id="cv" width="960" height="440" aria-hidden="true"></canvas>
     <div class="hud" id="hud">
       <div class="side" id="s1"><span class="who" id="n1"></span><div class="hp"><i id="hl1"></i><b id="h1"></b></div><span class="hpn" id="hn1">100 HP</span></div>

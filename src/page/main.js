@@ -546,9 +546,10 @@ function startFight(opts = {}) {
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, opts.rounds || rounds);
   if (!plan.rounds.length) return toast(`${a.name} and ${b.name} have no benchmark in common in these rounds. Try other rounds.`);
-  F = { roundIds: opts.rounds || rounds, arena: opts.daily ? arenaFor(`daily|${opts.daily.no}`) : arenaFor(`${a.id}|${b.id}`), daily: opts.daily || null, title: opts.title || opts.daily?.title || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: reduced ? [-1, -1] : bigHits(plan) };
+  F = { roundIds: opts.rounds || rounds, arena: sceneFor(opts.title || opts.daily?.title, opts.daily ? `daily|${opts.daily.no}` : `${a.id}|${b.id}`), daily: opts.daily || null, title: opts.title || opts.daily?.title || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: reduced ? [-1, -1] : bigHits(plan) };
   setView('arena');
   $('arena').classList.remove('royale');
+  windowFrame($('arena'), F.arena === CONTEXT_WINDOW ? F.title : null);
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
   $('rec').hidden = !F.recording;
   $('arena').classList.toggle('recording', F.recording);
@@ -1149,7 +1150,10 @@ const ARENAS = [
 ];
 /** The arena for a fight, fixed by its seed (the matchup), so replays and share links look the same. */
 function arenaFor(seed) { return ARENAS[hash(`arena|${seed}`) % ARENAS.length].id; }
-const arenaName = (id) => ARENAS.find((a) => a.id === id)?.name ?? 'Neon City';
+const arenaName = (id) => (id === CONTEXT_WINDOW ? 'The Context Window' : ARENAS.find((a) => a.id === id)?.name ?? 'Neon City');
+/** Overfit FC's arena: recorded title fights only, while Season 2 is on; never drawn at random. Visual only. */
+const CONTEXT_WINDOW = 'context';
+const sceneFor = (title, seed) => (title && SEASON_ON ? CONTEXT_WINDOW : arenaFor(seed));
 /** Deterministic "random" numbers for scenery: the same every frame, no flicker. */
 const rnd01 = (i, salt = 0) => { const x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453; return x - Math.floor(x); };
 function gradient(c, hgt, stops) { const gr = c.createLinearGradient(0, 0, 0, hgt); stops.forEach((col, i) => gr.addColorStop(i / (stops.length - 1), col)); return gr; }
@@ -1158,6 +1162,27 @@ function stars(c, w, top, n, t, tw = true) {
   c.globalAlpha = 1;
 }
 const SCENES = {
+  // an editor: a line-number gutter and lines of code drifting up, as if the fight runs inside a model's context
+  [CONTEXT_WINDOW](c, w, hgt, floor, t) {
+    c.fillStyle = gradient(c, hgt, ['#0b1020', '#111833']); c.fillRect(0, 0, w, hgt);
+    return () => {
+      const lh = 22, step = t * 9, scroll = step % lh, first = Math.floor(step / lh), gutter = 46;
+      const ink = ['#7FD3F0', '#F28DB2', '#D4F25C', '#F2B544', '#B79CF2'];
+      c.fillStyle = '#0a0e1c'; c.fillRect(0, 0, gutter, floor);
+      c.font = '500 11px "JetBrains Mono", monospace'; c.textAlign = 'right';
+      for (let i = 0; 16 + i * lh - scroll < floor; i++) {
+        const line = first + i, y = 16 + i * lh - scroll;
+        c.fillStyle = '#3A4466'; c.fillText(String(line + 1), gutter - 10, y + 4);
+        let x = gutter + 14 + Math.floor(rnd01(line, 3) * 4) * 18;
+        for (let k = 0, n = 1 + Math.floor(rnd01(line, 5) * 5); k < n && x < w - 20; k++) {
+          const len = 24 + rnd01(line * 7 + k, 6) * 90;
+          c.globalAlpha = 0.26; c.fillStyle = ink[(line + k) % ink.length]; c.fillRect(x, y - 3, len, 6); x += len + 12;
+        }
+        c.globalAlpha = 1;
+      }
+      c.fillStyle = '#2EC4A6'; if (reduced || Math.floor(t * 2) % 2 === 0) c.fillRect(gutter + 14, floor - 40, 9, 16); // the cursor
+    };
+  },
   city(c, w, hgt, floor, t) {
     c.fillStyle = gradient(c, hgt, ['#0d1022', '#170d1a']); c.fillRect(0, 0, w, hgt);
     return () => {
@@ -1255,6 +1280,7 @@ const SCENES = {
   },
 };
 const FLOORS = {
+  [CONTEXT_WINDOW]: ['#1b2140', '#0a0d1a', '#2EC4A6'],
   city: ['#2a2140', '#0a0c14', '#FF6B6B'], servers: ['#1a2238', '#080b16', '#2EC4A6'], moon: ['#4a4d58', '#16171d', '#C9CFDC'], synth: ['#1a0730', '#06020d', '#FF4F8B'],
   dojo: ['#6b4428', '#2a180c', '#C9A227'], volcano: ['#2a120c', '#0a0505', '#FF6B1A'], sea: ['#6b5a3a', '#2a2214', '#7FD3F0'], snow: ['#b9c6dc', '#56627e', '#E8EEF8'],
 };
@@ -1530,6 +1556,7 @@ function startRoyale() {
     special: ms.map((_, k) => { if (reduced) return null; let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
   setView('arena');
   $('arena').classList.add('royale'); $('rec').hidden = true;
+  windowFrame($('arena'), null);
   $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
   writeHash();
@@ -2062,8 +2089,23 @@ function renderNewcomers() {
           h('ul', { class: 'ncscores' }, ...rounds.map((r) => h('li', null, h('span', { class: 'rn' }, r.name), h('ul', null, ...r.benches.filter((id) => m.scores[id]).map(score))))))));
   }));
 }
+/**
+ * The Context Window's frame around a title fight: window dots, a tab with the belt and the matchup, and an address.
+ * Visual only (Season 2); `title` null takes it away.
+ */
+function windowFrame(el, title) {
+  const bar = el.querySelector('.cw-bar');
+  el.classList.toggle('cw', !!title);
+  bar.hidden = !title;
+  if (!title) return;
+  const f = title.kind === 'opening' ? openingFinal(title) : fightersOf(title), belt = beltName(title.belt);
+  const what = title.kind === 'opening' ? `${belt} opening final` : title.kind === 'vacant' ? `Vacant ${belt} title fight` : `${belt} title fight`;
+  bar.querySelector('.cw-tab').textContent = `${what} · ${f[0].name} vs ${f[1].name}`;
+  bar.querySelector('.cw-url').textContent = `overfit.fc/title/${titleKey(title)}`;
+}
 function renderToday() {
   renderNewcomers();
+  windowFrame($('today').querySelector('.stage'), DAILY?.title ?? null);
   if (!DAILY) { $('callBox').hidden = true; $('doneBox').hidden = true; $('brawlNo').textContent = 'NO BRAWL TODAY'; return; }
   const looks = looksFor([DAILY.a, DAILY.b]), rec = todayRec(), st = dailyStats();
   $('brawlNo').replaceChildren(...(DAILY.title ? [h('span', { class: 'titlechip' }, '🏅 TITLE NIGHT'), DAILY.no >= 1 ? `#${DAILY.no}` : ''] : [`BRAWL #${DAILY.no}`]));
@@ -2121,7 +2163,7 @@ function startToday() {
   const c = cv2.getContext('2d'), floor = hgt - (phone ? 150 : 100), s = phone ? 1.25 : 1.3, looks = looksFor([DAILY.a, DAILY.b]);
   const loop = (now) => {
     const t = now / 1000;
-    drawArena(arenaFor(`daily|${DAILY.no}`), c, w, hgt, floor, t);
+    drawArena(sceneFor(DAILY.title, `daily|${DAILY.no}`), c, w, hgt, floor, t);
     [DAILY.a, DAILY.b].forEach((m, k) => { c.save(); c.translate(w * (k ? 0.72 : 0.28), floor); c.scale(s, s); drawBot(c, 0, 0, k ? -1 : 1, looks[k], 'idle', t + k); c.restore(); });
     c.font = `400 ${phone ? 40 : 48}px "Press Start 2P", monospace`; c.textAlign = 'center';
     c.fillStyle = '#000'; c.fillText('VS', w / 2 + 5, floor - 120 + 5); c.fillStyle = '#F2B544'; c.fillText('VS', w / 2, floor - 120);
@@ -2144,7 +2186,7 @@ async function shareOrCopy(text, done) {
 async function shareCard(p, looks, rec, brawl) {
   const cv2 = document.createElement('canvas'); cv2.width = 1080; cv2.height = 1350;
   const c = cv2.getContext('2d'), floor = 760;
-  drawArena(brawl ? arenaFor(`daily|${brawl.no}`) : F?.arena || 'city', c, 1080, 1350, floor, 2);
+  drawArena(brawl ? sceneFor(brawl.title, `daily|${brawl.no}`) : F?.arena || 'city', c, 1080, 1350, floor, 2);
   c.fillStyle = '#0A0C14'; c.fillRect(0, floor + 3, 1080, 1350 - floor);
   p.fighters.forEach((m, k) => { const pose = p.winner === k ? 'win' : p.winner < 0 ? 'idle' : p.ko ? 'down' : 'hurt'; c.save(); c.translate(k ? 740 : 340, floor); c.scale(1.9, 1.9); drawBot(c, 0, 0, k ? -1 : 1, looks[k], pose, k); c.restore(); });
   const txt2 = (t, x, y, px, col, font = 'arcade') => { c.font = font === 'arcade' ? `400 ${px}px "Press Start 2P", monospace` : `700 ${px}px Inter, sans-serif`; c.textAlign = 'center'; c.fillStyle = '#000'; c.fillText(t, x + 5, y + 5); c.fillStyle = col; c.fillText(t, x, y); };
