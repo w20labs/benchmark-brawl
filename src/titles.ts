@@ -13,6 +13,11 @@ import type { BrawlData, Model } from './types.ts';
 export const TITLE_RULES = 'v1.1';
 /** The first day belts can open. null: Season 2 hasn't started, and the log stays empty. */
 export const SEASON_START: string | null = null;
+/**
+ * Whether Season 2 is on for a UTC day: the one gate for everything in it (title bookings, the Belts tab,
+ * new-challenger announcements). The data build checks the day being booked; the page checks today.
+ */
+export const seasonOn = (day: string, start: string | null | undefined = SEASON_START) => !!start && day >= start;
 /** Every title fight uses these rounds, in this order. */
 export const CHAMPIONSHIP_ROUNDS = ['coding', 'math', 'science', 'facts', 'puzzles'];
 /** Title night: Sunday (UTC). */
@@ -130,7 +135,7 @@ export const beltName = (id: BeltId) => BELTS.find((b) => b.id === id)!.name;
  * returned untouched, and a day already covered is never looked at again.
  */
 export function advanceTitles(data: BrawlData, log: TitleLog, today: string, seasonStart = SEASON_START): TitleLog {
-  if (!seasonStart || today < seasonStart) return log;
+  if (!seasonStart || !seasonOn(today, seasonStart)) return log; // the day being booked must be in the season
   const events = [...log.events], dataDate = data.generatedAt.slice(0, 10);
   const first = log.through && log.through >= seasonStart ? addDays(log.through, 1) : seasonStart;
   const fightable = (a: Model, b: Model) => sharedRounds(data, a, b) >= MIN_SHARED;

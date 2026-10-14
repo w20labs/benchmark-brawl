@@ -97,4 +97,8 @@ export type BrawlData = {
   daily?: DailyEntry[];
   /** Overfit FC title belts: an append-only log of openings, title fights and vacated belts (see src/titles.ts). */
   titles?: import('./titles.ts').TitleLog;
+  /** Season 2's start day (SEASON_START when the data was built); null or missing: off. */
+  seasonStart?: string | null;
+  /** When each fighter first joined the roster (see src/arrivals.ts). */
+  arrivals?: import('./arrivals.ts').Arrivals;
 };

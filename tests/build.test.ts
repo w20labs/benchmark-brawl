@@ -38,10 +38,11 @@ function sources(): { files: Files; prices: Record<string, unknown> } {
   for (let p = 0; p < 4; p++) prices[`filler${p}`] = { models: Object.fromEntries(Array.from({ length: 15 }, (_, i) => [`f${i}`, listing(`F${p}-${i}`, 1, 1, day(10))])) };
   return { files, prices };
 }
-function build(change: (s: ReturnType<typeof sources>) => void = () => {}) {
+function build(change: (s: ReturnType<typeof sources>) => void = () => {}, prev?: unknown) {
   const dir = mkdtempSync(join(tmpdir(), 'brawl-build-')), src = sources();
   change(src);
   mkdirSync(join(dir, 'data/cache'), { recursive: true });
+  if (prev) writeFileSync(join(dir, 'data/brawl.json'), JSON.stringify(prev)); // the last good data, as the deploy restores it
   writeFileSync(join(dir, 'data/cache/benchmark_data.zip'), zipSync(Object.fromEntries(Object.entries(src.files).map(([k, v]) => [k, strToU8(v)]))));
   writeFileSync(join(dir, 'data/cache/models-dev.json'), JSON.stringify(src.prices));
   writeFileSync(join(dir, 'data/claims.json'), '[]');
@@ -109,5 +110,33 @@ describe('the data build, run on synthetic sources', { timeout: 60_000 }, () => 
     expect(r.ok, r.log).toBe(true);
     expect(r.model('Gemini 3.1 Pro').price).toBeNull();
     expect(r.log).toMatch(/price alias/);
+  });
+
+  it('tracks arrivals silently and keeps Season 2 off', () => {
+    const first = build();
+    expect(first.ok).toBe(true);
+    expect(first.out.seasonStart).toBeNull();
+    expect(first.out.titles).toEqual({ through: null, events: [] });
+    expect(Object.values(first.out.arrivals.seen).every((d) => d === null)).toBe(true); // no announcement flood
+    // the next build: one fighter is new, one has left; the old records stay as they were
+    const next = build((s) => {
+      s.files['model_metadata.csv'] += `\nnew-one,New One,${day(5)},New One,Anthropic,API access`;
+      for (const f of Object.keys(s.files)) if (/\.csv$/.test(f) && f !== 'model_metadata.csv') s.files[f] += f.includes('eci') ? '' : f.startsWith('deepswe') ? '\nnew-one,0.6,0.03' : f.startsWith('weirdml') ? '\nnew-one,0.3,0.28,0.32' : '\nnew-one,0.6,0.02';
+    }, first.out);
+    expect(next.ok, next.log).toBe(true);
+    const today = new Date().toISOString().slice(0, 10);
+    expect(next.out.arrivals.since).toBe(first.out.arrivals.since);
+    expect(next.out.models.map((m: { id: string }) => m.id), next.log).toContain('newone');
+    expect(next.out.arrivals.seen.newone).toBe(today);
+    expect(Object.entries(next.out.arrivals.seen).filter(([, d]) => d !== null)).toEqual([['newone', today]]);
+    expect(next.out.titles).toEqual({ through: null, events: [] });
+  });
+
+  it('carries the saved arrival record forward exactly, never recomputing it', () => {
+    const first = build();
+    const saved = { ...first.out, arrivals: { since: '2026-01-01', seen: { ...first.out.arrivals.seen, 'alpha-one': '2026-01-02', gone: '2026-01-03' } } };
+    const next = build(() => {}, saved);
+    expect(next.ok, next.log).toBe(true);
+    expect(next.out.arrivals).toEqual(saved.arrivals);
   });
 });

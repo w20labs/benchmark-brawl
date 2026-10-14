@@ -12,7 +12,8 @@ import { unzipSync, strFromU8 } from 'fflate';
 import { parseCsv } from '../src/csv.ts';
 import type { Benchmark, BrawlData, Claim, DailyEntry, Model, Price, Round, Score } from '../src/types.ts';
 import { dailyBrawl, FIRST_BRAWL_DAY, rosterCutoff, snapshotFighters } from '../src/league.ts';
-import { advanceTitles, checkAppendOnly, TITLE_LOOKAHEAD_DAYS } from '../src/titles.ts';
+import { advanceTitles, checkAppendOnly, SEASON_START, TITLE_LOOKAHEAD_DAYS } from '../src/titles.ts';
+import { checkArrivals, trackArrivals } from '../src/arrivals.ts';
 import { checkCoverage, checkModelsDev, daysApart, isWebUrl, num, priceNum, requireColumns, sameVersion, strictNum } from './validate.ts';
 
 const EPOCH_ZIP = 'https://epoch.ai/data/benchmark_data.zip';
@@ -211,6 +212,10 @@ async function main() {
   // (through tomorrow, like the daily schedule: a page built today already has tomorrow's title night)
   data.titles = advanceTitles(data, prev?.titles ?? { through: null, events: [] }, new Date(now.getTime() + TITLE_LOOKAHEAD_DAYS * 864e5).toISOString().slice(0, 10));
   checkAppendOnly(prev?.titles, data.titles);
+  data.seasonStart = SEASON_START;
+  // who joined the roster today: tracked on every build (the page only shows it once Season 2 is on); never rewritten
+  data.arrivals = trackArrivals(prev?.arrivals, prev?.models.map((m) => m.id), data.models.map((m) => m.id), now.toISOString().slice(0, 10));
+  checkArrivals(prev?.arrivals, data.arrivals);
   mkdirSync('data', { recursive: true });
   writeFileSync('data/brawl.json.tmp', `${JSON.stringify(data, null, 1)}\n`);
   renameSync('data/brawl.json.tmp', 'data/brawl.json'); // all or nothing
