@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-13T22:20:59.785Z",
+ "generatedAt": "2026-10-14T06:50:51.366Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -298,7 +298,7 @@
     },
     "weirdml": {
      "v": 42.2,
-     "se": 1,
+     "se": 1.01,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -354,8 +354,8 @@
    },
    "scores": {
     "weirdml": {
-     "v": 35.5,
-     "se": 1.14,
+     "v": 38.3,
+     "se": 1.08,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -411,8 +411,8 @@
    },
    "scores": {
     "weirdml": {
-     "v": 20,
-     "se": 0.83,
+     "v": 19.9,
+     "se": 0.82,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -469,7 +469,7 @@
     },
     "weirdml": {
      "v": 26,
-     "se": 0.7,
+     "se": 0.71,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -526,7 +526,7 @@
     },
     "weirdml": {
      "v": 19,
-     "se": 0.89,
+     "se": 0.9,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -585,7 +585,7 @@
    "scores": {
     "weirdml": {
      "v": 19.7,
-     "se": 0.66,
+     "se": 0.68,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -646,8 +646,8 @@
      "setting": "high"
     },
     "weirdml": {
-     "v": 15.5,
-     "se": 1.05,
+     "v": 15.6,
+     "se": 1.08,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1499,7 +1499,7 @@
    "scores": {
     "weirdml": {
      "v": 7.9,
-     "se": 0.52,
+     "se": 0.53,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1902,7 +1902,7 @@
    "scores": {
     "weirdml": {
      "v": 5.9,
-     "se": 0.95,
+     "se": 0.96,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -2875,7 +2875,7 @@
     },
     "weirdml": {
      "v": 6.5,
-     "se": 0.77,
+     "se": 0.82,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -6897,6 +6897,136 @@
       "mystery": {
        "v": 21,
        "se": 4.09,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 16,
+   "day": "2026-10-28",
+   "a": "gpt6astra",
+   "b": "claudesonnet55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt6astra",
+     "name": "GPT-6 Astra",
+     "org": "OpenAI",
+     "released": "2026-09-03",
+     "open": false,
+     "eci": 166.45,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "openai",
+      "modelsDevId": "gpt-6-astra"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 74.1,
+       "se": 1.46,
+       "setting": "xhigh"
+      },
+      "mirrorcode": {
+       "v": 46.7,
+       "se": 11.86,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 42.2,
+       "se": 1.01,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 97.6,
+       "se": 2.4,
+       "setting": "high"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.8,
+       "se": 1.37,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 75.6,
+       "se": 1.36,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 84,
+       "se": 3.68,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudesonnet55",
+     "name": "Claude Sonnet 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-28",
+     "open": false,
+     "eci": 165.03,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "anthropic",
+      "modelsDevId": "claude-sonnet-5-5"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 19.9,
+       "se": 0.82,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 80.5,
+       "se": 6.27,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 88.8,
+       "se": 1.87,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.6,
+       "se": 1.37,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 46.5,
+       "se": 1.58,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 65,
+       "se": 4.79,
        "setting": "max"
       }
      }
