@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { BrawlData, Model } from '../src/types.ts';
-import { advanceTitles, checkAppendOnly, fingerprint, pairKey, replayTitle, sharedRounds, standings, type TitleEvent, type TitleLog } from '../src/titles.ts';
+import { advanceTitles, checkAppendOnly, fingerprint, pairKey, qualifies, replayTitle, sharedRounds, standings, TITLE_RULES, type TitleEvent, type TitleLog } from '../src/titles.ts';
 
 // real benchmarks and rounds, synthetic fighters
 const real: BrawlData = JSON.parse(readFileSync('data/brawl.json', 'utf8'));
@@ -31,7 +31,7 @@ describe('title log', () => {
     const log = run(roster(eight), START);
     expect(log.through).toBe(START);
     const [open] = log.events;
-    expect(open).toMatchObject({ kind: 'opening', belt: 'undisputed', day: START, champion: 'm1', rules: 'v1.1', dataDate: '2026-01-01' });
+    expect(open).toMatchObject({ kind: 'opening', belt: 'undisputed', day: START, champion: 'm1', rules: TITLE_RULES, dataDate: '2026-01-01' });
     if (open.kind !== 'opening') throw new Error();
     expect(open.matches).toHaveLength(7);
     expect(Object.keys(open.field[0].scores).sort()).toEqual(['frontiermath', 'gpqa', 'mystery', 'simpleqa', 'swebench']);
@@ -218,3 +218,101 @@ describe('title log', () => {
     expect(() => checkAppendOnly(forecast, kept)).not.toThrow();
   });
 });
+
+// v1.2 on the same fixture: m1 wins the Jan 1 opening (meeting m8, m4 and m2); title night is Sun Jan 4. Without
+// newcomers m3 is booked (the top 3 by index are m2, m3, m4, and only m3 hasn't met m1). m4 (all 65) is the #3.
+describe('newcomer title shots (v1.2)', () => {
+  const opened = run(roster(eight), START);
+  const unindexed = (id: string, scores: Record<string, number>, extra: Partial<Model> = {}) => model(id, 0, scores, { eci: null, ...extra });
+  const withArrivals = (d: BrawlData, seen: Record<string, string | null>): BrawlData => ({ ...d, arrivals: { since: '2025-12-01', seen } });
+  const night = (models: Model[], seen: Record<string, string | null> = {}, through = '2026-01-04', log = opened) => run(withArrivals(roster(models), seen), through, log);
+  const lastTitle = (log: TitleLog) => titles(log).at(-1)!;
+
+  it('without newcomers, books the top contender as before', () => {
+    expect(lastTitle(night(eight))).toMatchObject({ day: '2026-01-04', challenger: { id: 'm3' }, why: 'top contender', rules: TITLE_RULES });
+    expect(TITLE_RULES).toBe('v1.2');
+  });
+
+  it('gives a newcomer with no index the shot when it beats the #3 contender; the check is not a meeting', () => {
+    const n = unindexed('n', full(70)), d = withArrivals(roster([...eight, n]), {});
+    const log = night([...eight, n]);
+    const e = lastTitle(log);
+    expect(e).toMatchObject({ challenger: { id: 'n' }, why: 'new challenger', qualified: { by: 'beat #3', ref: 'm4' }, rules: 'v1.2' });
+    const met = standings(d, log.events).met;
+    expect(met.has(pairKey(d, eight[0], n))).toBe(true);
+    expect(met.has(pairKey(d, eight[3], n))).toBe(false); // beating #3 was a check, not a fight
+    expect(replayTitle(d, e)).toMatchObject({ hp: e.hp, winner: e.winner }); // replays from its saved scores
+  });
+
+  it('a draw or a loss against #3 earns nothing: the newcomer waits for an index', () => {
+    for (const v of [65, 60]) { // 65: the same scores as m4, a draw
+      expect(qualifies(real, unindexed('n', full(v)), eight[3])).toBe('did not beat #3');
+      expect(lastTitle(night([...eight, unindexed('n', full(v))])).challenger.id).toBe('m3');
+    }
+  });
+
+  it('an indexed newcomer outside the top 3 cannot use the exception, however strong', () => {
+    expect(lastTitle(night([...eight, model('n', 100, full(95))])).challenger.id).toBe('m3');
+  });
+
+  it('with no #3 contender, the newcomer waits, and the quiet night says why', () => {
+    // only m1 and m2 have an index; m2 already met m1 in the opening, so nobody can be booked
+    const ms = eight.map((m, k) => (k < 2 ? m : { ...m, eci: null }));
+    const log = run(withArrivals(roster([...ms, unindexed('n', full(95))]), {}), '2026-01-04', run(roster(ms), START));
+    expect(log.events.at(-1)).toMatchObject({ kind: 'quiet', day: '2026-01-04', waiting: [{ id: 'n', why: 'no #3 contender' }] });
+  });
+
+  it('needs 3 comparable rounds against #3, not only against the champion', () => {
+    // n has DeepSWE and OTIS AIME, which m1 also has but m4 (#3) doesn't: comparable with m1 on 4 rounds, with m4 on 2
+    const m1 = model('m1', 150, { ...full(80), deepswe: 80, aime: 80 }), ms = [m1, ...eight.slice(1)];
+    const n = unindexed('n', { deepswe: 95, aime: 95, gpqa: 95, simpleqa: 95 });
+    expect(sharedRounds(real, n, m1)).toBe(4);
+    expect(qualifies(real, n, eight[3])).toBe('not comparable with #3');
+    const log = run(withArrivals(roster([...ms, n]), {}), '2026-01-04', run(roster(ms), START));
+    expect(lastTitle(log).challenger.id).toBe('m3');
+  });
+
+  it('orders qualifying newcomers by roster arrival, unknown first, then by id', () => {
+    const a = unindexed('na', full(90)), b = unindexed('nb', full(95));
+    expect(lastTitle(night([...eight, a, b], { na: '2026-01-03', nb: '2026-01-02' })).challenger.id).toBe('nb');
+    expect(lastTitle(night([...eight, a, b], { na: '2026-01-02', nb: '2026-01-02' })).challenger.id).toBe('na');
+    expect(lastTitle(night([...eight, a, b], { na: '2026-01-02', nb: null })).challenger.id).toBe('nb'); // on the roster before tracking
+    expect(lastTitle(night([...eight, a, b])).challenger.id).toBe('na'); // no record at all: unknown, by id
+    // arrival, not index, decides between an indexed newcomer in the top 3 and one that beat #3
+    const i = model('ni', 149.5, full(50)); // top 3 is now ni, m2, m3: #3 is m3 (all 70)
+    expect(lastTitle(night([...eight, i, a], { ni: '2026-01-03', na: '2026-01-02' }))).toMatchObject({ challenger: { id: 'na' }, qualified: { ref: 'm3' } });
+    expect(lastTitle(night([...eight, i, a], { ni: '2026-01-02', na: '2026-01-03' }))).toMatchObject({ challenger: { id: 'ni' }, why: 'new challenger' });
+  });
+
+  it('never books the same pairing twice on unchanged scores', () => {
+    const n = unindexed('n', full(70)), d = withArrivals(roster([...eight, n]), {});
+    const log = night([...eight, n], {}, '2026-02-28');
+    expect(titles(log).filter((e) => e.challenger.id === 'n')).toHaveLength(1); // m1 kept the belt; n can't meet it again
+    expect(repeats(d, log)).toBe(0);
+  });
+
+  it('uses the roster of the night being booked: release dates and the one-year cutoff', () => {
+    const late = unindexed('n', full(70), { released: '2026-01-05' });
+    expect(titles(night([...eight, late])).some((e) => e.challenger.id === 'n')).toBe(false);
+    expect(lastTitle(night([...eight, late], {}, '2026-01-11'))).toMatchObject({ day: '2026-01-11', challenger: { id: 'n' } });
+    // m4 turns 366 days old on Jan 4: off the roster, so #3 is m5 (all 60), whom n (62) beats; m4 (65) would have stopped it
+    const ms = eight.map((m, k) => (k === 3 ? { ...m, released: '2025-01-03' } : m));
+    const log = run(withArrivals(roster([...ms, unindexed('n', full(62))]), {}), '2026-01-04', run(roster(ms), START));
+    expect(lastTitle(log)).toMatchObject({ challenger: { id: 'n' }, qualified: { ref: 'm5' } });
+  });
+
+  it('keeps earlier entries and their rules version; new entries are v1.2', () => {
+    const v11 = { ...opened, events: opened.events.map((e) => ({ ...e, rules: 'v1.1' })) };
+    const log = night([...eight, unindexed('n', full(70))], {}, '2026-01-04', v11);
+    expect(log.events.slice(0, v11.events.length)).toEqual(v11.events);
+    expect(log.events.slice(v11.events.length).map((e) => e.rules)).toEqual(['v1.2']);
+    expect(() => checkAppendOnly(v11, log)).not.toThrow();
+  });
+
+  it('does nothing while Season 2 is off or not yet started', () => {
+    const d = withArrivals(roster([...eight, unindexed('n', full(95))]), {});
+    expect(advanceTitles(d, EMPTY, '2026-01-04', null)).toEqual(EMPTY);
+    expect(advanceTitles(d, EMPTY, '2026-01-04', '2026-01-10')).toEqual(EMPTY);
+  });
+});
+

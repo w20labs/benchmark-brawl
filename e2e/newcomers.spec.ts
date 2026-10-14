@@ -171,3 +171,38 @@ test('a start postponed past the saved one keeps the season hidden until the new
   await expect(page.locator('#tabs [data-tab="belts"]')).toBeVisible();
   await expect(card(page, 'Newbie')).toBeVisible();
 });
+
+// v1.2: Rawbie joins on Oct 16 with no Capabilities Index yet.
+const rawbie = { ...model('Rawbie', 0, 70, '2026-10-01'), eci: null };
+function v12Page(models: Model[], name: string, clock = '2026-10-18') {
+  const opened = advanceTitles({ ...preview, models, claims: [] }, { through: null, events: [] }, '2026-10-15', START);
+  const withRawbie = { ...preview, models: [...models, rawbie], claims: [], arrivals: { since: '2026-09-20', seen: { ...Object.fromEntries(models.map((m) => [m.id, null])), rawbie: ARRIVED } } };
+  const titles = advanceTitles(withRawbie, opened, next(clock), START);
+  return pageFor({ ...withRawbie, daily: [], seasonStart: START, titles }, `newcomers-v12-${name}-${clock}`);
+}
+
+test('a newcomer with no index that beats the #3 contender gets its title shot, and the history says how', async ({ page }) => {
+  // the #3 contender is Fixture 4 (all 65); Rawbie (all 70) beats it
+  const errors = await open(page, v12Page(before, 'beats3', '2026-10-17'), '2026-10-17');
+  await expect(card(page, 'Rawbie').locator('.shot')).toHaveText('🏅 Title shot: Oct 18, 2026 vs Fixture 1 for the Undisputed belt.');
+  await page.goto('about:blank');
+  await open(page, v12Page(before, 'beats3'), '2026-10-18', '#belts');
+  await expect(page.locator('#history li', { hasText: 'Fixture 1 vs 🆕 Rawbie' })).toContainText('new challenger (no index yet: earned the shot by beating #3 Fixture 4)');
+  await expect(page.locator('#belts')).toContainText('A newcomer with no index yet can earn a shot by beating the #3 contender');
+  expect(errors).toEqual([]);
+});
+
+for (const width of [1280, 390, 320]) {
+  test(`a quiet night explains why a newcomer with no index waits, at ${width}px`, async ({ page }) => {
+    // only Fixture 1 and 2 have an index: there is no #3 to beat, and Fixture 2 already met Fixture 1
+    const ms = before.map((m, k) => (k < 2 ? m : { ...m, eci: null }));
+    await page.setViewportSize({ width, height: 900 });
+    const errors = await open(page, v12Page(ms, 'no3'), '2026-10-18', '#belts');
+    const quiet = page.locator('#history li', { hasText: 'no title fight' }).first();
+    await expect(quiet).toContainText('Rawbie has no Capabilities Index yet and waits for one: there is no #3 contender to beat yet.');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+    await page.click('#tabs [data-tab="today"]');
+    await expect(card(page, 'Rawbie')).not.toContainText('Title shot');
+    expect(errors).toEqual([]);
+  });
+}

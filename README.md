@@ -84,6 +84,26 @@ Each lab has its own robot, in colours close to its brand (no logos), and a sign
 
 Flagships are bigger and fast models smaller. Each fight takes place in one of eight arenas, picked by the matchup: Neon City, Server Farm, Moon Base, Synthwave, Dojo, Volcano, Deep Sea or Snow Peak. All of this is affectionate fun, not a claim about anyone.
 
+## Overfit FC: title belts (Season 2, not started yet)
+
+Benchmark Brawl presents Overfit FC: title belts won and defended in real fights. It's built but switched off until a start date is set (`SEASON_START` in [`src/titles.ts`](src/titles.ts)). Until then nothing of it shows on the site.
+
+| Rule (v1.2) | |
+|---|---|
+| Belts | **Undisputed** (any model) and **Open weights** |
+| Championship rounds | Coding, Math, Science, Facts, Puzzles, always all five |
+| Eligible | In the belt's class, with results in at least 4 of the 5 rounds |
+| Opening | Each belt opens with an 8-model tournament: the highest-ranked field where every pair can be compared and hasn't met |
+| Title night | Every Sunday (UTC), alternating between the open belts. With no possible challenger, the belt waits and Sunday is a normal daily brawl |
+| Contenders | The top 3 eligible models by Epoch Capabilities Index, champion excluded. **New in v1.2:** a newcomer with no index yet qualifies by strictly beating the #3 of them on the five rounds, on at least 3 comparable rounds. A draw doesn't qualify, and with no #3 or too few comparable rounds it waits for an index. This check isn't a fight on record |
+| Who gets the shot | Newcomers first (models eligible for this belt for the first time), earliest arrival on our roster first, then by id; models already on the roster when arrival tracking began count as earliest. Then the other contenders by index |
+| Booking | The two must share at least 3 comparable rounds, and never meet twice on the same scores (openings and other belts included) |
+| Draw | The champion keeps the belt |
+| Vacancy | A champion who leaves the roster or the class gives up the belt; the two highest-ranked contenders who can fight and haven't met fight for it |
+| History | Every entry is saved once, with both fighters' scores and the rules version it was written under, so later score updates never change a reign |
+
+New arrivals are announced on Today for a week (🆕 NEW CHALLENGER), with their title shot once it's booked.
+
 ## Claim check
 
 Labs publish benchmark numbers for their own models. Claim check puts each one next to an independent result for the **same benchmark and version**, and calls it a match if the gap is inside the independent result's margin of error.

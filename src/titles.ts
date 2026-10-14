@@ -10,7 +10,12 @@ import { judgeRound, planFight, type FightResult } from './fight.ts';
 import { onRosterOn, runTournament, snapshotFighters } from './league.ts';
 import type { BrawlData, Model } from './types.ts';
 
-export const TITLE_RULES = 'v1.1';
+/**
+ * v1.1: the top 3 contenders by Capabilities Index can challenge, newcomers first.
+ * v1.2: also a newcomer with no Capabilities Index yet that beats the #3 contender on the championship rounds;
+ *       newcomers are ordered by roster arrival. Entries keep the version they were written under.
+ */
+export const TITLE_RULES = 'v1.2';
 /** The first day belts can open. null: Season 2 hasn't started, and the log stays empty. */
 export const SEASON_START: string | null = null;
 /**
@@ -55,6 +60,8 @@ export type BracketMatch = { a: string; b: string; winner: string; tiebreak: boo
 export type TitleEvent =
   | { kind: 'opening'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; field: Snapshot[]; matches: BracketMatch[]; champion: string }
   | { kind: 'title'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; why: 'new challenger' | 'top contender';
+      /** v1.2, a new challenger with no Capabilities Index: it qualified by beating `ref`, the #3 contender (a check, not a fight on record). */
+      qualified?: { by: 'beat #3'; ref: string };
       champion: Snapshot; challenger: Snapshot; winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number] }
   | { kind: 'vacant'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; a: Snapshot; b: Snapshot;
       winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number]; champion: string }
@@ -64,7 +71,11 @@ export type TitleEvent =
       /** Title night: why each top contender wasn't booked against the champion. */
       blocked?: { id: string; why: Blocked }[];
       /** Vacant belt: how many ranked pairs were ruled out, and why. */
-      pairs?: Record<Blocked, number> };
+      pairs?: Record<Blocked, number>;
+      /** v1.2: newcomers with no Capabilities Index yet that didn't qualify against the #3 contender, and why. */
+      waiting?: { id: string; why: NotQualified }[] };
+/** Why a newcomer with no Capabilities Index didn't earn a title shot: it waits for an index. */
+export type NotQualified = 'no #3 contender' | 'not comparable with #3' | 'did not beat #3';
 /** Why a pairing can't be booked: they already met on these scores, or fewer than MIN_SHARED rounds can be compared. */
 export type Blocked = 'met' | 'not comparable';
 export type TitleLog = { through: string | null; events: TitleEvent[] };
@@ -203,23 +214,46 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
       continue;
     }
 
-    // a title fight: one of the top contenders, new to this belt first, that can be compared and hasn't met the champion on these scores
+    // a title fight. Contenders: the top 3 eligible by Capabilities Index (champion excluded), plus any newcomer with
+    // no index yet that beats the #3 of them. Newcomers (eligible for this belt for the first time) go first, earliest
+    // roster arrival first; then the others by index. Every booking still needs 3 comparable rounds and no meeting on these scores.
     const holder = champion, seen = st.seen[belt] ?? new Set();
-    const top = new Set(ranked(pool.filter((m) => m.id !== holder.id && m.eci != null)).slice(0, TOP_CONTENDERS).map((m) => m.id));
-    const contenders = ranked(pool.filter((m) => top.has(m.id) && fightable(holder, m) && !st.met.has(pairKey(data, holder, m))));
-    const ch = contenders.find((m) => !seen.has(m.id)) ?? contenders[0];
+    const indexed = ranked(pool.filter((m) => m.id !== holder.id && m.eci != null));
+    const top = new Set(indexed.slice(0, TOP_CONTENDERS).map((m) => m.id)), third = indexed[TOP_CONTENDERS - 1] ?? null;
+    const bookable = (m: Model) => fightable(holder, m) && !st.met.has(pairKey(data, holder, m));
+    const isNew = (m: Model) => m.id !== holder.id && !seen.has(m.id);
+    const unindexed = pool.filter((m) => isNew(m) && m.eci == null);
+    const verdicts = new Map(unindexed.map((m) => [m.id, qualifies(data, m, third)]));
+    const newcomers = pool.filter((m) => isNew(m) && (top.has(m.id) || verdicts.get(m.id) === true) && bookable(m)).sort(byArrival(data));
+    const ch = newcomers[0] ?? ranked(pool.filter((m) => top.has(m.id) && !isNew(m) && bookable(m)))[0];
+    const waiting = unindexed.flatMap((m) => { const v = verdicts.get(m.id)!; return v === true ? [] : [{ id: m.id, why: v }]; });
     if (!ch) { // the normal daily brawl runs
       const blocked = [...top].map((id) => ({ id, why: blockedWhy(holder, pool.find((m) => m.id === id)!) }));
-      events.push({ kind: 'quiet', belt, ...base, eligible, blocked,
+      events.push({ kind: 'quiet', belt, ...base, eligible, blocked, ...(waiting.length ? { waiting } : {}),
         reason: top.size ? 'no challenger: no top contender meets the booking rules' : 'no challenger: no ranked contenders' });
       continue;
     }
     const fight = planFight(data, holder, ch, CHAMPIONSHIP_ROUNDS), [c, x] = snap(data, holder, ch);
-    events.push({ kind: 'title', belt, ...base, eligible, why: seen.has(ch.id) ? 'top contender' : 'new challenger',
+    events.push({ kind: 'title', belt, ...base, eligible, why: isNew(ch) ? 'new challenger' : 'top contender',
+      ...(ch.eci == null ? { qualified: { by: 'beat #3' as const, ref: third!.id } } : {}),
       champion: c, challenger: x, winner: fight.winner, decision: fight.decision, hp: fight.hp, roundsWon: fight.roundsWon });
   }
   return { through: today, events };
 }
+
+/**
+ * v1.2: whether a newcomer with no Capabilities Index earns a title shot: it must strictly beat `third`, the belt's #3
+ * contender by index, under the championship fight rules, on at least MIN_SHARED comparable rounds. A draw doesn't
+ * qualify; with no #3, or too few comparable rounds, it waits for an index. This check isn't a fight on record.
+ */
+export function qualifies(data: BrawlData, m: Model, third: Model | null): true | NotQualified {
+  if (!third) return 'no #3 contender';
+  if (sharedRounds(data, m, third) < MIN_SHARED) return 'not comparable with #3';
+  return planFight(data, m, third, CHAMPIONSHIP_ROUNDS).winner === 0 ? true : 'did not beat #3';
+}
+/** Earliest roster arrival first, then id. Fighters with no known arrival day (on the roster before tracking began) come first. */
+const byArrival = (data: BrawlData) => (a: Model, b: Model) =>
+  (data.arrivals?.seen[a.id] ?? '').localeCompare(data.arrivals?.seen[b.id] ?? '') || a.id.localeCompare(b.id);
 
 /** The highest-ranked group of FIELD_SIZE where every pair passes `ok`: rank order, skipping a model only when no valid field includes it. */
 function field(pool: Model[], ok: (a: Model, b: Model) => boolean): Model[] | null {
