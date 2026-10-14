@@ -1,0 +1,307 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Overfit FC Mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: the game's own arcade world. One column of "screens" behind a tab bar; the Context Window frame is the one bold move. */
+:root {
+  color-scheme: dark;
+  --bg: #0A0C14; --panel: #121626; --sunken: #0C0F1B; --line: #262D45; --text: #F3F4F8; --muted: #9AA3B8;
+  --gold: #F2B544; --red: #FF6B6B; --mint: #4ADE9F; --sky: #7FD3F0; --pink: #F28DB2;
+  --arcade: 'Press Start 2P', ui-monospace, monospace; --ui: Inter, system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { background: var(--bg); color: var(--text); font: 15px/1.55 var(--ui); padding-inline: 16px; padding-block: 0 48px }
+.wrap { max-width: 1040px; margin: 0 auto }
+h1, h2, h3 { text-wrap: balance; margin: 0 }
+a { color: var(--sky) }
+.mockbar { background: var(--gold); color: #1A1406; font: 600 12px/1.4 var(--ui); padding: 7px 16px; margin-inline: -16px; text-align: center }
+header { padding-block: 28px 18px; display: grid; gap: 8px }
+.presents { font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted) }
+.logo { font: 400 clamp(26px, 6vw, 46px)/1.1 var(--arcade); letter-spacing: .02em }
+.logo span { color: var(--red) }
+.tag { color: var(--muted); max-width: 62ch }
+nav { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 22px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 5; padding-top: 10px }
+nav button { font: 600 13px var(--ui); color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 8px 12px; cursor: pointer }
+nav button[aria-selected="true"] { color: var(--text); border-color: var(--line); background: var(--panel) }
+nav button:focus-visible, .btn:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px }
+section[role="tabpanel"] { display: grid; gap: 22px }
+.lede { color: var(--muted); max-width: 70ch; margin: 0 }
+.label { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+
+/* belts */
+.belts { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px }
+.belt.later { opacity: .7; border-style: dashed; align-content: center; justify-items: center; text-align: center; padding: 22px; gap: 10px; grid-template-rows: none }
+.belt { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: grid; grid-template-rows: auto auto 1fr auto; min-width: 0 }
+.plate { position: relative; padding: 16px 16px 14px; background: linear-gradient(180deg, #1A1F33, var(--panel)); display: grid; justify-items: center; gap: 10px }
+.strap { width: 100%; height: 40px; border-radius: 6px; background: repeating-linear-gradient(90deg, #2A1E10 0 14px, #33240F 14px 16px); display: grid; place-items: center; position: relative }
+.buckle { position: absolute; inset: -14px auto -14px 50%; transform: translateX(-50%); min-width: 62%; border-radius: 12px; background: radial-gradient(circle at 50% 35%, #FFE3A3, var(--gold) 55%, #A9771F); border: 3px solid #7A5413; display: grid; place-items: center; padding: 6px 10px; box-shadow: 0 0 22px rgba(242,181,68,.35) }
+.buckle b { font: 400 10px/1.3 var(--arcade); color: #3A2606; text-align: center }
+.portrait { width: 120px; height: 140px; border-radius: 10px; object-fit: cover; object-position: center 40%; border: 2px solid var(--line); background: var(--sunken); margin-top: 18px }
+.champ { padding: 4px 16px 0; text-align: center; display: grid; gap: 4px }
+.champ h3 { font: 700 20px var(--ui) }
+.champ .org { color: var(--muted); font-size: 13px }
+.reign { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 12px 16px; font: 500 12px var(--mono); color: var(--muted) }
+.reign strong { color: var(--text); font-weight: 700 }
+.next { border-top: 1px dashed var(--line); padding: 12px 16px 16px; display: grid; gap: 4px; font-size: 13px }
+.next .vs { font-weight: 600 }
+.chip { display: inline-block; font: 600 10px var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; vertical-align: 1px }
+.chip.new { color: var(--mint) } .chip.top { color: var(--sky) } .chip.change { color: var(--gold) } .chip.keep { color: var(--muted) } .chip.draw { color: var(--pink) }
+
+/* the context window */
+.cw { border: 1px solid #3A4466; border-radius: 12px; overflow: hidden; background: var(--sunken); box-shadow: 0 18px 50px rgba(0,0,0,.45) }
+.cw-bar { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: #1B2035; border-bottom: 1px solid #3A4466; min-width: 0 }
+.dots { display: flex; gap: 6px; flex: none } .dots i { width: 11px; height: 11px; border-radius: 50%; background: #3A4466 } .dots i:first-child { background: var(--red) } .dots i:nth-child(2) { background: var(--gold) } .dots i:last-child { background: var(--mint) }
+.cw-tab { font: 600 12px var(--ui); background: var(--sunken); border: 1px solid #3A4466; border-bottom: 0; border-radius: 8px 8px 0 0; padding: 6px 12px; margin-bottom: -10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0 }
+.cw-url { display: flex; gap: 8px; align-items: center; padding: 8px 12px; background: #151A2C; border-bottom: 1px solid #3A4466; font: 500 12px var(--mono); color: var(--muted); min-width: 0 }
+.cw-url span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.cw-status { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 8px 12px; background: #151A2C; border-bottom: 1px solid #3A4466; font: 600 13px var(--mono); color: var(--text) }
+.cw-status .hpv { color: var(--gold) }
+.cw img { display: block; width: 100%; aspect-ratio: 1872 / 1056; object-fit: cover; background: #000 }
+.cw img.result { aspect-ratio: auto }
+.booth { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+.voice { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; min-width: 0 }
+.face { width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; font: 400 16px var(--arcade) }
+.hank .face { background: var(--red); color: #2A0A0A } .sam .face { background: var(--sky); color: #06202A }
+.voice .who { font: 400 10px var(--arcade); margin-bottom: 6px } .hank .who { color: var(--red) } .sam .who { color: var(--sky) }
+.hank p { font: 700 16px/1.4 var(--ui); margin: 0 } .sam p { margin: 0; color: #D5DAE6 }
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.btn { font: 600 14px var(--ui); color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; cursor: pointer }
+.btn.primary { background: var(--red); border-color: var(--red); color: #2A0A0A; font-family: var(--arcade); font-size: 11px; padding: 12px 16px }
+.btn:disabled { opacity: .4; cursor: default }
+.pips { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap }
+.pips button { font: 600 11px var(--mono); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; cursor: pointer }
+.pips button[aria-current="true"] { color: var(--bg); background: var(--gold); border-color: var(--gold) }
+.note { font-size: 13px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 12px; max-width: 75ch }
+
+/* history */
+.lineage { display: grid; gap: 14px }
+.line { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; min-width: 0 }
+.line h3 { font: 400 11px var(--arcade); color: var(--gold) }
+.reigns { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px }
+.r { flex: none; width: 118px; display: grid; gap: 4px; font-size: 12px; color: var(--muted) }
+.r img { width: 118px; height: 96px; object-fit: cover; object-position: center 35%; border-radius: 8px; border: 1px solid var(--line); background: var(--sunken) }
+.r .ph { width: 118px; height: 96px; border-radius: 8px; border: 1px dashed var(--line); display: grid; place-items: center; font: 700 22px var(--ui); color: var(--muted) }
+.r b { color: var(--text); font-size: 13px; line-height: 1.25 }
+.r.now img { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(242,181,68,.35) }
+.filters { display: flex; gap: 6px; flex-wrap: wrap }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap }
+th { font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--panel) }
+tr:last-child td { border-bottom: 0 }
+.sq { display: inline-flex; gap: 2px; vertical-align: -1px } .sq i { width: 10px; height: 10px; border-radius: 2px; background: var(--line) } .sq i.c { background: var(--gold) } .sq i.x { background: var(--red) } .sq i.t { background: var(--muted) }
+
+/* new challenger */
+.announce { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: radial-gradient(ellipse at 30% 0%, #3A1220, var(--panel) 60%); display: grid; grid-template-columns: 220px 1fr; gap: 20px; padding: 22px; align-items: center }
+.announce .portrait { width: 200px; height: 230px; margin: 0 }
+.flash { font: 400 clamp(16px, 4vw, 26px)/1.25 var(--arcade); color: var(--red); text-shadow: 0 0 18px rgba(255,107,107,.45) }
+.announce h2 { font: 700 28px var(--ui); margin-top: 8px }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 12px; font-size: 14px }
+.facts dt { color: var(--muted) } .facts dd { margin: 0 }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 8px; min-width: 0 }
+.card h3 { font-size: 16px }
+
+/* proof */
+.verdicts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px }
+.verdict { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 6px; border-top: 3px solid var(--mint) }
+.verdict.warn { border-top-color: var(--gold) } .verdict.bad { border-top-color: var(--red) }
+.verdict b { font-size: 15px } .verdict span { color: var(--muted); font-size: 13px }
+td.hi { color: var(--mint); font-weight: 700 } td.lo { color: var(--red); font-weight: 700 }
+ol.rules { margin: 0; padding-left: 22px; display: grid; gap: 8px; max-width: 80ch }
+ol.rules li::marker { color: var(--gold); font-family: var(--mono) }
+ol.rules em { color: var(--gold); font-style: normal; font-size: 12px; font-family: var(--mono) }
+@media (max-width: 720px) {
+  .booth, .grid2 { grid-template-columns: 1fr }
+  .announce { grid-template-columns: 1fr; justify-items: start }
+  .pips { margin-left: 0 }
+}
+@media (prefers-reduced-motion: no-preference) { .cw img { animation: in .25s ease-out } @keyframes in { from { opacity: .4 } } }
+</style>
+
+<div class="mockbar">Mock for review. Champions and history are simulated from today's real scores; nothing here is live.</div>
+<div class="wrap">
+<header>
+  <div class="presents">Benchmark Brawl presents</div>
+  <h1 class="logo">OVERFIT <span>FC</span></h1>
+  <p class="tag">Two belts at launch, Budget later. New challengers. A championship history you can follow. Every title fight is a real Benchmark Brawl fight on five fixed rounds, saved with its numbers.</p>
+</header>
+<nav role="tablist" aria-label="Season 2 screens">
+  <button role="tab" id="t-belts" aria-controls="belts">Belts</button>
+  <button role="tab" id="t-fight" aria-controls="fight">Title fight</button>
+  <button role="tab" id="t-history" aria-controls="history">Title history</button>
+  <button role="tab" id="t-challenger" aria-controls="challenger">New challenger</button>
+  <button role="tab" id="t-proof" aria-controls="proof">Proof</button>
+</nav>
+
+<section role="tabpanel" id="belts" aria-labelledby="t-belts">
+  <p class="lede">The Overfit FC home. One belt per weight class, the reigning champion, and who fights for it next. Title night is every Sunday, alternating between the belts. A Sunday with no title fight plays the normal daily brawl.</p>
+  <div class="belts" id="beltCards"></div>
+</section>
+
+<section role="tabpanel" id="fight" aria-labelledby="t-fight" hidden>
+  <p class="lede">A title fight inside the Context Window. Step through it round by round. Hype Hank calls the action and Sigma Sam says what the numbers support.</p>
+  <div class="cw">
+    <div class="cw-bar"><div class="dots"><i></i><i></i><i></i></div><div class="cw-tab" id="cwTab"></div></div>
+    <div class="cw-url"><span id="cwUrl"></span></div>
+    <div class="cw-status" id="cwStatus"></div>
+    <img id="frame" alt="">
+  </div>
+  <div class="controls">
+    <button class="btn" id="prev">← Back</button>
+    <button class="btn primary" id="nextBtn">NEXT ROUND</button>
+    <div class="pips" id="pips"></div>
+  </div>
+  <div class="booth">
+    <div class="voice hank"><div class="face" aria-hidden="true">H</div><div><div class="who">HYPE HANK</div><p id="hank"></p></div></div>
+    <div class="voice sam"><div class="face" aria-hidden="true">σ</div><div><div class="who">SIGMA SAM</div><p id="sam"></p></div></div>
+  </div>
+  <p class="note">Each frame is captured from today's game just after that round's hit lands, so the HP in the frame matches the status row. Frames are captured from today's game. The window frame, tab title and address bar are the Context Window reskin. The arena background inside it would change to match; in this mock it is still the Server Farm.</p>
+</section>
+
+<section role="tabpanel" id="history" aria-labelledby="t-history" hidden>
+  <p class="lede">Simulated history: every reign and title fight below is recalculated from today's scores each time this mock is built. The real version would append each title fight once, with both fighters' scores, the rounds and the rules version, and never recalculate it. That store isn't built yet.</p>
+  <div class="lineage" id="lineage"></div>
+  <div class="filters" id="filters"></div>
+  <div class="tablewrap"><table><thead><tr><th>Date</th><th>Belt</th><th>Champion</th><th>Challenger</th><th>Why</th><th>Result</th><th>Rounds</th><th>HP left</th><th>Rules</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+
+<section role="tabpanel" id="challenger" aria-labelledby="t-challenger" hidden>
+  <p class="lede">How a new model enters. "New challenger" means new to our roster, which can be days after its release.</p>
+  <div class="announce" id="announce"></div>
+  <div class="grid2" id="challengerCards"></div>
+</section>
+
+<section role="tabpanel" id="proof" aria-labelledby="t-proof" hidden>
+  <p class="lede">The rulebook was played over the real roster, week by week, as if belts had started when each class first had 8 eligible models. The roster is "as of" each Sunday, by release date. Scores are today's.</p>
+  <div class="verdicts" id="verdicts"></div>
+  <h2 class="label">Rule variants, same backtest</h2>
+  <div class="tablewrap"><table><thead><tr><th>Rules</th><th>Title fights</th><th>Belt changes</th><th>Draws</th><th>100–0 shutouts</th><th>Repeat pairings</th><th>Fewest shared rounds</th><th>Same-lab fights</th><th>Belts start</th></tr></thead><tbody id="variants"></tbody></table></div>
+  <h2 class="label">Who can fight for each belt today</h2>
+  <div class="tablewrap"><table><thead><tr><th>Belt</th><th>In class</th><th>Eligible (4 of 5 rounds)</th><th>Eligible (3 of 5 rounds)</th></tr></thead><tbody id="elig"></tbody></table></div>
+  <h2 class="label">Rulebook v1.1 (draft)</h2>
+  <ol class="rules" id="rules"></ol>
+  <p class="note" id="caveat"></p>
+</section>
+</div>
+
+<script>
+const D = __DATA__;
+const IMG = __IMGS__;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const date = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+const dayName = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+const pic = (id, cls = 'portrait') => IMG['p-' + id] ? `<img class="${cls}" src="${IMG['p-' + id]}" alt="">` : `<div class="ph" aria-hidden="true">?</div>`;
+const whyChip = (w) => w === 'new challenger' ? '<span class="chip new">New challenger</span>' : w === 'top contender' ? '<span class="chip top">Top contender</span>' : `<span class="chip keep">${esc(w)}</span>`;
+const days = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+const beltName = (id) => D.belts.find((b) => b.id === id).name;
+
+// tabs (plain #anchors)
+const tabs = [...document.querySelectorAll('[role=tab]')];
+function show(id) {
+  if (!tabs.some((t) => t.getAttribute('aria-controls') === id)) id = 'belts';
+  for (const t of tabs) { const on = t.getAttribute('aria-controls') === id; t.setAttribute('aria-selected', on); $(t.getAttribute('aria-controls')).hidden = !on; }
+  try { history.replaceState(null, '', '#' + id); } catch {}
+}
+tabs.forEach((t) => t.addEventListener('click', () => show(t.getAttribute('aria-controls'))));
+show(location.hash.slice(1));
+
+// belts
+$('beltCards').innerHTML = D.belts.map((b) => `
+  <article class="belt">
+    <div class="plate"><div class="strap"><div class="buckle"><b>${esc(b.name.toUpperCase())}<br>CHAMPION</b></div></div>${pic(b.champion.id)}</div>
+    <div class="champ"><h3>${esc(b.champion.name)}</h3><div class="org">${esc(b.champion.org)} · ${b.champion.open ? 'open weights' : 'closed weights'}${b.champion.price != null ? ` · $${b.champion.price.toFixed(2)}/M tokens` : ''}</div></div>
+    <div class="reign"><span><strong>${days(b.champion.since, D.today)}</strong> days</span><span><strong>${b.champion.defenses}</strong> defense${b.champion.defenses === 1 ? '' : 's'}</span><span>${esc(b.champion.how)}</span></div>
+    <div class="next"><span class="label">Next title night · ${b.next ? dayName(b.next.day) : 'none booked'}</span>${b.next ? `<span class="vs">vs ${esc(b.next.challenger.name)} ${whyChip(b.next.why)}</span>` : '<span class="vs">No challenger yet: the top 3 contenders have all fought this champion on their current scores. The belt waits for a new model or new scores; that Sunday plays the normal daily brawl.</span>'}<span style="color:var(--muted)">${b.eligibleNow} models can fight for this belt today</span></div>
+  </article>`).join('') + (() => { const e = D.proof.eligible.find((x) => x.belt === 'Budget'); return `
+  <article class="belt later"><span class="label">Coming later</span><h3 style="font:400 12px var(--arcade);color:var(--gold)">BUDGET BELT</h3>
+    <p class="lede" style="margin:0">${e.four} budget models qualify today, the bare minimum for an opening tournament. It opens once there's room for price and coverage changes.</p></article>`; })();
+
+// title fight
+const F = D.featured, C = F.commentary, frames = ['title-0', 'title-1', 'title-2', 'title-3', 'title-4', 'title-5', 'title-end'];
+let step = 0;
+function render() {
+  const c = C[step], last = step === C.length - 1;
+  $('frame').src = IMG[frames[step]]; $('frame').className = last ? 'result' : '';
+  $('frame').alt = last ? `${F.challenger.name} wins` : `Round: ${c.round}`;
+  const label = step === 0 ? 'Walkout' : last ? 'Result' : `Round ${step} of ${C.length - 2}: ${c.round}`;
+  $('cwTab').textContent = `Undisputed title fight · ${F.champion.name} vs ${F.challenger.name}`;
+  $('cwUrl').textContent = `overfit.fc/title/${F.day}`;
+  $('cwStatus').innerHTML = `<span>${esc(label)}</span><span class="hpv">${esc(F.champion.name)} ${c.hp[0]} HP · ${esc(F.challenger.name)} ${c.hp[1]} HP</span>`;
+  $('hank').textContent = c.hank; $('sam').textContent = c.sam;
+  $('prev').disabled = step === 0; $('nextBtn').textContent = last ? 'WATCH AGAIN' : step === C.length - 2 ? 'RESULT' : 'NEXT ROUND';
+  [...$('pips').children].forEach((p, i) => p.setAttribute('aria-current', i === step));
+}
+$('pips').innerHTML = C.map((c, i) => `<button aria-label="${esc(c.round)}">${i === 0 ? 'Intro' : i === C.length - 1 ? 'Result' : i}</button>`).join('');
+[...$('pips').children].forEach((p, i) => p.addEventListener('click', () => { step = i; render(); }));
+$('prev').addEventListener('click', () => { if (step) { step--; render(); } });
+$('nextBtn').addEventListener('click', () => { step = step === C.length - 1 ? 0 : step + 1; render(); });
+render();
+
+// history
+$('lineage').innerHTML = D.belts.map((b) => `
+  <div class="line"><h3>${esc(b.name.toUpperCase())}</h3>
+    <div class="reigns">${b.reigns.map((r, i) => `<div class="r ${r.to ? '' : 'now'}">${pic(r.id, '')}<b>${esc(r.name)}</b><span>${date(r.from)}${r.to ? ` – ${date(r.to)}` : ' – now'}</span><span>${r.defenses} defense${r.defenses === 1 ? '' : 's'} · ${esc(r.how)}${r.ended?.startsWith('vacated') ? ' · vacated' : ''}</span></div>`).join('')}</div>
+    <span style="color:var(--muted);font-size:13px">Opened ${date(b.opening.day)} with an 8-model tournament (${b.opening.pool} eligible): ${esc(b.opening.rounds.at(-1)[0].a.name)} vs ${esc(b.opening.rounds.at(-1)[0].b.name)} in the final.</span>
+  </div>`).join('');
+let filter = 'all';
+const outcome = (f) => f.outcome === 'new champion' ? '<span class="chip change">New champion</span>' : f.outcome === 'draw retains' ? '<span class="chip draw">Draw, keeps belt</span>' : f.outcome === 'vacant filled' ? '<span class="chip change">Wins vacant belt</span>' : '<span class="chip keep">Defends</span>';
+const how = (f) => f.decision === 'ko' ? 'K.O.' : f.decision;
+function rows() {
+  $('rows').innerHTML = D.fights.filter((f) => filter === 'all' || f.belt === filter).map((f) => `<tr>
+    <td>${date(f.day)}</td><td>${esc(beltName(f.belt))}</td><td>${esc(f.champion.name)}</td><td>${esc(f.challenger.name)}</td><td>${whyChip(f.why)}</td>
+    <td>${outcome(f)} <span style="color:var(--muted)">${esc(how(f))}</span></td>
+    <td><span class="sq" title="Champion's view: gold won, red lost, grey tie">${f.rounds.map((r) => `<i class="${r.winner === 0 ? 'c' : r.winner === 1 ? 'x' : 't'}" title="${esc(r.name)}: ${esc(r.bench ?? '')} ${r.values.map((v) => v ?? '–').join(' vs ')}${r.margin != null ? ` (±${r.margin})` : ''}"></i>`).join('')}</span></td>
+    <td>${f.hp[0]}–${f.hp[1]}</td><td>${esc(f.rules)}</td></tr>`).join('');
+  [...$('filters').children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.f === filter));
+}
+$('filters').innerHTML = [['all', 'All belts'], ...D.belts.map((b) => [b.id, b.name])].map(([id, n]) => `<button class="btn" data-f="${id}">${esc(n)}</button>`).join('');
+[...$('filters').children].forEach((b) => b.addEventListener('click', () => { filter = b.dataset.f; rows(); [...$('filters').children].forEach((x) => x.style.borderColor = x === b ? 'var(--gold)' : ''); }));
+rows(); $('filters').children[0].style.borderColor = 'var(--gold)';
+
+// new challenger: the announcement the week before a real title shot from the backtest
+const A = D.announce, nc = A.challenger, ord = (n) => n + (['th', 'st', 'nd', 'rd'][n] ?? 'th');
+$('announce').innerHTML = `${pic(nc.id)}<div>
+  <div class="flash">HERE COMES A<br>NEW CHALLENGER!</div>
+  <h2>${esc(nc.name)}</h2>
+  <dl class="facts"><dt>Lab</dt><dd>${esc(nc.org)}</dd><dt>Released</dt><dd>${date(nc.released)}</dd><dt>Belt</dt><dd>Undisputed · ranked ${ord(A.rank)} among eligible contenders</dd><dt>Title shot</dt><dd>${dayName(A.day)} vs ${esc(A.champion.name)}</dd></dl>
+</div>`;
+const H = D.newest;
+$('challengerCards').innerHTML = `
+  <div class="card"><span class="label">Hype Hank</span><h3>"${esc(nc.name)} wants the gold! ${esc(A.champion.name)}, you've been warned!"</h3><span class="label" style="margin-top:6px">Sigma Sam</span><p style="margin:0;color:#D5DAE6">It has results in ${A.rounds} of the 5 championship rounds, so it qualifies, and it ranks ${ord(A.rank)} among contenders by Capabilities Index. The ranking only decides who gets the shot. The fight decides the belt.</p></div>
+  <div class="card"><span class="label">Joins the roster, no title shot yet</span><h3>${esc(H.name)}</h3><p style="margin:0;color:#D5DAE6">The newest model in our data (released ${date(H.released)}). It has no Capabilities Index yet, so it can't be ranked as a contender. You can pick it in Free play now. It appears in the daily brawl only when it gets a matchup with at least 3 rounds that both models have results for; with today's data it gets none through Oct 31.</p></div>`;
+
+// proof
+const P = D.proof, v1 = P.variants[0], v11 = P.variants[1], tw = P.variants[2], r3 = P.variants[3];
+const budget = P.eligible.find((e) => e.belt === 'Budget');
+$('verdicts').innerHTML = [
+  ['', 'Belts change hands', `${v11.changes} title changes in ${v11.fights} weekly title fights. Undisputed went through ${D.belts[0].reigns.length} champions since ${date(v11.starts.undisputed)}, each one a new frontier model.`],
+  ['', 'Mismatches fixed', `Letting any eligible model challenge gave ${v1.shutouts} fights that ended 100–0. Only letting the top 3 contenders challenge cut that to ${v11.shutouts} without changing who won the belts.`],
+  ['', 'Rules hold', `Across every variant: ${P.variants.reduce((s, v) => s + v.rematches, 0)} repeat pairings, and every title fight had at least ${Math.min(...P.variants.map((v) => v.minShared))} rounds both fighters could be compared on. Openings included. Synthetic tests cover rematches, thin fights, opening fields and vacancies.`],
+  ['warn', 'Belts can stall', `${D.belts.filter((b) => !b.next).map((b) => b.name).join(', ') || 'No belt'}: no challenger through ${date('2026-11-01')}. Every top-3 contender has already fought the champion on current scores, so the belt waits for a new model or a score change. Decided: let it wait. Widening to the top 5 when the top 3 run out raised 100–0 shutouts from 1 to 5 in the reviewer's test, with the same champions.`],
+  ['', 'Weekly is enough', `Two title nights a week added ${tw.fights - v11.fights} fights and ${tw.changes - v11.changes} extra belt changes.`],
+  ['warn', 'Budget comes later', `Only ${budget.four} budget models have results in 4 of 5 rounds today, exactly enough for an opening tournament. Decided: launch with two belts and add Budget once more models qualify.`],
+  ['', 'Same-lab fights stay', `${v11.sameLab} of ${v11.fights} title fights were between two models from the same lab. Decided: same selection rules for everyone; skipping them would be another editorial filter.`],
+  ['warn', 'Looser eligibility doesn\'t pay', `Requiring only 3 of 5 rounds opens the belts ${['undisputed', 'open'].map((b) => days(r3.starts[b], v11.starts[b])).join(' and ')} days earlier, with ${r3.changes} belt changes instead of ${v11.changes}, but draws go from ${v11.draws} to ${r3.draws}: fewer shared rounds, more ties.`],
+].map(([k, b, s]) => `<div class="verdict ${k}"><b>${b}</b><span>${s}</span></div>`).join('');
+$('variants').innerHTML = P.variants.map((v, i) => `<tr><td>${esc(v.label)}</td><td>${v.fights}</td><td>${v.changes}</td><td class="${v.draws > 3 ? 'lo' : ''}">${v.draws}</td><td class="${v.shutouts > 3 ? 'lo' : i === 1 ? 'hi' : ''}">${v.shutouts}</td><td class="${v.rematches ? 'lo' : ''}">${v.rematches}</td><td class="${v.minShared < 3 ? 'lo' : ''}">${v.minShared}</td><td>${v.sameLab}</td><td>${['undisputed', 'open'].map((b) => date(v.starts[b])).join(' · ')}</td></tr>`).join('');
+$('elig').innerHTML = P.eligible.map((e) => `<tr><td>${esc(e.belt)}${e.belt === 'Premium' ? ' <span style="color:var(--muted)">(not chosen)</span>' : ''}</td><td>${e.inClass}</td><td class="${e.four < 10 ? 'lo' : ''}">${e.four}</td><td>${e.three}</td></tr>`).join('');
+$('rules').innerHTML = [
+  ['Belts', 'Undisputed (anyone) and Open weights at launch. Budget (under $1 blended per million tokens) opens later. <em>decided</em>'],
+  ['Championship rounds', 'Coding, Math, Science, Facts, Puzzles, every time. No price round.'],
+  ['Eligible', 'In the class on fight day, with results in at least 4 of the 5 rounds.'],
+  ['First champion', 'An 8-model tournament: the highest-ranked eligible models by Capabilities Index where every pair can be compared on at least 3 rounds, since any two can meet in the bracket. A drawn match goes to the higher seed. No valid field of 8: the belt opens later. Opening matches count as meetings for the no-rematch rule. <em>new in v1.1</em>'],
+  ['Challenger', 'Same rules for every lab, same-lab fights included. One of the top 3 eligible contenders by Capabilities Index. A model new to our roster goes first; otherwise the highest-ranked one. <em>changed from v1</em>'],
+  ['Comparable', 'A fight is only booked if the two have results for at least 3 of the same rounds, checked before the fight, so an early K.O. can\'t skip it. <em>new in v1.1</em>'],
+  ['No rematches on the same numbers', 'The same two models meet again, in either role, only if either one\'s scores changed. Same scores, same result. <em>new in v1.1</em>'],
+  ['When', 'Every Sunday, alternating between the belts. It replaces that day\'s daily brawl. If the belt has no eligible challenger, there\'s no title fight and the daily brawl runs as normal. <em>decided</em>'],
+  ['Draw', 'A draw keeps the belt with the champion.'],
+  ['Champion leaves', 'If the champion leaves the roster or the class (a price change), the reign ends and the belt is vacant. On the belt\'s next title night, the two highest-ranked eligible models that can be compared, and haven\'t met on their current scores, fight for it. A draw goes to the higher-ranked one. If no two can be compared, it stays vacant until they can. <em>new in v1.1</em>'],
+  ['History', 'Each title fight is appended once with both fighters\' scores, the rounds, the result, the data date and the rules version, and never recalculated. <em>not built yet; this mock recalculates</em>'],
+].map(([h, t]) => `<li><b>${h}.</b> ${t}</li>`).join('');
+$('caveat').textContent = `Limits of this proof: the history is recalculated on every build, not stored. Scores are today's, so early title fights use numbers that came out later. The roster only covers models from the last year (oldest ${P.roster.oldest}), so belts start late in the backtest. Live, the two launch belts would open on launch day. Data from ${P.roster.generatedAt.slice(0, 10)}, ${P.roster.models} models.`;
+</script>

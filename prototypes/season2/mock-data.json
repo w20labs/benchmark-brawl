@@ -1,0 +1,2792 @@
+{
+ "today": "2026-10-13",
+ "rules": "v1.1 (draft)",
+ "rounds": [
+  "coding",
+  "math",
+  "science",
+  "facts",
+  "puzzles"
+ ],
+ "belts": [
+  {
+   "id": "undisputed",
+   "name": "Undisputed",
+   "started": "2026-02-17",
+   "eligibleNow": 54,
+   "champion": {
+    "id": "gpt6astra",
+    "name": "GPT-6 Astra",
+    "org": "OpenAI",
+    "open": false,
+    "price": 20,
+    "released": "2026-09-03",
+    "since": "2026-09-06",
+    "defenses": 2,
+    "how": "beat Claude Fable 5 (K.O.)"
+   },
+   "reigns": [
+    {
+     "id": "gemini3flash",
+     "name": "Gemini 3 Flash",
+     "org": "Google DeepMind",
+     "open": false,
+     "price": null,
+     "released": "2025-12-17",
+     "from": "2026-02-17",
+     "to": "2026-02-22",
+     "defenses": 0,
+     "how": "won the opening tournament",
+     "ended": "lost to Gemini 3.1 Pro"
+    },
+    {
+     "id": "gemini31pro",
+     "name": "Gemini 3.1 Pro",
+     "org": "Google DeepMind",
+     "open": false,
+     "price": 4.5,
+     "released": "2026-02-19",
+     "from": "2026-02-22",
+     "to": "2026-03-08",
+     "defenses": 1,
+     "how": "beat Gemini 3 Flash (unanimous)",
+     "ended": "lost to GPT-5.4"
+    },
+    {
+     "id": "gpt54",
+     "name": "GPT-5.4",
+     "org": "OpenAI",
+     "open": false,
+     "price": 5.625,
+     "released": "2026-03-05",
+     "from": "2026-03-08",
+     "to": "2026-04-19",
+     "defenses": 2,
+     "how": "beat Gemini 3.1 Pro (unanimous)",
+     "ended": "lost to Claude Opus 4.7"
+    },
+    {
+     "id": "claudeopus47",
+     "name": "Claude Opus 4.7",
+     "org": "Anthropic",
+     "open": false,
+     "price": 10,
+     "released": "2026-04-16",
+     "from": "2026-04-19",
+     "to": "2026-04-26",
+     "defenses": 0,
+     "how": "beat GPT-5.4 (unanimous)",
+     "ended": "lost to GPT-5.5"
+    },
+    {
+     "id": "gpt55",
+     "name": "GPT-5.5",
+     "org": "OpenAI",
+     "open": false,
+     "price": 11.25,
+     "released": "2026-04-23",
+     "from": "2026-04-26",
+     "to": "2026-06-14",
+     "defenses": 3,
+     "how": "beat Claude Opus 4.7 (K.O.)",
+     "ended": "lost to Claude Fable 5"
+    },
+    {
+     "id": "claudefable5",
+     "name": "Claude Fable 5",
+     "org": "Anthropic",
+     "open": false,
+     "price": 20,
+     "released": "2026-06-09",
+     "from": "2026-06-14",
+     "to": "2026-09-06",
+     "defenses": 5,
+     "how": "beat GPT-5.5 (K.O.)",
+     "ended": "lost to GPT-6 Astra"
+    },
+    {
+     "id": "gpt6astra",
+     "name": "GPT-6 Astra",
+     "org": "OpenAI",
+     "open": false,
+     "price": 20,
+     "released": "2026-09-03",
+     "from": "2026-09-06",
+     "to": null,
+     "defenses": 2,
+     "how": "beat Claude Fable 5 (K.O.)",
+     "ended": null
+    }
+   ],
+   "next": {
+    "day": "2026-10-18",
+    "challenger": {
+     "id": "gpt61sol",
+     "name": "GPT-6.1 Sol",
+     "org": "OpenAI",
+     "open": false,
+     "price": 4,
+     "released": "2026-09-29"
+    },
+    "why": "top contender"
+   },
+   "opening": {
+    "day": "2026-02-17",
+    "pool": 8,
+    "rounds": [
+     [
+      {
+       "a": {
+        "id": "claudeopus46",
+        "name": "Claude Opus 4.6",
+        "org": "Anthropic",
+        "open": false,
+        "price": 10,
+        "released": "2026-02-05"
+       },
+       "b": {
+        "id": "qwen35plushosted397ba17b",
+        "name": "Qwen 3.5 Plus (hosted 397B-A17B)",
+        "org": "Alibaba",
+        "open": false,
+        "price": null,
+        "released": "2026-02-16"
+       },
+       "winner": "claudeopus46",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        91,
+        48
+       ]
+      },
+      {
+       "a": {
+        "id": "gemini3flash",
+        "name": "Gemini 3 Flash",
+        "org": "Google DeepMind",
+        "open": false,
+        "price": null,
+        "released": "2025-12-17"
+       },
+       "b": {
+        "id": "claudeopus45",
+        "name": "Claude Opus 4.5",
+        "org": "Anthropic",
+        "open": false,
+        "price": 10,
+        "released": "2025-11-24"
+       },
+       "winner": "gemini3flash",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        88,
+        46
+       ]
+      },
+      {
+       "a": {
+        "id": "gpt52",
+        "name": "GPT-5.2",
+        "org": "OpenAI",
+        "open": false,
+        "price": 4.8125,
+        "released": "2025-12-11"
+       },
+       "b": {
+        "id": "kimik25",
+        "name": "Kimi K2.5",
+        "org": "Moonshot",
+        "open": true,
+        "price": null,
+        "released": "2026-01-27"
+       },
+       "winner": "gpt52",
+       "tiebreak": true,
+       "decision": "draw",
+       "hp": [
+        88,
+        88
+       ]
+      },
+      {
+       "a": {
+        "id": "claudesonnet46",
+        "name": "Claude Sonnet 4.6",
+        "org": "Anthropic",
+        "open": false,
+        "price": 6,
+        "released": "2026-02-17"
+       },
+       "b": {
+        "id": "gpt51",
+        "name": "GPT-5.1",
+        "org": "OpenAI",
+        "open": false,
+        "price": 3.4375,
+        "released": "2025-11-13"
+       },
+       "winner": "gpt51",
+       "tiebreak": false,
+       "decision": "split",
+       "hp": [
+        66,
+        77
+       ]
+      }
+     ],
+     [
+      {
+       "a": {
+        "id": "claudeopus46",
+        "name": "Claude Opus 4.6",
+        "org": "Anthropic",
+        "open": false,
+        "price": 10,
+        "released": "2026-02-05"
+       },
+       "b": {
+        "id": "gemini3flash",
+        "name": "Gemini 3 Flash",
+        "org": "Google DeepMind",
+        "open": false,
+        "price": null,
+        "released": "2025-12-17"
+       },
+       "winner": "gemini3flash",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        48,
+        88
+       ]
+      },
+      {
+       "a": {
+        "id": "gpt52",
+        "name": "GPT-5.2",
+        "org": "OpenAI",
+        "open": false,
+        "price": 4.8125,
+        "released": "2025-12-11"
+       },
+       "b": {
+        "id": "gpt51",
+        "name": "GPT-5.1",
+        "org": "OpenAI",
+        "open": false,
+        "price": 3.4375,
+        "released": "2025-11-13"
+       },
+       "winner": "gpt51",
+       "tiebreak": false,
+       "decision": "split",
+       "hp": [
+        69,
+        79
+       ]
+      }
+     ],
+     [
+      {
+       "a": {
+        "id": "gemini3flash",
+        "name": "Gemini 3 Flash",
+        "org": "Google DeepMind",
+        "open": false,
+        "price": null,
+        "released": "2025-12-17"
+       },
+       "b": {
+        "id": "gpt51",
+        "name": "GPT-5.1",
+        "org": "OpenAI",
+        "open": false,
+        "price": 3.4375,
+        "released": "2025-11-13"
+       },
+       "winner": "gemini3flash",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        91,
+        38
+       ]
+      }
+     ]
+    ]
+   }
+  },
+  {
+   "id": "open",
+   "name": "Open weights",
+   "started": "2026-07-16",
+   "eligibleNow": 12,
+   "champion": {
+    "id": "deepseekv4pro0813",
+    "name": "DeepSeek V4 Pro 0813",
+    "org": "DeepSeek",
+    "open": true,
+    "price": 0.99,
+    "released": "2026-08-13",
+    "since": "2026-08-16",
+    "defenses": 3,
+    "how": "beat Kimi K3 (unanimous)"
+   },
+   "reigns": [
+    {
+     "id": "kimik3",
+     "name": "Kimi K3",
+     "org": "Moonshot",
+     "open": true,
+     "price": 6,
+     "released": "2026-07-16",
+     "from": "2026-07-16",
+     "to": "2026-08-16",
+     "defenses": 2,
+     "how": "won the opening tournament",
+     "ended": "lost to DeepSeek V4 Pro 0813"
+    },
+    {
+     "id": "deepseekv4pro0813",
+     "name": "DeepSeek V4 Pro 0813",
+     "org": "DeepSeek",
+     "open": true,
+     "price": 0.99,
+     "released": "2026-08-13",
+     "from": "2026-08-16",
+     "to": null,
+     "defenses": 3,
+     "how": "beat Kimi K3 (unanimous)",
+     "ended": null
+    }
+   ],
+   "next": null,
+   "opening": {
+    "day": "2026-07-16",
+    "pool": 8,
+    "rounds": [
+     [
+      {
+       "a": {
+        "id": "kimik3",
+        "name": "Kimi K3",
+        "org": "Moonshot",
+        "open": true,
+        "price": 6,
+        "released": "2026-07-16"
+       },
+       "b": {
+        "id": "kimik25",
+        "name": "Kimi K2.5",
+        "org": "Moonshot",
+        "open": true,
+        "price": null,
+        "released": "2026-01-27"
+       },
+       "winner": "kimik3",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        97,
+        53
+       ]
+      },
+      {
+       "a": {
+        "id": "inklingsmall",
+        "name": "Inkling-Small",
+        "org": "Thinking Machines",
+        "open": true,
+        "price": null,
+        "released": "2026-07-15"
+       },
+       "b": {
+        "id": "kimik27code",
+        "name": "Kimi K2.7 Code",
+        "org": "Moonshot",
+        "open": true,
+        "price": 1.7125,
+        "released": "2026-06-12"
+       },
+       "winner": "kimik27code",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        59,
+        94
+       ]
+      },
+      {
+       "a": {
+        "id": "glm52",
+        "name": "GLM-5.2",
+        "org": "Z.ai (Zhipu AI)",
+        "open": true,
+        "price": 2.15,
+        "released": "2026-06-16"
+       },
+       "b": {
+        "id": "deepseekv4pro",
+        "name": "DeepSeek-V4-Pro",
+        "org": "DeepSeek",
+        "open": true,
+        "price": null,
+        "released": "2026-04-24"
+       },
+       "winner": "glm52",
+       "tiebreak": false,
+       "decision": "split",
+       "hp": [
+        65,
+        37
+       ]
+      },
+      {
+       "a": {
+        "id": "kimik26",
+        "name": "Kimi K2.6",
+        "org": "Moonshot",
+        "open": true,
+        "price": 1.7125,
+        "released": "2026-04-20"
+       },
+       "b": {
+        "id": "glm51",
+        "name": "GLM-5.1",
+        "org": "Z.ai (Zhipu AI)",
+        "open": true,
+        "price": 2.15,
+        "released": "2026-04-07"
+       },
+       "winner": "kimik26",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        91,
+        50
+       ]
+      }
+     ],
+     [
+      {
+       "a": {
+        "id": "kimik3",
+        "name": "Kimi K3",
+        "org": "Moonshot",
+        "open": true,
+        "price": 6,
+        "released": "2026-07-16"
+       },
+       "b": {
+        "id": "kimik27code",
+        "name": "Kimi K2.7 Code",
+        "org": "Moonshot",
+        "open": true,
+        "price": 1.7125,
+        "released": "2026-06-12"
+       },
+       "winner": "kimik3",
+       "tiebreak": false,
+       "decision": "ko",
+       "hp": [
+        100,
+        0
+       ]
+      },
+      {
+       "a": {
+        "id": "glm52",
+        "name": "GLM-5.2",
+        "org": "Z.ai (Zhipu AI)",
+        "open": true,
+        "price": 2.15,
+        "released": "2026-06-16"
+       },
+       "b": {
+        "id": "kimik26",
+        "name": "Kimi K2.6",
+        "org": "Moonshot",
+        "open": true,
+        "price": 1.7125,
+        "released": "2026-04-20"
+       },
+       "winner": "glm52",
+       "tiebreak": true,
+       "decision": "draw",
+       "hp": [
+        85,
+        85
+       ]
+      }
+     ],
+     [
+      {
+       "a": {
+        "id": "kimik3",
+        "name": "Kimi K3",
+        "org": "Moonshot",
+        "open": true,
+        "price": 6,
+        "released": "2026-07-16"
+       },
+       "b": {
+        "id": "glm52",
+        "name": "GLM-5.2",
+        "org": "Z.ai (Zhipu AI)",
+        "open": true,
+        "price": 2.15,
+        "released": "2026-06-16"
+       },
+       "winner": "kimik3",
+       "tiebreak": false,
+       "decision": "unanimous",
+       "hp": [
+        91,
+        9
+       ]
+      }
+     ]
+    ]
+   }
+  }
+ ],
+ "fights": [
+  {
+   "day": "2026-10-04",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt6astra",
+    "name": "GPT-6 Astra",
+    "org": "OpenAI",
+    "open": false,
+    "price": 20,
+    "released": "2026-09-03"
+   },
+   "challenger": {
+    "id": "claudeopus55",
+    "name": "Claude Opus 5.5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 8,
+    "released": "2026-09-22"
+   },
+   "why": "new challenger",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    91,
+    55
+   ],
+   "roundsWon": [
+    2,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "Average of MirrorCode + WeirdML v3",
+     "values": [
+      44.5,
+      54.3
+     ],
+     "margin": 14.2
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      97.6,
+      95
+     ],
+     "margin": 9.3
+    },
+    {
+     "name": "Science",
+     "winner": 0,
+     "bench": "GPQA Diamond",
+     "values": [
+      95.8,
+      90.6
+     ],
+     "margin": 4.7
+    },
+    {
+     "name": "Facts",
+     "winner": -1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      75.6,
+      72.2
+     ],
+     "margin": 3.9
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      84,
+      71
+     ],
+     "margin": 11.5
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-09-27",
+   "belt": "open",
+   "champion": {
+    "id": "deepseekv4pro0813",
+    "name": "DeepSeek V4 Pro 0813",
+    "org": "DeepSeek",
+    "open": true,
+    "price": 0.99,
+    "released": "2026-08-13"
+   },
+   "challenger": {
+    "id": "deepseekv4flash0731",
+    "name": "DeepSeek V4 Flash 0731",
+    "org": "DeepSeek",
+    "open": true,
+    "price": null,
+    "released": "2026-07-31"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    91,
+    52
+   ],
+   "roundsWon": [
+    1,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      26.8,
+      24.4
+     ],
+     "margin": 19.1
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      91.7,
+      91
+     ],
+     "margin": 4.6
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      52.9,
+      33.6
+     ],
+     "margin": 4.3
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      43,
+      34
+     ],
+     "margin": 13.5
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 4
+  },
+  {
+   "day": "2026-09-20",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt6astra",
+    "name": "GPT-6 Astra",
+    "org": "OpenAI",
+    "open": false,
+    "price": 20,
+    "released": "2026-09-03"
+   },
+   "challenger": {
+    "id": "claudefable51",
+    "name": "Claude Fable 5.1",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-09-01"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    94,
+    32
+   ],
+   "roundsWon": [
+    2,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "Average of MirrorCode + WeirdML v3",
+     "values": [
+      44.5,
+      49.7
+     ],
+     "margin": 14.7
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      97.6,
+      87.8
+     ],
+     "margin": 11.2
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      75.6,
+      70.8
+     ],
+     "margin": 3.9
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      84,
+      58
+     ],
+     "margin": 12.1
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 4
+  },
+  {
+   "day": "2026-09-13",
+   "belt": "open",
+   "champion": {
+    "id": "deepseekv4pro0813",
+    "name": "DeepSeek V4 Pro 0813",
+    "org": "DeepSeek",
+    "open": true,
+    "price": 0.99,
+    "released": "2026-08-13"
+   },
+   "challenger": {
+    "id": "deepseekv41flash",
+    "name": "DeepSeek V4.1 Flash",
+    "org": "DeepSeek",
+    "open": true,
+    "price": 0.2625,
+    "released": "2026-09-09"
+   },
+   "why": "new challenger",
+   "outcome": "draw retains",
+   "decision": "draw",
+   "hp": [
+    91,
+    91
+   ],
+   "roundsWon": [
+    0,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      26.8,
+      26.8
+     ],
+     "margin": 19.4
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      91.7,
+      89.8
+     ],
+     "margin": 4.5
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      43,
+      43
+     ],
+     "margin": 13.8
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 3
+  },
+  {
+   "day": "2026-09-06",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "challenger": {
+    "id": "gpt6astra",
+    "name": "GPT-6 Astra",
+    "org": "OpenAI",
+    "open": false,
+    "price": 20,
+    "released": "2026-09-03"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "ko",
+   "hp": [
+    0,
+    94
+   ],
+   "roundsWon": [
+    0,
+    3
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "Average of DeepSWE + MirrorCode + WeirdML v3",
+     "values": [
+      49.8,
+      54.3
+     ],
+     "margin": 10.4
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      90.2,
+      97.6
+     ],
+     "margin": 10.2
+    },
+    {
+     "name": "Science",
+     "winner": 1,
+     "bench": "GPQA Diamond",
+     "values": [
+      85.9,
+      95.8
+     ],
+     "margin": 5.6
+    },
+    {
+     "name": "Facts",
+     "winner": 1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      70.7,
+      75.6
+     ],
+     "margin": 3.9
+    },
+    {
+     "name": "Puzzles",
+     "winner": 1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      52,
+      84
+     ],
+     "margin": 12.2
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-08-30",
+   "belt": "open",
+   "champion": {
+    "id": "deepseekv4pro0813",
+    "name": "DeepSeek V4 Pro 0813",
+    "org": "DeepSeek",
+    "open": true,
+    "price": 0.99,
+    "released": "2026-08-13"
+   },
+   "challenger": {
+    "id": "glm53flash",
+    "name": "GLM-5.3-Flash",
+    "org": "Z.ai (Zhipu AI)",
+    "open": true,
+    "price": 0.2375,
+    "released": "2026-08-20"
+   },
+   "why": "new challenger",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    94,
+    24
+   ],
+   "roundsWon": [
+    1,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      26.8,
+      17.1
+     ],
+     "margin": 18
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      91.7,
+      90.2
+     ],
+     "margin": 4.5
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      43,
+      8
+     ],
+     "margin": 11.1
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 3
+  },
+  {
+   "day": "2026-08-16",
+   "belt": "open",
+   "champion": {
+    "id": "kimik3",
+    "name": "Kimi K3",
+    "org": "Moonshot",
+    "open": true,
+    "price": 6,
+    "released": "2026-07-16"
+   },
+   "challenger": {
+    "id": "deepseekv4pro0813",
+    "name": "DeepSeek V4 Pro 0813",
+    "org": "DeepSeek",
+    "open": true,
+    "price": 0.99,
+    "released": "2026-08-13"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "unanimous",
+   "hp": [
+    57,
+    91
+   ],
+   "roundsWon": [
+    0,
+    1
+   ],
+   "rounds": [
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      39,
+      26.8
+     ],
+     "margin": 20.4
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      93.1,
+      91.7
+     ],
+     "margin": 4.2
+    },
+    {
+     "name": "Facts",
+     "winner": -1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      50.6,
+      52.9
+     ],
+     "margin": 4.4
+    },
+    {
+     "name": "Puzzles",
+     "winner": 1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      26,
+      43
+     ],
+     "margin": 13
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 4
+  },
+  {
+   "day": "2026-08-09",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "challenger": {
+    "id": "gpt56terra",
+    "name": "GPT-5.6 Terra",
+    "org": "OpenAI",
+    "open": false,
+    "price": 4.5,
+    "released": "2026-07-09"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "ko",
+   "hp": [
+    82,
+    0
+   ],
+   "roundsWon": [
+    3,
+    1
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "DeepSWE",
+     "values": [
+      69.9,
+      69.6
+     ],
+     "margin": 4.1
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      90.2,
+      70.7
+     ],
+     "margin": 16.7
+    },
+    {
+     "name": "Science",
+     "winner": 1,
+     "bench": "GPQA Diamond",
+     "values": [
+      85.9,
+      93.3
+     ],
+     "margin": 5.7
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      70.7,
+      43.2
+     ],
+     "margin": 4.2
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      52,
+      35
+     ],
+     "margin": 13.6
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-08-02",
+   "belt": "open",
+   "champion": {
+    "id": "kimik3",
+    "name": "Kimi K3",
+    "org": "Moonshot",
+    "open": true,
+    "price": 6,
+    "released": "2026-07-16"
+   },
+   "challenger": {
+    "id": "deepseekv4flash0731",
+    "name": "DeepSeek V4 Flash 0731",
+    "org": "DeepSeek",
+    "open": true,
+    "price": null,
+    "released": "2026-07-31"
+   },
+   "why": "new challenger",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    91,
+    57
+   ],
+   "roundsWon": [
+    1,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      39,
+      24.4
+     ],
+     "margin": 20.1
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      93.1,
+      91
+     ],
+     "margin": 4.5
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      50.6,
+      33.6
+     ],
+     "margin": 4.3
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      26,
+      34
+     ],
+     "margin": 12.7
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 4
+  },
+  {
+   "day": "2026-07-26",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "challenger": {
+    "id": "claudeopus5",
+    "name": "Claude Opus 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-07-24"
+   },
+   "why": "new challenger",
+   "outcome": "retains",
+   "decision": "split",
+   "hp": [
+    74,
+    41
+   ],
+   "roundsWon": [
+    2,
+    2
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 1,
+     "bench": "Average of DeepSWE + WeirdML v3",
+     "values": [
+      42.7,
+      46.3
+     ],
+     "margin": 2.9
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      90.2,
+      73.2
+     ],
+     "margin": 16.4
+    },
+    {
+     "name": "Science",
+     "winner": 1,
+     "bench": "GPQA Diamond",
+     "values": [
+      85.9,
+      93.9
+     ],
+     "margin": 5.7
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      70.7,
+      59.9
+     ],
+     "margin": 4.1
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      52,
+      59
+     ],
+     "margin": 13.8
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-07-19",
+   "belt": "open",
+   "champion": {
+    "id": "kimik3",
+    "name": "Kimi K3",
+    "org": "Moonshot",
+    "open": true,
+    "price": 6,
+    "released": "2026-07-16"
+   },
+   "challenger": {
+    "id": "kimik26",
+    "name": "Kimi K2.6",
+    "org": "Moonshot",
+    "open": true,
+    "price": 1.7125,
+    "released": "2026-04-20"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    91,
+    60
+   ],
+   "roundsWon": [
+    1,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      39,
+      25.6
+     ],
+     "margin": 20.5
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      93.1,
+      90.8
+     ],
+     "margin": 4.5
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      50.6,
+      34.9
+     ],
+     "margin": 4.3
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      26,
+      18
+     ],
+     "margin": 11.5
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 4
+  },
+  {
+   "day": "2026-07-12",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "challenger": {
+    "id": "gpt56sol",
+    "name": "GPT-5.6 Sol",
+    "org": "OpenAI",
+    "open": false,
+    "price": 8,
+    "released": "2026-07-09"
+   },
+   "why": "new challenger",
+   "outcome": "retains",
+   "decision": "split",
+   "hp": [
+    76,
+    63
+   ],
+   "roundsWon": [
+    1,
+    1
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 0,
+     "bench": "Average of DeepSWE + MirrorCode + WeirdML v3",
+     "values": [
+      49.8,
+      35.9
+     ],
+     "margin": 9.2
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      90.2,
+      82.9
+     ],
+     "margin": 14.7
+    },
+    {
+     "name": "Science",
+     "winner": 1,
+     "bench": "GPQA Diamond",
+     "values": [
+      85.9,
+      93.5
+     ],
+     "margin": 5.8
+    },
+    {
+     "name": "Facts",
+     "winner": -1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      70.7,
+      69.7
+     ],
+     "margin": 4
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      52,
+      58
+     ],
+     "margin": 13.8
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-06-28",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "challenger": {
+    "id": "gpt54",
+    "name": "GPT-5.4",
+    "org": "OpenAI",
+    "open": false,
+    "price": 5.625,
+    "released": "2026-03-05"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "ko",
+   "hp": [
+    100,
+    0
+   ],
+   "roundsWon": [
+    2,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 0,
+     "bench": "Average of DeepSWE + MirrorCode",
+     "values": [
+      66.9,
+      33.7
+     ],
+     "margin": 12.8
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      90.2,
+      49
+     ],
+     "margin": 18.1
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-06-21",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "challenger": {
+    "id": "claudeopus48",
+    "name": "Claude Opus 4.8",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-05-28"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "ko",
+   "hp": [
+    97,
+    0
+   ],
+   "roundsWon": [
+    3,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 0,
+     "bench": "DeepSWE",
+     "values": [
+      69.9,
+      59
+     ],
+     "margin": 3.7
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      90.2,
+      56.1
+     ],
+     "margin": 17.8
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      85.9,
+      91
+     ],
+     "margin": 6.1
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      70.7,
+      53
+     ],
+     "margin": 4.2
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-06-14",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt55",
+    "name": "GPT-5.5",
+    "org": "OpenAI",
+    "open": false,
+    "price": 11.25,
+    "released": "2026-04-23"
+   },
+   "challenger": {
+    "id": "claudefable5",
+    "name": "Claude Fable 5",
+    "org": "Anthropic",
+    "open": false,
+    "price": 20,
+    "released": "2026-06-09"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "ko",
+   "hp": [
+    0,
+    84
+   ],
+   "roundsWon": [
+    1,
+    3
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 1,
+     "bench": "Average of DeepSWE + MirrorCode",
+     "values": [
+      38.5,
+      66.9
+     ],
+     "margin": 12.3
+    },
+    {
+     "name": "Math",
+     "winner": 1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      72.5,
+      90.2
+     ],
+     "margin": 16.7
+    },
+    {
+     "name": "Science",
+     "winner": 0,
+     "bench": "GPQA Diamond",
+     "values": [
+      94,
+      85.9
+     ],
+     "margin": 5.7
+    },
+    {
+     "name": "Facts",
+     "winner": 1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      63,
+      70.7
+     ],
+     "margin": 4.1
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-05-31",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt55",
+    "name": "GPT-5.5",
+    "org": "OpenAI",
+    "open": false,
+    "price": 11.25,
+    "released": "2026-04-23"
+   },
+   "challenger": {
+    "id": "claudeopus48",
+    "name": "Claude Opus 4.8",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-05-28"
+   },
+   "why": "new challenger",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    94,
+    18
+   ],
+   "roundsWon": [
+    3,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 0,
+     "bench": "DeepSWE",
+     "values": [
+      67,
+      59
+     ],
+     "margin": 6.7
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      72.5,
+      56.1
+     ],
+     "margin": 20.8
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      94,
+      91
+     ],
+     "margin": 4.8
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      63,
+      53
+     ],
+     "margin": 4.3
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      56,
+      36
+     ],
+     "margin": 13.6
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-05-10",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt55",
+    "name": "GPT-5.5",
+    "org": "OpenAI",
+    "open": false,
+    "price": 11.25,
+    "released": "2026-04-23"
+   },
+   "challenger": {
+    "id": "claudeopus46",
+    "name": "Claude Opus 4.6",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-02-05"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "ko",
+   "hp": [
+    94,
+    0
+   ],
+   "roundsWon": [
+    2,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "SWE-bench Verified",
+     "values": [
+      80.6,
+      78.7
+     ],
+     "margin": 5.1
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      72.5,
+      26.8
+     ],
+     "margin": 19.6
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      94,
+      90.5
+     ],
+     "margin": 4.5
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      63,
+      47
+     ],
+     "margin": 4.3
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-05-03",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt55",
+    "name": "GPT-5.5",
+    "org": "OpenAI",
+    "open": false,
+    "price": 11.25,
+    "released": "2026-04-23"
+   },
+   "challenger": {
+    "id": "gpt54",
+    "name": "GPT-5.4",
+    "org": "OpenAI",
+    "open": false,
+    "price": 5.625,
+    "released": "2026-03-05"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "ko",
+   "hp": [
+    94,
+    0
+   ],
+   "roundsWon": [
+    3,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "Average of DeepSWE + SWE-bench Verified + MirrorCode",
+     "values": [
+      52.5,
+      48.1
+     ],
+     "margin": 7
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      72.5,
+      49
+     ],
+     "margin": 21
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      94,
+      93.3
+     ],
+     "margin": 4.7
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      63,
+      45.1
+     ],
+     "margin": 4.3
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      56,
+      37
+     ],
+     "margin": 13.6
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-04-26",
+   "belt": "undisputed",
+   "champion": {
+    "id": "claudeopus47",
+    "name": "Claude Opus 4.7",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-04-16"
+   },
+   "challenger": {
+    "id": "gpt55",
+    "name": "GPT-5.5",
+    "org": "OpenAI",
+    "open": false,
+    "price": 11.25,
+    "released": "2026-04-23"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "ko",
+   "hp": [
+    0,
+    73
+   ],
+   "roundsWon": [
+    1,
+    2
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 0,
+     "bench": "Average of SWE-bench Verified + MirrorCode",
+     "values": [
+      57.3,
+      45.3
+     ],
+     "margin": 10.9
+    },
+    {
+     "name": "Math",
+     "winner": 1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      31.7,
+      72.5
+     ],
+     "margin": 20.1
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      90.2,
+      94
+     ],
+     "margin": 4.7
+    },
+    {
+     "name": "Facts",
+     "winner": 1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      51.7,
+      63
+     ],
+     "margin": 4.3
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-04-19",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt54",
+    "name": "GPT-5.4",
+    "org": "OpenAI",
+    "open": false,
+    "price": 5.625,
+    "released": "2026-03-05"
+   },
+   "challenger": {
+    "id": "claudeopus47",
+    "name": "Claude Opus 4.7",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-04-16"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "unanimous",
+   "hp": [
+    75,
+    88
+   ],
+   "roundsWon": [
+    0,
+    1
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "Average of SWE-bench Verified + MirrorCode",
+     "values": [
+      46.3,
+      57.3
+     ],
+     "margin": 11.9
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      49,
+      31.7
+     ],
+     "margin": 21.3
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      93.3,
+      90.2
+     ],
+     "margin": 5.1
+    },
+    {
+     "name": "Facts",
+     "winner": 1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      45.1,
+      51.7
+     ],
+     "margin": 4.4
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      37,
+      28
+     ],
+     "margin": 13
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-03-22",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt54",
+    "name": "GPT-5.4",
+    "org": "OpenAI",
+    "open": false,
+    "price": 5.625,
+    "released": "2026-03-05"
+   },
+   "challenger": {
+    "id": "gpt52",
+    "name": "GPT-5.2",
+    "org": "OpenAI",
+    "open": false,
+    "price": 4.8125,
+    "released": "2025-12-11"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    91,
+    47
+   ],
+   "roundsWon": [
+    2,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "SWE-bench Verified",
+     "values": [
+      76.9,
+      73.8
+     ],
+     "margin": 5.4
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      49,
+      31.7
+     ],
+     "margin": 21.2
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      93.3,
+      91.4
+     ],
+     "margin": 5
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      45.1,
+      37.1
+     ],
+     "margin": 4.3
+    },
+    {
+     "name": "Puzzles",
+     "winner": 0,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      37,
+      23
+     ],
+     "margin": 12.6
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-03-15",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gpt54",
+    "name": "GPT-5.4",
+    "org": "OpenAI",
+    "open": false,
+    "price": 5.625,
+    "released": "2026-03-05"
+   },
+   "challenger": {
+    "id": "claudeopus46",
+    "name": "Claude Opus 4.6",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-02-05"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    88,
+    44
+   ],
+   "roundsWon": [
+    1,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "SWE-bench Verified",
+     "values": [
+      76.9,
+      78.7
+     ],
+     "margin": 5.2
+    },
+    {
+     "name": "Math",
+     "winner": 0,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      49,
+      26.8
+     ],
+     "margin": 20.8
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      93.3,
+      90.5
+     ],
+     "margin": 4.8
+    },
+    {
+     "name": "Facts",
+     "winner": -1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      45.1,
+      47
+     ],
+     "margin": 4.4
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      37,
+      25
+     ],
+     "margin": 12.8
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-03-08",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gemini31pro",
+    "name": "Gemini 3.1 Pro",
+    "org": "Google DeepMind",
+    "open": false,
+    "price": 4.5,
+    "released": "2026-02-19"
+   },
+   "challenger": {
+    "id": "gpt54",
+    "name": "GPT-5.4",
+    "org": "OpenAI",
+    "open": false,
+    "price": 5.625,
+    "released": "2026-03-05"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "unanimous",
+   "hp": [
+    18,
+    37
+   ],
+   "roundsWon": [
+    1,
+    2
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": 1,
+     "bench": "Average of DeepSWE + SWE-bench Verified + MirrorCode",
+     "values": [
+      32.1,
+      48.1
+     ],
+     "margin": 6.2
+    },
+    {
+     "name": "Math",
+     "winner": 1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      26.8,
+      49
+     ],
+     "margin": 20.8
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      94.4,
+      93.3
+     ],
+     "margin": 4.8
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      73.5,
+      45.1
+     ],
+     "margin": 4.1
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      34,
+      37
+     ],
+     "margin": 13.3
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-03-01",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gemini31pro",
+    "name": "Gemini 3.1 Pro",
+    "org": "Google DeepMind",
+    "open": false,
+    "price": 4.5,
+    "released": "2026-02-19"
+   },
+   "challenger": {
+    "id": "claudeopus46",
+    "name": "Claude Opus 4.6",
+    "org": "Anthropic",
+    "open": false,
+    "price": 10,
+    "released": "2026-02-05"
+   },
+   "why": "top contender",
+   "outcome": "retains",
+   "decision": "unanimous",
+   "hp": [
+    88,
+    35
+   ],
+   "roundsWon": [
+    1,
+    0
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "SWE-bench Verified",
+     "values": [
+      75.6,
+      78.7
+     ],
+     "margin": 5.3
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      26.8,
+      26.8
+     ],
+     "margin": 19.4
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      94.4,
+      90.5
+     ],
+     "margin": 4.6
+    },
+    {
+     "name": "Facts",
+     "winner": 0,
+     "bench": "SimpleQA Verified",
+     "values": [
+      73.5,
+      47
+     ],
+     "margin": 4.1
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      34,
+      25
+     ],
+     "margin": 12.6
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  },
+  {
+   "day": "2026-02-22",
+   "belt": "undisputed",
+   "champion": {
+    "id": "gemini3flash",
+    "name": "Gemini 3 Flash",
+    "org": "Google DeepMind",
+    "open": false,
+    "price": null,
+    "released": "2025-12-17"
+   },
+   "challenger": {
+    "id": "gemini31pro",
+    "name": "Gemini 3.1 Pro",
+    "org": "Google DeepMind",
+    "open": false,
+    "price": 4.5,
+    "released": "2026-02-19"
+   },
+   "why": "new challenger",
+   "outcome": "new champion",
+   "decision": "unanimous",
+   "hp": [
+    75,
+    88
+   ],
+   "roundsWon": [
+    0,
+    1
+   ],
+   "rounds": [
+    {
+     "name": "Coding",
+     "winner": -1,
+     "bench": "SWE-bench Verified",
+     "values": [
+      75.4,
+      75.6
+     ],
+     "margin": 5.4
+    },
+    {
+     "name": "Math",
+     "winner": -1,
+     "bench": "FrontierMath Tier 4",
+     "values": [
+      17.1,
+      26.8
+     ],
+     "margin": 18
+    },
+    {
+     "name": "Science",
+     "winner": -1,
+     "bench": "GPQA Diamond",
+     "values": [
+      89.4,
+      94.4
+     ],
+     "margin": 5.4
+    },
+    {
+     "name": "Facts",
+     "winner": 1,
+     "bench": "SimpleQA Verified",
+     "values": [
+      66.8,
+      73.5
+     ],
+     "margin": 4
+    },
+    {
+     "name": "Puzzles",
+     "winner": -1,
+     "bench": "Mystery Game Puzzles",
+     "values": [
+      26,
+      34
+     ],
+     "margin": 12.7
+    }
+   ],
+   "rules": "v1.1",
+   "shared": 5
+  }
+ ],
+ "featured": {
+  "day": "2026-09-06",
+  "belt": "undisputed",
+  "champion": {
+   "id": "claudefable5",
+   "name": "Claude Fable 5",
+   "org": "Anthropic",
+   "open": false,
+   "price": 20,
+   "released": "2026-06-09"
+  },
+  "challenger": {
+   "id": "gpt6astra",
+   "name": "GPT-6 Astra",
+   "org": "OpenAI",
+   "open": false,
+   "price": 20,
+   "released": "2026-09-03"
+  },
+  "why": "new challenger",
+  "outcome": "new champion",
+  "decision": "ko",
+  "hp": [
+   0,
+   94
+  ],
+  "roundsWon": [
+   0,
+   3
+  ],
+  "rounds": [
+   {
+    "name": "Coding",
+    "winner": -1,
+    "bench": "Average of DeepSWE + MirrorCode + WeirdML v3",
+    "values": [
+     49.8,
+     54.3
+    ],
+    "margin": 10.4
+   },
+   {
+    "name": "Math",
+    "winner": -1,
+    "bench": "FrontierMath Tier 4",
+    "values": [
+     90.2,
+     97.6
+    ],
+    "margin": 10.2
+   },
+   {
+    "name": "Science",
+    "winner": 1,
+    "bench": "GPQA Diamond",
+    "values": [
+     85.9,
+     95.8
+    ],
+    "margin": 5.6
+   },
+   {
+    "name": "Facts",
+    "winner": 1,
+    "bench": "SimpleQA Verified",
+    "values": [
+     70.7,
+     75.6
+    ],
+    "margin": 3.9
+   },
+   {
+    "name": "Puzzles",
+    "winner": 1,
+    "bench": "Mystery Game Puzzles",
+    "values": [
+     52,
+     84
+    ],
+    "margin": 12.2
+   }
+  ],
+  "rules": "v1.1",
+  "shared": 5,
+  "commentary": [
+   {
+    "round": "Intro",
+    "hp": [
+     100,
+     100
+    ],
+    "hank": "From inside the Context Window: the Undisputed champion, Claude Fable 5! And the challenger, GPT-6 Astra!",
+    "sam": "Five championship rounds: Coding, Math, Science, Facts, Puzzles. Same five for every title fight. Each model plays its best reasoning setting."
+   },
+   {
+    "round": "Coding",
+    "hp": [
+     97,
+     97
+    ],
+    "hank": "Both swing! A black hole from Claude Fable 5, a water balloon from GPT-6 Astra! What a collision!",
+    "sam": "49.8% against 54.3% on the average of DeepSWE + MirrorCode + WeirdML v3. The difference is within the ±10.4 point margin of error, so we call this round a tie. Both lose 3 HP."
+   },
+   {
+    "round": "Math",
+    "hp": [
+     94,
+     94
+    ],
+    "hank": "Both swing! A boomerang from Claude Fable 5, a piano drop from GPT-6 Astra! What a collision!",
+    "sam": "90.2% against 97.6% on FrontierMath Tier 4. The difference is within the ±10.2 point margin of error, so we call this round a tie. Both lose 3 HP."
+   },
+   {
+    "round": "Science",
+    "hp": [
+     74,
+     94
+    ],
+    "hank": "MISSILE SWARM! GPT-6 Astra lands it! That's 20 HP gone!",
+    "sam": "95.8% against 85.9% on GPQA Diamond: a 9.9 point gap, outside the ±5.6 margin. Twice the gap, rounded to whole HP: 20 damage."
+   },
+   {
+    "round": "Facts",
+    "hp": [
+     64,
+     94
+    ],
+    "hank": "PLASMA BALL! GPT-6 Astra lands it! That's 10 HP gone!",
+    "sam": "75.6% against 70.7% on SimpleQA Verified: a 4.9 point gap, outside the ±3.9 margin. Twice the gap, rounded to whole HP: 10 damage."
+   },
+   {
+    "round": "Puzzles",
+    "hp": [
+     0,
+     94
+    ],
+    "hank": "EM DASH BARRAGE! The signature move! GPT-6 Astra lands it! That's 64 HP gone!",
+    "sam": "84.0% against 52.0% on Mystery Game Puzzles: a 32.0 point gap, outside the ±12.2 margin. Twice the gap, rounded to whole HP: 64 damage."
+   },
+   {
+    "round": "Result",
+    "hp": [
+     0,
+     94
+    ],
+    "hank": "DOWN GOES CLAUDE FABLE 5! WE HAVE A NEW UNDISPUTED CHAMPION!",
+    "sam": "GPT-6 Astra won 3 of 5 rounds and finished it by K.O."
+   }
+  ]
+ },
+ "newest": {
+  "id": "claudehaiku55",
+  "name": "Claude Haiku 5.5",
+  "org": "Anthropic",
+  "open": false,
+  "price": 0.2,
+  "released": "2026-10-07"
+ },
+ "announce": {
+  "day": "2026-10-04",
+  "challenger": {
+   "id": "claudeopus55",
+   "name": "Claude Opus 5.5",
+   "org": "Anthropic",
+   "open": false,
+   "price": 8,
+   "released": "2026-09-22"
+  },
+  "champion": {
+   "id": "gpt6astra",
+   "name": "GPT-6 Astra",
+   "org": "OpenAI",
+   "open": false,
+   "price": 20,
+   "released": "2026-09-03"
+  },
+  "rank": 1,
+  "rounds": 5
+ },
+ "proof": {
+  "eligible": [
+   {
+    "belt": "Undisputed",
+    "inClass": 73,
+    "four": 54,
+    "three": 73
+   },
+   {
+    "belt": "Open weights",
+    "inClass": 21,
+    "four": 12,
+    "three": 21
+   },
+   {
+    "belt": "Budget",
+    "inClass": 13,
+    "four": 8,
+    "three": 13
+   },
+   {
+    "belt": "Premium",
+    "inClass": 15,
+    "four": 14,
+    "three": 15
+   }
+  ],
+  "variants": [
+   {
+    "label": "v1.1, but any eligible model can challenge",
+    "fights": 34,
+    "changes": 7,
+    "draws": 1,
+    "rematches": 0,
+    "minShared": 3,
+    "shutouts": 10,
+    "sameLab": 10,
+    "starts": {
+     "undisputed": "2026-02-17",
+     "open": "2026-07-16"
+    }
+   },
+   {
+    "label": "v1.1: top 3 contenders only",
+    "fights": 25,
+    "changes": 7,
+    "draws": 1,
+    "rematches": 0,
+    "minShared": 3,
+    "shutouts": 1,
+    "sameLab": 8,
+    "starts": {
+     "undisputed": "2026-02-17",
+     "open": "2026-07-16"
+    }
+   },
+   {
+    "label": "v1.1, two title nights a week",
+    "fights": 33,
+    "changes": 7,
+    "draws": 2,
+    "rematches": 0,
+    "minShared": 3,
+    "shutouts": 1,
+    "sameLab": 11,
+    "starts": {
+     "undisputed": "2026-02-17",
+     "open": "2026-07-16"
+    }
+   },
+   {
+    "label": "v1.1, every belt needs only 3 of 5 rounds",
+    "fights": 27,
+    "changes": 7,
+    "draws": 3,
+    "rematches": 0,
+    "minShared": 3,
+    "shutouts": 0,
+    "sameLab": 9,
+    "starts": {
+     "undisputed": "2026-02-05",
+     "open": "2026-06-16"
+    }
+   }
+  ],
+  "roster": {
+   "models": 73,
+   "oldest": "2025-10-15",
+   "generatedAt": "2026-10-13T08:52:06.415Z"
+  }
+ }
+}
