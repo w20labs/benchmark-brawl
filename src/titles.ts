@@ -40,7 +40,9 @@ export type TitleEvent =
       champion: Snapshot; challenger: Snapshot; winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number] }
   | { kind: 'vacant'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; a: Snapshot; b: Snapshot;
       winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number]; champion: string }
-  | { kind: 'vacated'; belt: BeltId; day: string; rules: string; dataDate: string; model: string; reason: string };
+  | { kind: 'vacated'; belt: BeltId; day: string; rules: string; dataDate: string; model: string; reason: string }
+  /** A title night with no fight. Kept so the log remembers who was already eligible: they aren't new challengers later. */
+  | { kind: 'quiet'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; reason: string };
 export type TitleLog = { through: string | null; events: TitleEvent[] };
 
 // ---------- eligibility, comparability, fingerprints ----------
@@ -96,6 +98,8 @@ export function standings(data: BrawlData, events: TitleEvent[]): Standings {
       s.met.add(pairKey(data, e.a, e.b));
       const w = e.winner === 1 ? e.b : e.a, other = w === e.a ? e.b : e.a;
       crown(e.belt, w, w.name, e.day, e.winner === -1 ? 'drew the vacant-title fight, ranked higher' : `won the vacant-title fight vs ${other.name}`);
+    } else if (e.kind === 'quiet') {
+      // nothing changes hands
     } else {
       Object.assign(current(e.belt)!, { to: e.day, ended: e.reason });
       s.champions[e.belt] = null;
@@ -124,9 +128,11 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
     const base = { day, rules: TITLE_RULES, dataDate };
 
     // openings: 8 eligible models, every pair comparable and not yet met; the highest-ranked such field
+    // only models released by that day: a catch-up run must not put a later model into an earlier fight
+    const roster = data.models.filter((m) => m.released <= day);
     for (const belt of BELTS) {
       if (st.opened[belt.id]) continue;
-      const pool = data.models.filter((m) => eligibleFor(data, belt.id, m));
+      const pool = roster.filter((m) => eligibleFor(data, belt.id, m));
       const f = field(pool, (x, y) => fightable(x, y) && !st.met.has(pairKey(data, x, y)));
       if (!f) continue; // no valid field yet: the belt opens later
       const bracket = runTournament(data, f, CHAMPIONSHIP_ROUNDS)!;
@@ -139,13 +145,13 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
     if (new Date(`${day}T00:00:00Z`).getUTCDay() !== TITLE_NIGHT) continue;
     const open = BELTS.map((b) => b.id).filter((b) => st.opened[b] && st.opened[b]! < day);
     if (!open.length) continue;
-    const belt = beltFor(day, open), pool = data.models.filter((m) => eligibleFor(data, belt, m)), eligible = pool.map((m) => m.id);
+    const belt = beltFor(day, open), pool = roster.filter((m) => eligibleFor(data, belt, m)), eligible = pool.map((m) => m.id);
     const champId = st.champions[belt];
     let champion = champId ? pool.find((m) => m.id === champId) ?? null : null;
 
     // a champion who left the roster or the class gives up the belt
     if (champId && !champion) {
-      events.push({ kind: 'vacated', belt, ...base, model: champId, reason: data.models.some((m) => m.id === champId) ? 'vacated: no longer eligible' : 'vacated: left the roster' });
+      events.push({ kind: 'vacated', belt, ...base, model: champId, reason: roster.some((m) => m.id === champId) ? 'vacated: no longer eligible' : 'vacated: left the roster' });
       st = standings(data, events);
     }
     if (!champion) {
@@ -154,7 +160,7 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
       let pair: [Model, Model] | null = null;
       for (let i = 0; i < order.length && !pair; i++) for (let j = i + 1; j < order.length && !pair; j++)
         if (fightable(order[i], order[j]) && !st.met.has(pairKey(data, order[i], order[j]))) pair = [order[i], order[j]];
-      if (!pair) continue; // stays vacant until two can fight
+      if (!pair) { events.push({ kind: 'quiet', belt, ...base, eligible, reason: 'vacant: no two contenders can be compared yet' }); continue; }
       const fight = planFight(data, pair[0], pair[1], CHAMPIONSHIP_ROUNDS), [a, b] = snap(data, pair[0], pair[1]);
       events.push({ kind: 'vacant', belt, ...base, eligible, a, b, winner: fight.winner, decision: fight.decision, hp: fight.hp, roundsWon: fight.roundsWon, champion: (fight.winner === 1 ? b : a).id });
       continue;
@@ -165,7 +171,7 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
     const top = new Set(ranked(pool.filter((m) => m.id !== holder.id && m.eci != null)).slice(0, TOP_CONTENDERS).map((m) => m.id));
     const contenders = ranked(pool.filter((m) => top.has(m.id) && fightable(holder, m) && !st.met.has(pairKey(data, holder, m))));
     const ch = contenders.find((m) => !seen.has(m.id)) ?? contenders[0];
-    if (!ch) continue; // nobody left to fight: no title fight, the normal daily brawl runs
+    if (!ch) { events.push({ kind: 'quiet', belt, ...base, eligible, reason: 'no challenger: every top contender has fought the champion on current scores' }); continue; } // the normal daily brawl runs
     const fight = planFight(data, holder, ch, CHAMPIONSHIP_ROUNDS), [c, x] = snap(data, holder, ch);
     events.push({ kind: 'title', belt, ...base, eligible, why: seen.has(ch.id) ? 'top contender' : 'new challenger',
       champion: c, challenger: x, winner: fight.winner, decision: fight.decision, hp: fight.hp, roundsWon: fight.roundsWon });

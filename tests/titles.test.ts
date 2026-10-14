@@ -144,10 +144,39 @@ describe('title log', () => {
     expect(() => checkAppendOnly(log, { ...log, through: '2026-01-01' })).toThrow('went back');
   });
 
-  it('runs on the real roster: both belts open, no repeats, every match comparable', () => {
+  it('keeps the rules on the real roster, whichever belts open', () => {
+    // the roster changes every day, so this checks the rules hold, not which belts open (a synthetic test covers that)
     const log = advanceTitles(real, EMPTY, '2026-11-29', '2026-10-15');
-    expect(log.events.filter((e) => e.kind === 'opening').map((e) => e.belt).sort()).toEqual(['open', 'undisputed']);
     expect(repeats(real, log)).toBe(0);
-    for (const e of log.events) if (e.kind === 'title') expect(sharedRounds(real, e.champion, e.challenger)).toBeGreaterThanOrEqual(3);
+    for (const e of log.events) {
+      if (e.kind === 'title') expect(sharedRounds(real, e.champion, e.challenger)).toBeGreaterThanOrEqual(3);
+      if (e.kind === 'vacant') expect(sharedRounds(real, e.a, e.b)).toBeGreaterThanOrEqual(3);
+      if (e.kind === 'opening') for (const m of e.matches) expect(sharedRounds(real, e.field.find((x) => x.id === m.a)!, e.field.find((x) => x.id === m.b)!)).toBeGreaterThanOrEqual(3);
+      if (e.kind === 'title' || e.kind === 'vacant') expect(replayTitle(real, e.kind === 'title' ? e : { ...e, champion: e.a, challenger: e.b } as never).hp).toEqual(e.hp);
+    }
+  });
+
+  it("catches up missed days without booking a model before its release", () => {
+    const log = run(roster(eight), '2026-01-04');
+    // the next build is two weeks late; y was released in between, on Jan 15
+    const y = model('y', 160, full(95), { released: '2026-01-15' });
+    const after = run(roster([...eight, y]), '2026-01-18', log);
+    // Jan 11: y wasn't out yet, and everyone else has met the champion, so no fight (without the release check, y would fight here)
+    const jan11 = after.events.find((e) => e.day === '2026-01-11');
+    expect(jan11).toMatchObject({ kind: 'quiet' });
+    expect(jan11?.kind === 'quiet' && jan11.eligible.includes('y')).toBe(false);
+    expect(titles(after).find((e) => e.day === '2026-01-18')).toMatchObject({ challenger: { id: 'y' }, why: 'new challenger' });
+  });
+
+  it('remembers who was eligible on a night with no fight, so they are not new challengers later', () => {
+    // a joins Jan 5, ranked second, but can't be compared with the champion yet: Jan 11 has no fight
+    const aPartial = model('a', 149.5, { weirdml: 10, aime: 10, gpqa: 10, simpleqa: 10 }, { released: '2026-01-05' });
+    const log = run(roster([...eight, aPartial]), '2026-01-11', run(roster(eight), '2026-01-04'));
+    expect(log.events.at(-1)).toMatchObject({ kind: 'quiet', day: '2026-01-11' });
+    expect(standings(roster(eight), log.events).seen.undisputed!.has('a')).toBe(true);
+    // by Jan 18, a has comparable scores and b has arrived, ranked just below a: b is the new challenger, so b goes first
+    const a = model('a', 149.5, full(10), { released: '2026-01-05' }), b = model('b', 149.2, full(10), { released: '2026-01-15' });
+    const next = run(roster([...eight, a, b]), '2026-01-18', log);
+    expect(titles(next).at(-1)).toMatchObject({ day: '2026-01-18', challenger: { id: 'b' }, why: 'new challenger' });
   });
 });
