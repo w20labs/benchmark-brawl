@@ -26,6 +26,10 @@ export const MIN_ROUNDS = 3, MAX_ROUNDS = 7;
 
 // ---------- champion and new challengers ----------
 const DAY = 864e5;
+/** Fighters are models released in the last year: on `day`, released on or after this date (and not after `day`). */
+export const MAX_AGE_DAYS = 365;
+export const rosterCutoff = (day: string) => new Date(Date.parse(day) - MAX_AGE_DAYS * DAY).toISOString().slice(0, 10);
+export const onRosterOn = (m: Model, day: string) => m.released <= day && m.released >= rosterCutoff(day);
 /** Highest Epoch Capabilities Index among the fighters. */
 export const champion = (models: Model[]) => [...models].filter((m) => m.eci != null).sort((a, b) => b.eci! - a.eci!)[0] ?? models[0];
 /** Released within `days` of `now`, newest first. */

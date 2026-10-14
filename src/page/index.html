@@ -58,6 +58,8 @@ body[data-view="arena"] .wrap { max-width: 1400px; }
 .calls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
 .callbtn { flex: 1 1 200px; max-width: 300px; min-height: 52px; border-radius: 12px; border: 2px solid var(--c); background: var(--panel); color: var(--c); font: 800 15px var(--ui); cursor: pointer; }
 .callbtn[aria-pressed="true"] { background: var(--c); color: #0A0C14; box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 30%, transparent); }
+.callbtn.draw { --c: #C9CFDC; flex: none; width: min(300px, 100%); min-height: 44px; font-size: 14px; }
+#drawNote { margin: -4px 0 0; }
 .btn.go.huge { font-size: 20px; padding: 18px 44px; box-shadow: 0 6px 0 #9b2f2f; }
 .btn.go.huge:active { transform: translateY(3px); box-shadow: 0 3px 0 #9b2f2f; }
 .linkbtn { background: none; border: 0; color: var(--muted); font: 600 13px var(--ui); text-decoration: underline; cursor: pointer; }
@@ -218,6 +220,27 @@ pre.share { margin: 0; background: var(--sunken); border: 1px solid var(--line);
 .champ { font: 400 clamp(14px, 2.4vw, 18px)/1.5 var(--arcade); }
 .champ b { font-weight: 400; color: var(--c); }
 
+/* overfit fc: title belts */
+.presents { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-left: 6px; }
+.beltcards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.beltcard { border: 1px solid var(--line); border-radius: 14px; background: var(--sunken); display: grid; gap: 8px; justify-items: center; text-align: center; padding: 18px 14px 14px; min-width: 0; }
+.buckle { font: 400 10px/1.4 var(--arcade); color: #3A2606; background: radial-gradient(circle at 50% 35%, #FFE3A3, var(--amber) 55%, #A9771F); border: 3px solid #7A5413; border-radius: 10px; padding: 8px 14px; box-shadow: 0 0 22px rgba(242,181,68,.3); }
+.beltcard canvas { width: 110px; height: 130px; }
+.beltcard .who2 { font: 800 19px var(--ui); color: var(--c); }
+.beltcard .meta { font: 600 12.5px var(--ui); color: var(--muted); }
+.beltcard .reign { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; font: 500 12px var(--mono); color: var(--muted); }
+.beltcard .reign b { color: var(--text); }
+.beltcard .next { border-top: 1px dashed var(--line); width: 100%; padding-top: 10px; font-size: 13px; display: grid; gap: 4px; }
+.beltcard.vacant .buckle { filter: grayscale(1); opacity: .7; }
+.history { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.history li { border: 1px solid var(--line); border-radius: 10px; background: var(--sunken); padding: 10px 12px; display: grid; grid-template-columns: 92px 1fr auto; gap: 4px 12px; align-items: center; }
+.history .when { font: 600 12px var(--mono); color: var(--muted); }
+.history .what { font: 600 14px var(--ui); min-width: 0; }
+.history .what .t { display: block; font: 400 12px var(--ui); color: var(--muted); }
+.history .chip2 { font: 700 10.5px var(--mono); text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.chip2.change { color: var(--amber); } .chip2.keep { color: var(--muted); } .chip2.draw { color: var(--pink); } .chip2.open2 { color: var(--lime); } .chip2.quiet { color: var(--muted); border-style: dashed; }
+.titlechip { font: 400 10px var(--arcade); color: #3A2606; background: var(--amber); border-radius: 6px; padding: 3px 6px; margin-right: 8px; white-space: nowrap; }
+
 .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--lime); border-radius: 10px; padding: 9px 14px; font-size: 14px; z-index: 10; }
 footer { display: grid; gap: 6px; }
 @media (max-width: 760px) {
@@ -245,6 +268,9 @@ footer { display: grid; gap: 6px; }
   .search { width: 100%; }
   th, td { padding: 8px; }
   .bracket { grid-template-columns: 1fr; }
+  .history li { grid-template-columns: 1fr auto; }
+  .history .when { grid-column: 1 / -1; }
+  .presents { display: block; margin: 4px 0 0; }
 }
 </style>
 
@@ -262,6 +288,7 @@ footer { display: grid; gap: 6px; }
     <button type="button" data-tab="play"><i>🎮</i>Free play</button>
     <button type="button" data-tab="royale"><i>👑</i>Royale</button>
     <button type="button" data-tab="tournament"><i>🏆</i>Tournament</button>
+    <button type="button" data-tab="belts" hidden><i>🏅</i>Belts</button>
     <button type="button" data-tab="claims"><i>🔎</i>Claims</button>
   </nav>
 
@@ -277,6 +304,8 @@ footer { display: grid; gap: 6px; }
     <div class="call" id="callBox">
       <div class="q">WHO WINS? <span style="color:var(--muted)">make your call</span></div>
       <div class="calls"><button type="button" class="callbtn" id="callA" aria-pressed="false"></button><button type="button" class="callbtn" id="callB" aria-pressed="false"></button></div>
+      <button type="button" class="callbtn draw" id="callDraw" aria-pressed="false" hidden>Draw</button>
+      <p class="fine" id="drawNote" hidden></p>
       <p class="fine" id="roundsToday"></p>
       <button type="button" class="btn go huge" id="todayFight" disabled>FIGHT!</button>
       <button type="button" class="linkbtn" id="justWatch">or just watch, no call</button>
@@ -403,6 +432,15 @@ footer { display: grid; gap: 6px; }
     <pre class="share" id="claimShare"></pre>
     <div class="acts"><button class="btn" id="claimCopy">Copy summary + link</button></div>
     <p class="fine">A gap doesn't mean anyone fudged a number. Labs often test with their own agent setup, more attempts, a different prompt or effort level, and benchmarks get updated. Some labs quote DeepSWE straight from Datacurve's leaderboard, so those match by design. Each lab number links to the page it comes from; we copied them by hand, so if one is wrong, <a href="https://github.com/w20labs/benchmark-brawl/issues/new?template=wrong-number.yml">tell us</a>.</p>
+  </section>
+
+  <section class="box" id="belts" hidden aria-label="Overfit FC title belts">
+    <div class="toolbar"><h2>🏅 Overfit FC <span class="presents">Benchmark Brawl presents</span></h2><button class="btn small" id="beltsClose">← Back</button></div>
+    <p class="pitch" style="margin:0">Title belts, won and defended in real fights on five fixed rounds: Coding, Math, Science, Facts and Puzzles. Title night is every Sunday, alternating between the belts.</p>
+    <div class="beltcards" id="beltCards"></div>
+    <div class="toolbar"><h2>Title history</h2><div class="chips" id="historyFilter"></div></div>
+    <ol class="history" id="history"></ol>
+    <p class="fine">Every title fight is saved once, with both fighters' scores, the rounds, the result and the rules version, so later score updates never change it. The top 3 contenders by Epoch Capabilities Index can challenge, newcomers first. Two models need results in at least 3 of the same rounds to fight, and never meet twice on the same scores. A draw keeps the belt. If nobody can challenge, the belt waits and Sunday is a normal daily brawl.</p>
   </section>
 
   <section class="box" id="tourney" hidden aria-label="Tournament">

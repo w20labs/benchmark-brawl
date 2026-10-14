@@ -197,4 +197,24 @@ describe('title log', () => {
     const solo = run(roster([eight[1]]), '2026-01-11', log);
     expect(solo.events.at(-1)).toMatchObject({ kind: 'quiet', reason: 'vacant: fewer than two ranked contenders' });
   });
+
+  it("books a day ahead on that day's roster: a champion who turns 366 days old on title night gives up the belt", () => {
+    // m1 is released 2025-01-03: 365 days old on Saturday Jan 3 (still a fighter), 366 on Sunday Jan 4 (past the cutoff)
+    const old = [model('m1', 150, full(80), { released: '2025-01-03' }), ...eight.slice(1)];
+    const upToSaturday = run(roster(old, '2026-01-02T06:30:00Z'), '2026-01-03');
+    expect(standings(roster(old), upToSaturday.events).champions.undisputed).toBe('m1');
+    // Saturday's build forecasts Sunday with Saturday's data, which still lists m1
+    const forecast = run(roster(old, '2026-01-03T06:30:00Z'), '2026-01-04', upToSaturday);
+    // Sunday's own build no longer lists m1 (the data build drops it at the same cutoff)
+    const fresh = run(roster(old.slice(1), '2026-01-04T06:30:00Z'), '2026-01-04', upToSaturday);
+    const sunday = (log: TitleLog) => log.events.slice(upToSaturday.events.length).map(({ dataDate, ...e }) => e);
+    expect(sunday(forecast)).toEqual(sunday(fresh));
+    expect(sunday(forecast).map((e) => e.kind)).toEqual(['vacated', 'vacant']);
+    expect(forecast.events.at(-2)).toMatchObject({ kind: 'vacated', model: 'm1', reason: 'vacated: left the roster' });
+    expect(forecast.events.at(-1)).toMatchObject({ kind: 'vacant', a: { id: 'm2' }, b: { id: 'm4' } }); // m2 and m3 met in the opening
+    // and Sunday's build, carrying the forecast forward, keeps it exactly
+    const kept = run(roster(old.slice(1), '2026-01-04T06:30:00Z'), '2026-01-04', forecast);
+    expect(kept).toEqual(forecast);
+    expect(() => checkAppendOnly(forecast, kept)).not.toThrow();
+  });
 });

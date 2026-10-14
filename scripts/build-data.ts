@@ -11,8 +11,8 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { unzipSync, strFromU8 } from 'fflate';
 import { parseCsv } from '../src/csv.ts';
 import type { Benchmark, BrawlData, Claim, DailyEntry, Model, Price, Round, Score } from '../src/types.ts';
-import { dailyBrawl, FIRST_BRAWL_DAY, snapshotFighters } from '../src/league.ts';
-import { advanceTitles, checkAppendOnly } from '../src/titles.ts';
+import { dailyBrawl, FIRST_BRAWL_DAY, rosterCutoff, snapshotFighters } from '../src/league.ts';
+import { advanceTitles, checkAppendOnly, TITLE_LOOKAHEAD_DAYS } from '../src/titles.ts';
 import { checkCoverage, checkModelsDev, daysApart, isWebUrl, num, priceNum, requireColumns, sameVersion, strictNum } from './validate.ts';
 
 const EPOCH_ZIP = 'https://epoch.ai/data/benchmark_data.zip';
@@ -63,7 +63,7 @@ const ROUNDS: Round[] = [
 ];
 const DEFAULT_ROUNDS = ['coding', 'math', 'science', 'facts', 'puzzles'];
 /** Fighters: released in the last year, and with a result in at least three of the default rounds. */
-const MAX_AGE_DAYS = 365, MIN_DEFAULT_ROUNDS = 3;
+const MIN_DEFAULT_ROUNDS = 3;
 const hasRound = (scores: Record<string, Score>, id: string) => ROUNDS.find((r) => r.id === id)!.benches.some((b) => scores[b]);
 
 async function fetchCached(url: string, file: string): Promise<Buffer> {
@@ -161,7 +161,7 @@ async function main() {
   };
 
   const now = new Date();
-  const cutoff = new Date(now.getTime() - MAX_AGE_DAYS * 864e5).toISOString().slice(0, 10);
+  const cutoff = rosterCutoff(now.toISOString().slice(0, 10)); // the same rule title bookings use
   const models: Model[] = [...groups.values()]
     .filter((g) => g.released >= cutoff && !/unreleased/i.test(g.access))
     .filter((g) => DEFAULT_ROUNDS.filter((id) => hasRound(g.scores, id)).length >= MIN_DEFAULT_ROUNDS)
@@ -208,7 +208,8 @@ async function main() {
   // prev is the last good data: the deploy workflow puts its saved copy (from the data-state branch) in data/brawl.json
   data.daily = schedule(data, prev?.daily ?? [], now);
   // title belts: add the days since the last build; earlier entries are never changed (checked, so a bug can't publish a rewrite)
-  data.titles = advanceTitles(data, prev?.titles ?? { through: null, events: [] }, now.toISOString().slice(0, 10));
+  // (through tomorrow, like the daily schedule: a page built today already has tomorrow's title night)
+  data.titles = advanceTitles(data, prev?.titles ?? { through: null, events: [] }, new Date(now.getTime() + TITLE_LOOKAHEAD_DAYS * 864e5).toISOString().slice(0, 10));
   checkAppendOnly(prev?.titles, data.titles);
   mkdirSync('data', { recursive: true });
   writeFileSync('data/brawl.json.tmp', `${JSON.stringify(data, null, 1)}\n`);
