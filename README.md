@@ -96,7 +96,7 @@ Benchmark Brawl presents Overfit FC: title belts won and defended in real fights
 | Opening | Each belt opens with an 8-model tournament: the highest-ranked field where every pair can be compared and hasn't met |
 | Title night | Every Sunday (UTC), alternating between the open belts. With no possible challenger, the belt waits and Sunday is a normal daily brawl |
 | Contenders | The top 3 eligible models by Epoch Capabilities Index, champion excluded. **New in v1.2:** a newcomer with no index yet qualifies by strictly beating the #3 of them on the five rounds, on at least 3 comparable rounds. A draw doesn't qualify, and with no #3 or too few comparable rounds it waits for an index. This check isn't a fight on record |
-| Who gets the shot | Newcomers first (models eligible for this belt for the first time), earliest arrival on our roster first, then by id; models already on the roster when arrival tracking began count as earliest. Then the other contenders by index |
+| Who gets the shot | 1. Newcomers (eligible for this belt for the first time) in the top 3, highest index first. 2. Newcomers that beat #3, earliest arrival on our roster first, then by id (models on the roster before arrival tracking began count as earliest). A qualifier that isn't booked keeps its place in line, rechecked each title night, until it gets its shot, an index, or leaves the belt. 3. The other top-3 contenders, highest index first |
 | Booking | The two must share at least 3 comparable rounds, and never meet twice on the same scores (openings and other belts included) |
 | Draw | The champion keeps the belt |
 | Vacancy | A champion who leaves the roster or the class gives up the belt; the two highest-ranked contenders who can fight and haven't met fight for it |

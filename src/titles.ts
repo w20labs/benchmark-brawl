@@ -12,8 +12,10 @@ import type { BrawlData, Model } from './types.ts';
 
 /**
  * v1.1: the top 3 contenders by Capabilities Index can challenge, newcomers first.
- * v1.2: also a newcomer with no Capabilities Index yet that beats the #3 contender on the championship rounds;
- *       newcomers are ordered by roster arrival. Entries keep the version they were written under.
+ * v1.2: also a newcomer with no Capabilities Index yet that beats the #3 contender on the championship rounds. It
+ *       keeps its place in line until it gets its shot (or an index). Order: newcomers in the top 3 by index, then
+ *       newcomers that beat #3 by roster arrival, then the other top-3 contenders by index.
+ *       Entries keep the version they were written under.
  */
 export const TITLE_RULES = 'v1.2';
 /** The first day belts can open. null: Season 2 hasn't started, and the log stays empty. */
@@ -62,6 +64,8 @@ export type TitleEvent =
   | { kind: 'title'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; why: 'new challenger' | 'top contender';
       /** v1.2, a new challenger with no Capabilities Index: it qualified by beating `ref`, the #3 contender (a check, not a fight on record). */
       qualified?: { by: 'beat #3'; ref: string };
+      /** v1.2: newcomers with no index that have qualified and still wait for their shot on this belt (see Standings.pending). */
+      pending?: string[];
       champion: Snapshot; challenger: Snapshot; winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number] }
   | { kind: 'vacant'; belt: BeltId; day: string; rules: string; dataDate: string; eligible: string[]; a: Snapshot; b: Snapshot;
       winner: 0 | 1 | -1; decision: FightResult['decision']; hp: [number, number]; roundsWon: [number, number]; champion: string }
@@ -72,8 +76,9 @@ export type TitleEvent =
       blocked?: { id: string; why: Blocked }[];
       /** Vacant belt: how many ranked pairs were ruled out, and why. */
       pairs?: Record<Blocked, number>;
-      /** v1.2: newcomers with no Capabilities Index yet that didn't qualify against the #3 contender, and why. */
-      waiting?: { id: string; why: NotQualified }[] };
+      /** v1.2: newcomers with no Capabilities Index yet that didn't qualify against the #3 contender tonight, and why. */
+      waiting?: { id: string; why: NotQualified }[];
+      pending?: string[] };
 /** Why a newcomer with no Capabilities Index didn't earn a title shot: it waits for an index. */
 export type NotQualified = 'no #3 contender' | 'not comparable with #3' | 'did not beat #3';
 /** Why a pairing can't be booked: they already met on these scores, or fewer than MIN_SHARED rounds can be compared. */
@@ -106,11 +111,17 @@ export type Standings = {
   met: Set<string>;
   /** Per belt, every model that has been eligible on an earlier entry: anyone else is a new challenger. */
   seen: Partial<Record<BeltId, Set<string>>>;
+  /**
+   * v1.2, per belt: newcomers with no index that qualified on a title night but haven't had their shot yet. Being
+   * eligible made them "seen", so they're kept here instead, and rechecked each title night until they get the shot,
+   * an index, or leave the belt's pool. From the belt's latest title or quiet night.
+   */
+  pending: Partial<Record<BeltId, Set<string>>>;
 };
 
 /** Champions, reigns and meetings, from the log alone. */
 export function standings(data: BrawlData, events: TitleEvent[]): Standings {
-  const s: Standings = { champions: {}, opened: {}, reigns: [], met: new Set(), seen: {} };
+  const s: Standings = { champions: {}, opened: {}, reigns: [], met: new Set(), seen: {}, pending: {} };
   const current = (belt: BeltId) => s.reigns.findLast((r) => r.belt === belt && r.to == null);
   const crown = (belt: BeltId, model: Snapshot | string, name: string, day: string, how: string) => {
     const id = typeof model === 'string' ? model : model.id;
@@ -119,6 +130,7 @@ export function standings(data: BrawlData, events: TitleEvent[]): Standings {
   const nameIn = (ms: Snapshot[], id: string) => ms.find((m) => m.id === id)?.name ?? id;
   for (const e of events) {
     if (e.kind !== 'vacated') { const seen = (s.seen[e.belt] ??= new Set()); for (const id of e.eligible) seen.add(id); }
+    if (e.kind === 'title' || e.kind === 'quiet') s.pending[e.belt] = new Set(e.pending ?? []);
     if (e.kind === 'opening') {
       s.opened[e.belt] = e.day;
       for (const m of e.matches) s.met.add(pairKey(data, e.field.find((x) => x.id === m.a)!, e.field.find((x) => x.id === m.b)!));
@@ -214,28 +226,34 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
       continue;
     }
 
-    // a title fight. Contenders: the top 3 eligible by Capabilities Index (champion excluded), plus any newcomer with
-    // no index yet that beats the #3 of them. Newcomers (eligible for this belt for the first time) go first, earliest
-    // roster arrival first; then the others by index. Every booking still needs 3 comparable rounds and no meeting on these scores.
-    const holder = champion, seen = st.seen[belt] ?? new Set();
+    // a title fight. Contenders: the top 3 eligible by Capabilities Index (champion excluded), plus newcomers with no
+    // index yet that beat the #3 of them. In order: newcomers (eligible for this belt for the first time) in the top 3,
+    // by index; then newcomers that beat #3, by roster arrival (including earlier qualifiers still waiting for their
+    // shot); then the other top-3 contenders, by index. Every booking needs 3 comparable rounds and no meeting on these scores.
+    const holder = champion, seen = st.seen[belt] ?? new Set(), waitingShot = st.pending[belt] ?? new Set();
     const indexed = ranked(pool.filter((m) => m.id !== holder.id && m.eci != null));
     const top = new Set(indexed.slice(0, TOP_CONTENDERS).map((m) => m.id)), third = indexed[TOP_CONTENDERS - 1] ?? null;
     const bookable = (m: Model) => fightable(holder, m) && !st.met.has(pairKey(data, holder, m));
     const isNew = (m: Model) => m.id !== holder.id && !seen.has(m.id);
-    const unindexed = pool.filter((m) => isNew(m) && m.eci == null);
+    // unindexed newcomers, and earlier qualifiers still in line (dropped once they get an index or leave the pool)
+    const unindexed = pool.filter((m) => m.id !== holder.id && m.eci == null && (isNew(m) || waitingShot.has(m.id)));
     const verdicts = new Map(unindexed.map((m) => [m.id, qualifies(data, m, third)]));
-    const newcomers = pool.filter((m) => isNew(m) && (top.has(m.id) || verdicts.get(m.id) === true) && bookable(m)).sort(byArrival(data));
-    const ch = newcomers[0] ?? ranked(pool.filter((m) => top.has(m.id) && !isNew(m) && bookable(m)))[0];
+    const ch = ranked(pool.filter((m) => isNew(m) && top.has(m.id) && bookable(m)))[0]
+      ?? unindexed.filter((m) => verdicts.get(m.id) === true && bookable(m)).sort(byArrival(data))[0]
+      ?? ranked(pool.filter((m) => top.has(m.id) && !isNew(m) && bookable(m)))[0];
+    // still in line after tonight: every qualifier not booked, and earlier ones even if they don't qualify tonight
+    const pendingIds = unindexed.filter((m) => m.id !== ch?.id && (verdicts.get(m.id) === true || waitingShot.has(m.id))).map((m) => m.id).sort();
+    const pending = pendingIds.length ? { pending: pendingIds } : {};
     const waiting = unindexed.flatMap((m) => { const v = verdicts.get(m.id)!; return v === true ? [] : [{ id: m.id, why: v }]; });
     if (!ch) { // the normal daily brawl runs
       const blocked = [...top].map((id) => ({ id, why: blockedWhy(holder, pool.find((m) => m.id === id)!) }));
-      events.push({ kind: 'quiet', belt, ...base, eligible, blocked, ...(waiting.length ? { waiting } : {}),
+      events.push({ kind: 'quiet', belt, ...base, eligible, blocked, ...(waiting.length ? { waiting } : {}), ...pending,
         reason: top.size ? 'no challenger: no top contender meets the booking rules' : 'no challenger: no ranked contenders' });
       continue;
     }
     const fight = planFight(data, holder, ch, CHAMPIONSHIP_ROUNDS), [c, x] = snap(data, holder, ch);
-    events.push({ kind: 'title', belt, ...base, eligible, why: isNew(ch) ? 'new challenger' : 'top contender',
-      ...(ch.eci == null ? { qualified: { by: 'beat #3' as const, ref: third!.id } } : {}),
+    events.push({ kind: 'title', belt, ...base, eligible, why: isNew(ch) || waitingShot.has(ch.id) ? 'new challenger' : 'top contender',
+      ...(ch.eci == null ? { qualified: { by: 'beat #3' as const, ref: third!.id } } : {}), ...pending,
       champion: c, challenger: x, winner: fight.winner, decision: fight.decision, hp: fight.hp, roundsWon: fight.roundsWon });
   }
   return { through: today, events };

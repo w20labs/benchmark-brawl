@@ -206,3 +206,19 @@ for (const width of [1280, 390, 320]) {
     expect(errors).toEqual([]);
   });
 }
+
+test('a qualifier that waits behind a top-3 newcomer keeps its place in line, and the quiet or title history says so', async ({ page }) => {
+  // Newbie (indexed, top 3) and Rawbie (no index, all 75: beats #3 both before and after Newbie takes the belt) both
+  // arrive Oct 16: Newbie gets Oct 18, Rawbie stays in line and gets Oct 25
+  const withBoth = [...before, newbie], rawbie = { ...model('Rawbie', 0, 75, '2026-10-01'), eci: null };
+  const opened = advanceTitles({ ...preview, models: before, claims: [] }, { through: null, events: [] }, '2026-10-15', START);
+  const d = { ...preview, models: [...withBoth, rawbie], claims: [], arrivals: { since: '2026-09-20', seen: { ...Object.fromEntries(before.map((m) => [m.id, null])), newbie: ARRIVED, rawbie: ARRIVED } } };
+  const titles = advanceTitles(d, opened, '2026-10-26', START);
+  const url = pageFor({ ...d, daily: [], seasonStart: START, titles }, 'newcomers-v12-line');
+  const errors = await open(page, url, '2026-10-25', '#belts');
+  await expect(page.locator('#history li', { hasText: 'vs 🆕 Newbie' })).toBeVisible();
+  await expect(page.locator('#history li', { hasText: 'vs 🆕 Rawbie' })).toContainText('Oct 25, 2026');
+  // on Oct 18 the history notes nothing for Rawbie (it was a title night); its place in line is on record
+  expect(titles.events.find((e) => e.day === '2026-10-18')).toMatchObject({ pending: ['rawbie'] });
+  expect(errors).toEqual([]);
+});

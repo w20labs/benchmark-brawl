@@ -1914,7 +1914,9 @@ function renderBelts() {
   const list = (ids) => ids.map(nameOf).join(ids.length > 2 ? ', ' : ' and ').replace(/, ([^,]+)$/, ' and $1');
   const quietText = (e) => {
     const WAIT = { 'no #3 contender': 'there is no #3 contender to beat yet', 'not comparable with #3': "it doesn't share 3 comparable rounds with the #3 contender", 'did not beat #3': "it didn't beat the #3 contender" };
-    const waiting = (e.waiting ?? []).map((x) => `${nameOf(x.id)} has no Capabilities Index yet and waits for one: ${WAIT[x.why]}.`).join(' ');
+    const inLine = new Set(e.pending ?? []);
+    const waiting = [...(e.waiting ?? []).filter((x) => !inLine.has(x.id)).map((x) => `${nameOf(x.id)} has no Capabilities Index yet and waits for one: ${WAIT[x.why]}.`),
+      ...(e.pending ?? []).map((id) => `${nameOf(id)} has earned a title shot and keeps its place in line.`)].join(' ');
     if (e.blocked) {
       const met = e.blocked.filter((x) => x.why === 'met').map((x) => x.id), far = e.blocked.filter((x) => x.why !== 'met').map((x) => x.id);
       if (!e.blocked.length) return ['No ranked contender to challenge.', waiting].join(' ').trim();
