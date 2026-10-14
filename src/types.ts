@@ -95,4 +95,6 @@ export type BrawlData = {
   claims: Claim[];
   /** The daily brawl schedule: past days are kept as they were, new days appended. */
   daily?: DailyEntry[];
+  /** Overfit FC title belts: an append-only log of openings, title fights and vacated belts (see src/titles.ts). */
+  titles?: import('./titles.ts').TitleLog;
 };
