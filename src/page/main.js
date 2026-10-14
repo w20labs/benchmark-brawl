@@ -6,7 +6,7 @@ import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
 import { brawlNumber, CLASSES, dailyBrawl, dailyFromEntry, FIRST_BRAWL_DAY, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 import { BELTS, beltName, CHAMPIONSHIP_ROUNDS, fightersOf, seasonOn, standings, TITLE_NIGHT, titleNightBelt } from '../titles.ts';
 import { recentArrivals } from '../arrivals.ts';
-import { samLines } from '../commentary.ts';
+import { hankLines, samLines } from '../commentary.ts';
 
 /** @type {import('../types.ts').BrawlData} */
 const DATA = JSON.parse(document.getElementById('brawl-data').textContent);
@@ -551,9 +551,12 @@ function startFight(opts = {}) {
   setView('arena');
   $('arena').classList.remove('royale');
   windowFrame($('arena'), F.arena === CONTEXT_WINDOW ? F.title : null);
-  // Sigma Sam calls Season 2 title fights: an opening line now, each round's once its hit lands, then the result
+  // Sigma Sam calls Season 2 title fights: an opening line now, each round's once its hit lands, then the result.
+  // Hype Hank calls each hit as it's thrown, so he's always a beat ahead of Sam
   F.sam = F.title && SEASON_ON ? samLines(DATA, plan, F.roundIds.map((id) => roundById.get(id)).filter(Boolean)) : null;
+  F.hank = F.sam ? hankLines(plan, { belt: beltName(F.title.belt), kind: F.title.kind === 'vacant' ? 'vacant' : 'title', newChallenger: newChallenger(F.title), moves: plan.rounds.map(moveOf) }) : null;
   say(F.sam?.[0].text ?? null);
+  hype(F.hank?.intro ?? null);
   $('arena').classList.toggle('sam', !!F.sam);
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
   $('rec').hidden = !F.recording;
@@ -616,7 +619,14 @@ function resultLine(R) {
   }
   const w = R.winner === 0 ? a : b;
   const by = R.bench.kind === 'price' ? `${(Math.max(...R.values) / Math.min(...R.values)).toFixed(1)}× cheaper` : `by ${R.points} point${R.points === 1 ? '' : 's'}`;
-  return `${F.special?.[R.winner] === F.plan.rounds.indexOf(R) ? moveNameFor(w.org) : (STYLE_NAMES[R.style] || weaponName(R.weapon))}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
+  return `${moveOf(R, F.plan.rounds.indexOf(R)).name}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
+}
+/** The move the arena shows for round `i`: the winner's weapon (or signature move), or both weapons in a tie. */
+function moveOf(R, i) {
+  if (R.winner === -1) return { name: R.tieStyles.map((st) => STYLE_NAMES[st]).join(' VS '), signature: false };
+  if (R.winner == null) return { name: '', signature: false };
+  const signature = F.special?.[R.winner] === i;
+  return { name: signature ? moveNameFor(F.plan.fighters[R.winner].org) : (STYLE_NAMES[R.style] || weaponName(R.weapon)), signature };
 }
 function enterPhase() {
   const R = F.plan.rounds[F.i];
@@ -629,7 +639,7 @@ function enterPhase() {
     F.pose = ['idle', 'idle'];
     sfx.bell();
   } else if (name === 'reveal') banner('', '');
-  else if (name === 'attack') { F.fx = startFx(R); roundBar(R, R.values.map((v) => formatValue(R.bench, v)), resultLine(R)); }
+  else if (name === 'attack') { F.fx = startFx(R); roundBar(R, R.values.map((v) => formatValue(R.bench, v)), resultLine(R)); if (F.hank) hype(F.hank.rounds[F.i]); }
   else if (name === 'after') {
     banner('', '');
     if (F.sam) say(F.sam[F.i + 1].text);
@@ -648,9 +658,12 @@ function nextPhase() {
 }
 /** Sam's current line in the arena; null hides it. */
 function say(text) { $('samLine').hidden = text == null; $('samText').textContent = text ?? ''; }
+/** Hank's current call in the arena; null hides it. */
+function hype(text) { $('hankLine').hidden = text == null; $('hankText').textContent = text ?? ''; }
 function finish() {
   F.over = true; F.t = 0; F.fx = null;
   if (F.sam) say(F.sam.slice(F.plan.rounds.length + 1).map((l) => l.text).join(' '));
+  if (F.hank) hype(F.hank.result);
   const p = F.plan, w = p.winner;
   F.hp = [...p.hp]; setHp(false);
   if (w >= 0) { F.pose[w] = 'win'; F.pose[1 - w] = p.ko ? 'down' : 'hurt'; }
@@ -1420,7 +1433,11 @@ function showResult() {
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? h('span', null, R.tie === 'margin' ? 'tie (margin)' : 'tie', h('span', { class: 't' }, grazeText(R))) : `−${R.dmg} HP`))));
   $('share').textContent = F.daily ? dailyText(p, rec, F.daily) : F.title ? titleText(F.title, p) : shareText();
   $('samCard').hidden = !F.sam;
-  $('samList').replaceChildren(...(F.sam ?? []).map((l) => h('li', null, l.round ? h('span', { class: 'rn' }, `${l.round}: `) : null, l.text)));
+  // Hank's call above each of Sam's lines: the intro over Sam's opener, each hit over its round, the result over his
+  const hankFor = (i) => (!F.hank ? null : i === 0 ? F.hank.intro : i <= p.rounds.length ? F.hank.rounds[i - 1] : i === F.sam.length - 1 ? F.hank.result : null);
+  $('samList').replaceChildren(...(F.sam ?? []).map((l, i) => h('li', null,
+    hankFor(i) ? h('span', { class: 'hank-q' }, h('b', null, 'HANK '), hankFor(i)) : null,
+    h('span', { class: 'sam-t' }, l.round ? h('span', { class: 'rn' }, `${l.round}: `) : null, l.text))));
   $('skippedNote').hidden = !p.skipped.length;
   $('skippedNote').textContent = p.skipped.length ? `Left out: ${p.skipped.map((r) => r.name).join(', ')}. These two have no benchmark in common there, so the fight skipped ${p.skipped.length === 1 ? 'it' : 'them'} instead of playing empty rounds.` : '';
   $('backToBracket').hidden = !fromBracket;
@@ -1566,7 +1583,7 @@ function startRoyale() {
     // per fighter, its biggest hit as leader: where its signature move plays
     special: ms.map((_, k) => { if (reduced) return null; let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
   setView('arena');
-  $('arena').classList.add('royale'); $('rec').hidden = true; say(null); $('arena').classList.remove('sam');
+  $('arena').classList.add('royale'); $('rec').hidden = true; say(null); hype(null); $('arena').classList.remove('sam');
   windowFrame($('arena'), null);
   $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));

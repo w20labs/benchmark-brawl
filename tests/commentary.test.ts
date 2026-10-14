@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { samLines } from '../src/commentary.ts';
+import { hankLines, samLines, type HankContext } from '../src/commentary.ts';
 import { formatValue, planFight } from '../src/fight.ts';
 import { CHAMPIONSHIP_ROUNDS } from '../src/titles.ts';
 import type { BrawlData, Model, Score } from '../src/types.ts';
@@ -132,3 +132,71 @@ describe('Sigma Sam', () => {
   });
 });
 
+
+describe('Hype Hank', () => {
+  const hank = (a: Model, b: Model, ctx: Partial<HankContext> = {}) => {
+    const p = planFight(real, a, b, CHAMPIONSHIP_ROUNDS);
+    return { p, call: hankLines(p, { belt: 'Undisputed', kind: 'title', newChallenger: false, moves: p.rounds.map(() => ({ name: 'PIANO DROP', signature: false })), ...ctx }) };
+  };
+  const numbers = (s: string) => (s.match(/\d+(\.\d+)?/g) ?? []).map(Number);
+
+  it('introduces the champion first and the challenger second, and says when the challenger is new', () => {
+    const { call } = hank(model('Champ', all(80)), model('Kid', all(70)), { newChallenger: true });
+    expect(call.intro).toContain('Undisputed');
+    expect(call.intro.indexOf('Champ')).toBeLessThan(call.intro.indexOf('Kid'));
+    expect(call.intro).toContain('NEW CHALLENGER');
+    expect(hank(model('Champ', all(80)), model('Kid', all(70))).call.intro).not.toContain('NEW CHALLENGER');
+    expect(hank(model('A', all(80)), model('B', all(70)), { kind: 'vacant' }).call.intro).toContain('VACANT');
+  });
+
+  it("calls the move the arena shows, and only says the round's real damage: never a score, gap or margin", () => {
+    const a = model('A', { swebench: S(83.25), frontiermath: S(80), gpqa: S(80.4, null), simpleqa: S(70), mystery: S(81) });
+    const { p, call } = hank(a, model('B', all(78)));
+    p.rounds.forEach((R, i) => {
+      expect(call.rounds[i]).toContain('PIANO DROP');
+      expect(numbers(call.rounds[i]).every((n) => n === R.dmg || R.graze.includes(n))).toBe(true);
+    });
+  });
+
+  it('calls a 1 HP poke devastating, while Sam says what it was', () => {
+    const a = model('A', { ...all(80), swebench: S(70.2, null) }), b = model('B', { ...all(80), swebench: S(70, 0.5) });
+    const { p, call } = hank(a, b);
+    expect(p.rounds[0].dmg).toBe(1);
+    expect(call.rounds[0]).toMatch(/DEVASTATING 1 HP!|1 HP! That one's gonna leave a MARK!/);
+    expect(line(sam(a, b).lines, 'Coding')).toContain('A leads by 0.20 points');
+  });
+
+  it('calls a tie a double knockdown, with the HP each loses', () => {
+    const { call } = hank(model('A', all(80)), model('B', all(80)));
+    expect(call.rounds[0]).toMatch(/DOUBLE KNOCKDOWN|SAME TIME/);
+    expect(call.rounds[0]).toContain('3 HP each');
+  });
+
+  it('calls the K.O. and the signature move', () => {
+    const { p, call } = hank(model('A', { ...all(80), swebench: S(95) }), model('B', { ...all(80), swebench: S(30) }), { moves: [{ name: 'CONTEXT CRUSHER', signature: true }] });
+    expect(p.ko).toBe(true);
+    expect(call.rounds[0]).toMatch(/^THE SIGNATURE MOVE! CONTEXT CRUSHER!/);
+    expect(call.rounds[0]).toMatch(/B IS DOWN|B is FLAT/);
+    expect(call.result).toBe('AND STILL UNDISPUTED CHAMPION... A!!! By K.O.!');
+  });
+
+  it('crowns a new champion, keeps the belt on a draw, and fills a vacant belt', () => {
+    expect(hank(model('Champ', all(75)), model('Kid', all(80))).call.result).toBe('AND THE NEW UNDISPUTED CHAMPION... Kid!!! By unanimous decision!');
+    expect(hank(model('Champ', all(80)), model('Kid', all(80))).call.result).toBe('A DRAW! And a draw means Champ KEEPS the Undisputed belt!');
+    expect(hank(model('A', all(75)), model('B', all(80)), { kind: 'vacant', belt: 'Open weights' }).call.result).toBe('B takes the VACANT Open weights belt! By unanimous decision!');
+    expect(hank(model('A', all(80)), model('B', all(80)), { kind: 'vacant' }).call.result).toBe('A DRAW! A takes the Undisputed belt as the higher-ranked fighter!');
+  });
+
+  it('says the champ is in trouble once, when the challenger first takes the HP lead', () => {
+    const { call } = hank(model('Champ', all(70)), model('Kid', all(75)));
+    expect(call.rounds.filter((r) => r.includes('The champ is in TROUBLE!')).map((r) => call.rounds.indexOf(r))).toEqual([0]);
+    expect(hank(model('Champ', all(70)), model('Kid', all(75)), { kind: 'vacant' }).call.rounds.join(' ')).not.toContain('TROUBLE');
+  });
+
+  it('is the same every time for the same fight, and varies its wording between rounds', () => {
+    const run = () => hank(model('Champ', all(70)), model('Kid', all(75))).call;
+    expect(run()).toEqual(run());
+    const r = run().rounds.map((t) => t.replace(' The champ is in TROUBLE!', ''));
+    expect(r[0]).not.toBe(r[1]);
+  });
+});

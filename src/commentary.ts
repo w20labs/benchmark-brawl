@@ -97,3 +97,60 @@ function resultLine(p: FightResult): string {
   const why = p.decision === 'split' ? ' A split decision: fewer or as many rounds won, but bigger wins.' : p.decision === 'unanimous' ? ' A unanimous decision: more HP and more rounds won.' : '';
   return `${name(w)} wins ${how}, ${rounds}.${why}`;
 }
+
+/**
+ * Hype Hank: the play-by-play voice next to Sam. He calls the hits the arena shows and loses his mind at every one;
+ * Sam then says what the numbers support. Their disagreement is the joke: Hank calls a 1 HP poke devastating, and
+ * Sam explains it was a 0.4-point gap.
+ *
+ * Hank exaggerates the tone, never the facts. Every name, move, damage number and HP he says comes from the recorded
+ * fight, and he never gives a score, a gap or a margin (that's Sam's job). His wording varies by fight but is fixed
+ * for a given fight: no randomness.
+ */
+export type HankContext = {
+  belt: string;
+  /** A title fight puts the champion first and the challenger second; a vacant belt has no champion. */
+  kind: 'title' | 'vacant';
+  newChallenger: boolean;
+  /** Per round played, the move the arena shows (a tie shows both fighters' moves), and whether it's a signature move. */
+  moves: { name: string; signature: boolean }[];
+};
+export type HankCall = { intro: string; rounds: string[]; result: string };
+
+export function hankLines(p: FightResult, ctx: HankContext): HankCall {
+  const [a, b] = p.fighters.map((m) => m.name), name = (k: 0 | 1) => p.fighters[k].name;
+  let seed = 0; for (const ch of `${p.fighters[0].id}|${p.fighters[1].id}|${ctx.belt}`) seed = (Math.imul(seed, 31) + ch.charCodeAt(0)) >>> 0;
+  // the same fight always picks the same wording; neighbouring rounds rotate through the options
+  const pick = (options: string[], k: number) => options[(seed + k) % options.length];
+  const intro = ctx.kind === 'vacant'
+    ? pick([`The ${ctx.belt} belt is VACANT, and somebody takes it home tonight! ${a} versus ${b}! LET'S GET IT ON!`,
+      `Nobody holds the ${ctx.belt} belt, folks, and that ends TONIGHT! ${a}! ${b}! One belt!`], 0)
+    : pick([`It's TITLE NIGHT at Overfit FC! The ${ctx.belt} belt is on the line! In this corner, the champion, ${a}! And ${ctx.newChallenger ? 'a NEW CHALLENGER' : 'the challenger'}, ${b}!`,
+      `Ladies and gentlemen, the ${ctx.belt} championship! ${a} walks in with the belt, ${ctx.newChallenger ? `and a NEW CHALLENGER, ${b}, wants it` : `and ${b} wants it`}! LET'S GET IT ON!`], 0);
+  let trouble = false; // "the champ is in trouble" is said once, the first time the challenger takes the HP lead
+  const rounds = p.rounds.map((R, i) => {
+    // every call opens with the move, so a lab's signature move reads as well as a weapon
+    const move = `${ctx.moves[i]?.signature ? 'THE SIGNATURE MOVE! ' : ''}${ctx.moves[i]?.name || 'WHAT A SHOT'}!`;
+    if (R.winner == null) return pick(["Nothing on the board this round, folks! They're just staring each other down!", 'A quiet round! Catch your breath, everybody!'], i);
+    if (R.winner === -1) {
+      const graze = R.graze[0] === R.graze[1] ? `${R.graze[0]} HP each` : `${a} loses ${R.graze[0]}, ${b} ${R.graze[1]}`;
+      return pick([`${move} DOUBLE KNOCKDOWN! They BOTH connect! ${graze}!`, `${move} They hit each other at the SAME TIME! What a war! ${graze}!`], i);
+    }
+    const w = R.winner, l = (1 - w) as 0 | 1, d = R.dmg, hp = `${d} HP`;
+    let call: string;
+    if (R.hpAfter[l] === 0) call = pick([`${move} ${name(l)} IS DOWN! IT'S OVER! IT'S OVER!`, `${move} ${name(w)} hits for ${d} and ${name(l)} is FLAT on the canvas! GOOD NIGHT!`], i);
+    else if (d >= 20) call = pick([`${move} OH MY! ${name(w)} lands ${hp} on ${name(l)}!`, `${move} That's ${hp} GONE! Somebody check on ${name(l)}!`], i);
+    else if (d >= 4) call = pick([`${move} ${name(w)} connects for ${d}!`, `${move} ${name(w)} rocks ${name(l)}! ${hp}!`], i);
+    else call = pick([`${move} WHAT A SHOT by ${name(w)}! ${hp}! That one's gonna leave a MARK!`, `${move} ${name(w)} lands a DEVASTATING ${hp}!`], i);
+    if (ctx.kind === 'title' && w === 1 && !trouble && R.hpAfter[1] > R.hpAfter[0] && R.hpAfter[0] > 0) { trouble = true; call += ' The champ is in TROUBLE!'; }
+    return call;
+  });
+  const how = p.ko ? 'By K.O.!' : p.decision === 'unanimous' ? 'By unanimous decision!' : p.decision === 'split' ? 'By SPLIT decision!' : '';
+  const belt = ctx.belt.toUpperCase();
+  const result = ctx.kind === 'vacant'
+    ? (p.winner === -1 ? `A DRAW! ${a} takes the ${ctx.belt} belt as the higher-ranked fighter!` : `${name(p.winner)} takes the VACANT ${ctx.belt} belt! ${how}`)
+    : p.winner === -1 ? `A DRAW! And a draw means ${a} KEEPS the ${ctx.belt} belt!`
+    : p.winner === 1 ? `AND THE NEW ${belt} CHAMPION... ${b}!!! ${how}`
+    : `AND STILL ${belt} CHAMPION... ${a}!!! ${how}`;
+  return { intro, rounds, result };
+}
