@@ -171,6 +171,14 @@ select.sort { min-height: 36px; padding: 6px 10px; border-radius: 9px; border: 1
 .banner.ko .big { color: var(--red); font-size: clamp(34px, 9vw, 84px); }
 .arena.recording .hud, .arena.recording .banner { visibility: hidden; }
 .rec { position: absolute; top: 56px; right: 14px; font: 700 12px var(--mono); color: #fff; background: #c92a2a; padding: 3px 8px; border-radius: 6px; }
+.samline { margin: 0; padding: 10px 14px; border-top: 1px solid var(--line); background: #0f1424; font: 500 13.5px/1.5 var(--ui); color: #D5DAE6; display: grid; gap: 4px; }
+.samline[hidden], .samcard[hidden] { display: none; }
+.sam-who { font: 400 10px var(--arcade); color: var(--sky); }
+.samcard h3 { margin: 0; font: 400 11px/1.6 var(--arcade); color: var(--sky); display: flex; gap: 10px; align-items: center; }
+.sam-face { width: 28px; height: 28px; border-radius: 8px; display: inline-grid; place-items: center; background: var(--sky); color: #06202A; font: 700 15px var(--ui); flex: none; }
+.samcard ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; line-height: 1.5; color: #D5DAE6; }
+.samcard li::marker { color: var(--muted); }
+.samcard .rn { font-weight: 800; color: var(--text); }
 .roundbar { display: grid; grid-template-columns: 1fr minmax(0, 2.4fr) 1fr; gap: 10px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); background: var(--panel); }
 .rs { display: grid; gap: 2px; justify-items: start; min-width: 0; }
 .rs.r { justify-items: end; text-align: right; }
@@ -404,6 +412,7 @@ footer { display: grid; gap: 6px; }
       <div class="rmid"><div class="rname" id="rname"></div><div class="rtest" id="rtest"></div><div class="rres" id="rres"></div></div>
       <div class="rs r" id="rs2"><b id="sc2">–</b><span id="sl2"></span></div>
     </div>
+    <p class="samline" id="samLine" hidden aria-live="polite"><b class="sam-who">σ SIGMA SAM</b><span id="samText"></span></p>
     <div class="board" id="board"></div>
     <div class="arena-foot">
       <span class="note" id="arenaNote">Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP</span>
@@ -428,6 +437,10 @@ footer { display: grid; gap: 6px; }
       <button class="btn" id="again">New fight</button>
     </div>
     <pre class="share" id="share"></pre>
+    <section class="box samcard" id="samCard" hidden aria-label="Sigma Sam's notes">
+      <h3><span class="sam-face" aria-hidden="true">σ</span> Sigma Sam: what the numbers support</h3>
+      <ol id="samList"></ol>
+    </section>
     <details class="box" id="numbers">
       <summary>See the numbers</summary>
       <div class="tablewrap"><table>
