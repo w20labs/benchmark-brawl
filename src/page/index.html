@@ -67,9 +67,10 @@ body[data-view="arena"] .wrap { max-width: 1400px; }
 .cw-bar .cw-tab { font: 600 12px var(--ui); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1 1 auto; }
 .cw-bar .cw-url { font: 500 11px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; max-width: 45%; }
 .arena.cw, .stage.cw { border-color: #3A4466; box-shadow: 0 18px 50px rgba(0,0,0,.45); }
-.arena.cw .hud { top: 34px; }
-.arena.cw .banner { top: calc(34% + 17px); }
-.arena.cw .rec { top: 90px; }
+.arena.cw:not(.sam) .hud { top: 34px; }
+.arena.cw:not(.sam) .banner { top: calc(34% + 17px); }
+.arena.cw:not(.sam) .rec { top: 90px; }
+/* with Sam on (every Season 2 title fight), the HUD, banner and REC sit in .screen, already below the bar: no offset */
 .stage.cw .top { top: 48px; }
 @media (max-width: 420px) { .cw-bar .cw-url { display: none; } }
 .stage .tag.nc { white-space: nowrap; }
@@ -151,6 +152,10 @@ select.sort { min-height: 36px; padding: 6px 10px; border-radius: 9px; border: 1
 
 /* arena */
 .arena { position: relative; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #070910; }
+/* With Sam's line below the round bar, the arena grows: the canvas and what sits on it (HUD, banner, REC) are then
+   positioned against the canvas instead. Ordinary fights keep positioning against the arena, unchanged. */
+.arena.sam .screen { position: relative; }
+.arena.sam .banner { top: 44%; }
 .arena canvas { display: block; width: min(100%, calc((100svh - 190px) * 960 / 440)); height: auto; aspect-ratio: 960 / 440; margin: 0 auto; }
 .hud { position: absolute; inset: 0 0 auto 0; display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: start; padding: 12px 14px; pointer-events: none; }
 .side { display: grid; gap: 5px; min-width: 0; }
@@ -399,14 +404,16 @@ footer { display: grid; gap: 6px; }
 
   <section class="arena" id="arena" hidden aria-label="Fight">
     <div class="cw-bar" hidden><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="cw-tab"></span><span class="cw-url"></span></div>
-    <canvas id="cv" width="960" height="440" aria-hidden="true"></canvas>
-    <div class="hud" id="hud">
-      <div class="side" id="s1"><span class="who" id="n1"></span><div class="hp"><i id="hl1"></i><b id="h1"></b></div><span class="hpn" id="hn1">100 HP</span></div>
-      <div class="mid"><div class="pips" id="pips"></div><span class="timer" id="roundNo"></span></div>
-      <div class="side r" id="s2"><span class="who" id="n2"></span><div class="hp"><i id="hl2"></i><b id="h2"></b></div><span class="hpn" id="hn2">100 HP</span></div>
+    <div class="screen">
+      <canvas id="cv" width="960" height="440" aria-hidden="true"></canvas>
+      <div class="hud" id="hud">
+        <div class="side" id="s1"><span class="who" id="n1"></span><div class="hp"><i id="hl1"></i><b id="h1"></b></div><span class="hpn" id="hn1">100 HP</span></div>
+        <div class="mid"><div class="pips" id="pips"></div><span class="timer" id="roundNo"></span></div>
+        <div class="side r" id="s2"><span class="who" id="n2"></span><div class="hp"><i id="hl2"></i><b id="h2"></b></div><span class="hpn" id="hn2">100 HP</span></div>
+      </div>
+      <div class="banner" id="banner" aria-live="polite"></div>
+      <span class="rec" id="rec" hidden>● REC</span>
     </div>
-    <div class="banner" id="banner" aria-live="polite"></div>
-    <span class="rec" id="rec" hidden>● REC</span>
     <div class="roundbar" aria-live="polite">
       <div class="rs" id="rs1"><b id="sc1">–</b><span id="sl1"></span></div>
       <div class="rmid"><div class="rname" id="rname"></div><div class="rtest" id="rtest"></div><div class="rres" id="rres"></div></div>

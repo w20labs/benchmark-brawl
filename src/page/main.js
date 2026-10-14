@@ -552,8 +552,9 @@ function startFight(opts = {}) {
   $('arena').classList.remove('royale');
   windowFrame($('arena'), F.arena === CONTEXT_WINDOW ? F.title : null);
   // Sigma Sam calls Season 2 title fights: an opening line now, each round's once its hit lands, then the result
-  F.sam = F.title && SEASON_ON ? samLines(plan, F.roundIds.map((id) => roundById.get(id)).filter(Boolean)) : null;
+  F.sam = F.title && SEASON_ON ? samLines(DATA, plan, F.roundIds.map((id) => roundById.get(id)).filter(Boolean)) : null;
   say(F.sam?.[0].text ?? null);
+  $('arena').classList.toggle('sam', !!F.sam);
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
   $('rec').hidden = !F.recording;
   $('arena').classList.toggle('recording', F.recording);
@@ -1565,7 +1566,7 @@ function startRoyale() {
     // per fighter, its biggest hit as leader: where its signature move plays
     special: ms.map((_, k) => { if (reduced) return null; let best = null, d = 0; plan.rounds.forEach((R, i) => { if (R.leader === k) for (const x of R.hits) if (x.dmg > d) { d = x.dmg; best = { i, target: x.target }; } }); return best; }) };
   setView('arena');
-  $('arena').classList.add('royale'); $('rec').hidden = true; say(null);
+  $('arena').classList.add('royale'); $('rec').hidden = true; say(null); $('arena').classList.remove('sam');
   windowFrame($('arena'), null);
   $('arenaNote').textContent = 'Best result fires at everyone · damage = 2 × gap to the leader · inside the margin = dodge';
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));

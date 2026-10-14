@@ -17,7 +17,7 @@ const base = { ...preview, models: [...eight, rookie], claims: [], daily: [], ar
 const opened = advanceTitles({ ...base, models: eight }, { through: null, events: [] }, '2026-10-16', '2026-10-14');
 const log = advanceTitles(base, opened, '2026-10-19', '2026-10-14');
 const night = log.events.find((e) => e.day === '2026-10-18' && fightersOf(e))!;
-const expected = (() => { const [a, b] = fightersOf(night)!; const rs = CHAMPIONSHIP_ROUNDS.map((id) => preview.rounds.find((r) => r.id === id)!); return samLines(planFight(base, a, b, CHAMPIONSHIP_ROUNDS), rs); })();
+const expected = (() => { const [a, b] = fightersOf(night)!; const rs = CHAMPIONSHIP_ROUNDS.map((id) => preview.rounds.find((r) => r.id === id)!); return samLines(base, planFight(base, a, b, CHAMPIONSHIP_ROUNDS), rs); })();
 const on = (start: string | null, name: string) => pageFor({ ...base, seasonStart: start, titles: log } as BrawlData, `sam-${name}`);
 const PAGES = { on: on('2026-10-14', 'on'), off: on(null, 'off'), later: on('2026-10-25', 'later') };
 
@@ -52,7 +52,7 @@ test('the lines cover a tie, a missing margin and whole-HP rounding from the rec
   expect(t).toContain('leads by 3.25 points'); // Coding: 83.25 against 80
   expect(t).toContain("Twice the gap is 6.50; rounded to whole HP, that's 7 damage.");
   expect(t).toContain('Equal scores: a tie.'); // Math: 80 against 80
-  expect(t).toContain('Rookie has no published margin of error here'); // Science
+  expect(t).toContain('No margin of error is published for Rookie, so only equal scores would count as a tie.'); // Science
 });
 
 test('replays from Belts get Sam too; ordinary fights never do', async ({ page }) => {
@@ -95,6 +95,11 @@ for (const width of [1280, 390, 320]) {
     const errors = await open(page, PAGES.on, '2026-10-18');
     await page.click('#justWatch');
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+    // the round banner stays on the canvas, however long Sam's line below it is
+    await expect(page.locator('#banner')).toContainText('ROUND 1');
+    const cv = (await page.locator('#cv').boundingBox())!, bn = (await page.locator('#banner').boundingBox())!;
+    expect(bn.y).toBeGreaterThanOrEqual(cv.y);
+    expect(bn.y + bn.height).toBeLessThanOrEqual(cv.y + cv.height + 1);
     await page.click('#skip');
     await expect(page.locator('#samCard')).toBeVisible({ timeout: 10_000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
