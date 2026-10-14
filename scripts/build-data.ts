@@ -12,6 +12,7 @@ import { unzipSync, strFromU8 } from 'fflate';
 import { parseCsv } from '../src/csv.ts';
 import type { Benchmark, BrawlData, Claim, DailyEntry, Model, Price, Round, Score } from '../src/types.ts';
 import { dailyBrawl, FIRST_BRAWL_DAY, snapshotFighters } from '../src/league.ts';
+import { advanceTitles, checkAppendOnly } from '../src/titles.ts';
 import { checkCoverage, checkModelsDev, daysApart, isWebUrl, num, priceNum, requireColumns, sameVersion, strictNum } from './validate.ts';
 
 const EPOCH_ZIP = 'https://epoch.ai/data/benchmark_data.zip';
@@ -206,6 +207,9 @@ async function main() {
   if (!process.env.BRAWL_ALLOW_DROP) checkCoverage(data, prev, DEFAULT_ROUNDS);
   // prev is the last good data: the deploy workflow puts its saved copy (from the data-state branch) in data/brawl.json
   data.daily = schedule(data, prev?.daily ?? [], now);
+  // title belts: add the days since the last build; earlier entries are never changed (checked, so a bug can't publish a rewrite)
+  data.titles = advanceTitles(data, prev?.titles ?? { through: null, events: [] }, now.toISOString().slice(0, 10));
+  checkAppendOnly(prev?.titles, data.titles);
   mkdirSync('data', { recursive: true });
   writeFileSync('data/brawl.json.tmp', `${JSON.stringify(data, null, 1)}\n`);
   renameSync('data/brawl.json.tmp', 'data/brawl.json'); // all or nothing
