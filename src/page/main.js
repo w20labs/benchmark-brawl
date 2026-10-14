@@ -4,7 +4,8 @@ import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
 import { judgeClaim } from '../claims.ts';
 import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
 import { brawlNumber, CLASSES, dailyBrawl, dailyFromEntry, FIRST_BRAWL_DAY, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
-import { BELTS, beltName, CHAMPIONSHIP_ROUNDS, fightersOf, standings, TITLE_NIGHT, titleNightBelt } from '../titles.ts';
+import { BELTS, beltName, CHAMPIONSHIP_ROUNDS, fightersOf, seasonOn, standings, TITLE_NIGHT, titleNightBelt } from '../titles.ts';
+import { recentArrivals } from '../arrivals.ts';
 
 /** @type {import('../types.ts').BrawlData} */
 const DATA = JSON.parse(document.getElementById('brawl-data').textContent);
@@ -1833,7 +1834,11 @@ $('claimCopy').addEventListener('click', () => { track('share-claims'); copyText
 // The title log is append-only and written by the data build; the page only reads it. A build records one day ahead
 // (so tonight's title fight is ready before midnight), so everything shown here is cut at today.
 const TODAY_DAY = NOW.toISOString().slice(0, 10);
-const TITLE_LOG = DATA.titles?.events ?? [];
+// Season 2 is on from its start day (UTC). Before that, or with no start date, nothing of it shows: no belts, no title
+// nights, no new-challenger announcements, whatever the data holds. The start day is stamped by the site build from
+// the code (SEASON_START), not taken from saved data.
+const SEASON_ON = seasonOn(TODAY_DAY, DATA.seasonStart);
+const TITLE_LOG = SEASON_ON ? DATA.titles?.events ?? [] : [];
 const TITLES = TITLE_LOG.filter((e) => e.day <= TODAY_DAY);
 const TITLE_ST = standings(DATA, TITLES);
 const OPEN_BELTS = BELTS.map((b) => b.id).filter((b) => TITLE_ST.opened[b]);
@@ -1849,6 +1854,8 @@ function snapshotOf(id) {
   return byId.get(id) ?? null;
 }
 const nameOf = (id) => snapshotOf(id)?.name ?? id;
+/** A recorded title fight booked under the newcomer priority: the challenger was new to this belt. */
+const newChallenger = (e) => e.kind === 'title' && e.why === 'new challenger';
 function titleOutcome(e) {
   const belt = beltName(e.belt);
   if (e.kind === 'opening') { const m = e.matches.at(-1); return `${nameOf(e.champion)} wins the opening tournament and the ${belt} belt${m.tiebreak ? ' (tiebreak: ranked higher)' : ''}`; }
@@ -1858,7 +1865,7 @@ function titleOutcome(e) {
 }
 function titleText(e, p) {
   const [a, b] = p.fighters, row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
-  return [`🏅 Overfit FC · ${beltName(e.belt)} ${e.kind === 'opening' ? 'opening final' : 'title'} · ${fmtDate(e.day)}`, `${a.name} vs ${b.name}`, row, titleOutcome(e), `${SITE_URL}#title=${titleKey(e)}`].join('\n');
+  return [`🏅 Overfit FC · ${beltName(e.belt)} ${e.kind === 'opening' ? 'opening final' : 'title'} · ${fmtDate(e.day)}`, `${a.name} vs ${b.name}${newChallenger(e) ? ' (🆕 new challenger)' : ''}`, row, titleOutcome(e), `${SITE_URL}#title=${titleKey(e)}`].join('\n');
 }
 function playTitle(e, final = null) {
   const f = final ?? fightersOf(e);
@@ -1920,7 +1927,7 @@ function renderBelts() {
     if (e.kind === 'title' || e.kind === 'vacant') {
       const [a, b] = fightersOf(e);
       const chip = e.kind === 'vacant' ? ['change', 'Vacant belt won'] : e.winner === 1 ? ['change', 'New champion'] : e.winner === -1 ? ['draw', 'Draw, keeps belt'] : ['keep', 'Defends'];
-      return h('li', null, when, h('span', { class: 'what' }, `${a.name} vs ${b.name}`, h('span', { class: 't' }, `${belt} · ${titleOutcome(e)}${e.decision === 'ko' ? ' by K.O.' : ''} · ${e.hp[0]}–${e.hp[1]} HP · rules ${e.rules}, data ${fmtDate(e.dataDate)}`)),
+      return h('li', null, when, h('span', { class: 'what' }, `${a.name} vs ${newChallenger(e) ? '🆕 ' : ''}${b.name}`, h('span', { class: 't' }, `${belt}${newChallenger(e) ? ' · new challenger' : ''} · ${titleOutcome(e)}${e.decision === 'ko' ? ' by K.O.' : ''} · ${e.hp[0]}–${e.hp[1]} HP · rules ${e.rules}, data ${fmtDate(e.dataDate)}`)),
         h('span', { class: 'acts' }, h('span', { class: `chip2 ${chip[0]}` }, chip[1]), watch(e)));
     }
     if (e.kind === 'opening') return h('li', null, when, h('span', { class: 'what' }, `${belt} belt opens: ${nameOf(e.champion)} wins the tournament`, h('span', { class: 't' }, `8 fighters: ${e.field.map((m) => m.name).join(', ')}`)),
@@ -2020,15 +2027,43 @@ function recordDaily(p) {
 function dailyText(p, rec, brawl = DAILY) {
   const [a, b] = p.fighters, st = dailyStats();
   const row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
-  return [brawl.title ? `Benchmark Brawl #${brawl.no} 🏅 ${beltName(brawl.title.belt)} title night` : `Benchmark Brawl #${brawl.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${brawl.no}`].join('\n');
+  return [brawl.title ? `Benchmark Brawl #${brawl.no} 🏅 ${beltName(brawl.title.belt)} title night${newChallenger(brawl.title) ? ' · 🆕 new challenger' : ''}` : `Benchmark Brawl #${brawl.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${brawl.no}`].join('\n');
+}
+/**
+ * Fighters that joined the roster in the last week (Season 2 only), each with its sourced scores, and its title shot
+ * if the title log has booked one from today on. A booking is shown, never its result.
+ */
+function renderNewcomers() {
+  const list = SEASON_ON ? recentArrivals(DATA.arrivals, TODAY_DAY).map((x) => ({ ...x, m: byId.get(x.id) })).filter((x) => x.m) : [];
+  $('newcomers').hidden = !list.length;
+  $('newcomers').replaceChildren(...list.map(({ m }) => {
+    const rounds = DATA.rounds.filter((r) => r.benches.some((id) => benchById.get(id)?.kind === 'score' && m.scores[id]));
+    const shot = TITLE_LOG.find((e) => e.day >= TODAY_DAY && (e.kind === 'title' ? e.challenger.id === m.id : e.kind === 'vacant' && (e.a.id === m.id || e.b.id === m.id)));
+    const rival = shot && (shot.kind === 'title' ? shot.champion : shot.a.id === m.id ? shot.b : shot.a);
+    const score = (id) => {
+      const b = benchById.get(id), s = m.scores[id], url = safeUrl(b.source.url);
+      return h('li', null, url ? h('a', { href: url, target: '_blank', rel: 'noopener' }, b.name) : b.name, ' ', h('b', null, formatValue(b, s.v)),
+        h('span', { class: 't' }, ` ${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`));
+    };
+    return h('article', { class: 'newcomer', style: `--c:${colorOf(m)}`, 'aria-label': `New challenger: ${m.name}` },
+      botCanvas(m, 60, 72, 'win'),
+      h('div', { class: 'body' },
+        h('h3', null, `🆕 NEW CHALLENGER: ${m.name} enters the arena`),
+        h('p', { class: 'fine' }, `${m.org} · ${m.open ? 'open weights' : 'closed weights'} · rounds: ${rounds.map((r) => r.name).join(', ')}`),
+        shot ? h('p', { class: 'shot' }, `🏅 Title shot: ${fmtDate(shot.day)}${shot.day === TODAY_DAY ? ' (tonight)' : ''} vs ${rival.name} for the ${shot.kind === 'vacant' ? 'vacant ' : ''}${beltName(shot.belt)} belt.`) : null,
+        h('details', null, h('summary', { class: 'fine' }, 'Sourced scores'),
+          h('ul', { class: 'ncscores' }, ...rounds.map((r) => h('li', null, h('span', { class: 'rn' }, r.name), h('ul', null, ...r.benches.filter((id) => m.scores[id]).map(score))))))));
+  }));
 }
 function renderToday() {
+  renderNewcomers();
   if (!DAILY) { $('callBox').hidden = true; $('doneBox').hidden = true; $('brawlNo').textContent = 'NO BRAWL TODAY'; return; }
   const looks = looksFor([DAILY.a, DAILY.b]), rec = todayRec(), st = dailyStats();
   $('brawlNo').replaceChildren(...(DAILY.title ? [h('span', { class: 'titlechip' }, '🏅 TITLE NIGHT'), DAILY.no >= 1 ? `#${DAILY.no}` : ''] : [`BRAWL #${DAILY.no}`]));
   $('streakChip').textContent = st.streak ? `🔥 ${st.streak}-day streak` : '🔥 Start a streak';
   [[DAILY.a, 'A', 0], [DAILY.b, 'B', 1]].forEach(([m, k, i]) => {
-    $(`tag${k}`).textContent = DAILY.title ? (DAILY.title.kind === 'vacant' ? 'CONTENDER' : i ? 'CHALLENGER' : 'CHAMPION') : DAILY.featured ? (i ? 'TOP CONTENDER' : 'NEW CHALLENGER') : (i ? 'BLUE CORNER' : 'RED CORNER');
+    $(`tag${k}`).textContent = DAILY.title ? (DAILY.title.kind === 'vacant' ? 'CONTENDER' : i ? (newChallenger(DAILY.title) ? '🆕 NEW CHALLENGER' : 'CHALLENGER') : 'CHAMPION') : DAILY.featured ? (i ? 'TOP CONTENDER' : 'NEW CHALLENGER') : (i ? 'BLUE CORNER' : 'RED CORNER');
+    $(`tag${k}`).classList.toggle('nc', !!DAILY.title && i === 1 && newChallenger(DAILY.title));
     $(`tag${k}`).style.color = i ? 'var(--sky)' : 'var(--red)';
     $(`nm${k}`).textContent = m.name; $(`nm${k}`).style.color = looks[i].ui;
     $(`sub${k}`).textContent = `${m.org}${m.eci != null ? ` · ECI ${m.eci.toFixed(0)}` : ''}`;

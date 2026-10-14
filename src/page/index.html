@@ -43,6 +43,23 @@ body[data-view="arena"] .wrap { max-width: 1400px; }
 
 /* today: the daily brawl */
 .today { display: grid; gap: 16px; }
+.newcomers { display: grid; gap: 10px; }
+.newcomer { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; padding: 12px 14px; border-radius: 14px; border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 8%, var(--panel)); }
+.newcomer canvas { width: 60px; height: 72px; }
+.newcomer .body { min-width: 0; display: grid; gap: 6px; }
+.newcomer h3 { margin: 0; font: 400 12px/1.6 var(--arcade); color: var(--c); overflow-wrap: anywhere; }
+.newcomer .ncscores { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.newcomer .ncscores ul { list-style: none; margin: 0; padding: 0; display: inline; }
+.newcomer .ncscores ul li { display: inline; }
+.newcomer .ncscores ul li + li::before { content: ' · '; color: var(--muted); }
+.newcomer .rn { font-weight: 800; margin-right: 6px; }
+.newcomer .t { color: var(--muted); font-size: 12px; }
+.newcomer .shot { margin: 0; font-weight: 800; color: #F2B544; }
+.newcomer summary { cursor: pointer; width: max-content; }
+.newcomer details[open] summary { margin-bottom: 6px; }
+@media (max-width: 420px) { .newcomer { grid-template-columns: 1fr; } .newcomer canvas { display: none; } }
+.stage .tag.nc { white-space: nowrap; }
+@media (max-width: 420px) { .stage .tag.nc { font-size: 8px; } }
 .stage { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #070910; }
 .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 460; }
 .stage .top { position: absolute; inset: 14px 16px auto 16px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
@@ -293,6 +310,7 @@ footer { display: grid; gap: 6px; }
   </nav>
 
   <section class="today" id="today" aria-label="Today's brawl">
+    <div class="newcomers" id="newcomers" hidden></div>
     <div class="stage">
       <canvas id="todayCv" width="1200" height="460" aria-hidden="true"></canvas>
       <div class="top"><span class="brawlno" id="brawlNo"></span><span class="streak" id="streakChip"></span></div>

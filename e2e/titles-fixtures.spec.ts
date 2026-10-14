@@ -1,19 +1,17 @@
-import { readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import { brawlNumber } from '../src/league.ts';
 import { advanceTitles, type TitleLog } from '../src/titles.ts';
 import type { BrawlData, Model } from '../src/types.ts';
+import { pageFor, preview } from './fixture-page.ts';
 
 // Season 2 edge cases on synthetic fighters: the preview page's rounds and benchmarks, made-up models and title logs.
 // Season starts Wed Oct 14 2026 (opening tournament); Sun Oct 18 is the first title night.
-const preview: BrawlData = JSON.parse(readFileSync('_preview/brawl.json', 'utf8'));
 const S = (v: number) => ({ v, se: 0.5, setting: 'fixture' });
 const model = (name: string, eci: number, v: number, released = '2026-06-01'): Model =>
   ({ id: name.toLowerCase().replace(/ /g, '-'), name, org: name, released, open: false, eci, price: null,
     scores: Object.fromEntries(['swebench', 'frontiermath', 'gpqa', 'simpleqa', 'mystery'].map((b) => [b, S(v)])) });
 const eight = Array.from({ length: 8 }, (_, i) => model(`Fixture ${i + 1}`, 150 - i, 80 - 5 * i));
-const base: BrawlData = { ...preview, models: eight, claims: [], daily: [], titles: undefined };
+const base: BrawlData = { ...preview, models: eight, claims: [], daily: [], titles: undefined, arrivals: undefined, seasonStart: '2026-10-14' };
 const opening = advanceTitles(base, { through: null, events: [] }, '2026-10-16', '2026-10-14');
 /** A title night on Oct 18: Fixture 1 (champion) against a new challenger with every score at `v`. */
 function season(challenger: Model): BrawlData {
@@ -25,15 +23,6 @@ const decisive = season(model('Rookie', 200, 95, '2026-10-17'));
 // the champion has since left the roster: only the title log still has it
 const archived = { ...decisive, models: decisive.models.filter((m) => m.id !== 'fixture-1') };
 
-const html = readFileSync(resolve('_preview/index.html'), 'utf8');
-const [, json] = html.match(/<script type="application\/json" id="brawl-data">([\s\S]*?)<\/script>/)!;
-function pageFor(d: BrawlData, name: string) {
-  const file = resolve(`_preview/fixture-${name}.html`); // beside the preview, so its relative links still work; same content from every worker
-  const tmp = `${file}.${process.pid}.tmp`; // each worker writes its own copy, then swaps it in whole
-  writeFileSync(tmp, html.replace(json, () => JSON.stringify(d).replace(/</g, '\\u003c')));
-  renameSync(tmp, file);
-  return `file://${file}`;
-}
 /** Fixture 1, the champion, has left the roster by title night: the belt is vacated, then a vacant-title fight or a quiet night. */
 function vacated(models: Model[]): BrawlData {
   const d = { ...base, models };
