@@ -8,7 +8,8 @@
     "build": "tsx scripts/build-site.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "preview:season": "tsx scripts/preview-season.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",

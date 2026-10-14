@@ -3,7 +3,8 @@ import { formatValue, planFight, STYLE_NAMES, weaponName } from '../fight.ts';
 import { planRoyale, ROYALE_MAX, ROYALE_MIN } from '../royale.ts';
 import { judgeClaim } from '../claims.ts';
 import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
-import { CLASSES, dailyBrawl, dailyFromEntry, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
+import { brawlNumber, CLASSES, dailyBrawl, dailyFromEntry, FIRST_BRAWL_DAY, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
+import { BELTS, beltName, CHAMPIONSHIP_ROUNDS, fightersOf, standings, TITLE_NIGHT, titleNightBelt } from '../titles.ts';
 
 /** @type {import('../types.ts').BrawlData} */
 const DATA = JSON.parse(document.getElementById('brawl-data').textContent);
@@ -544,7 +545,7 @@ function startFight(opts = {}) {
   if (!a || !b) return;
   const plan = planFight(DATA, a, b, opts.rounds || rounds);
   if (!plan.rounds.length) return toast(`${a.name} and ${b.name} have no benchmark in common in these rounds. Try other rounds.`);
-  F = { roundIds: opts.rounds || rounds, arena: opts.daily ? arenaFor(`daily|${opts.daily.no}`) : arenaFor(`${a.id}|${b.id}`), daily: opts.daily || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: reduced ? [-1, -1] : bigHits(plan) };
+  F = { roundIds: opts.rounds || rounds, arena: opts.daily ? arenaFor(`daily|${opts.daily.no}`) : arenaFor(`${a.id}|${b.id}`), daily: opts.daily || null, title: opts.title || opts.daily?.title || null, replay: !!opts.replay, plan, colors: fightColors(a, b), looks: looksFor([a, b]), i: 0, phase: 0, t: 0, x: [300, 660], pose: ['idle', 'idle'], flash: [0, 0], shake: 0, white: 0, sparks: [], floats: [], booms: [], fx: null, hp: [100, 100], over: false, recording: !!opts.recording, onDone: opts.onDone || null, special: reduced ? [-1, -1] : bigHits(plan) };
   setView('arena');
   $('arena').classList.remove('royale');
   $('arenaNote').textContent = 'Damage = 2 × score gap · bigger gap, bigger weapon · a tie grazes both for 3 HP';
@@ -558,8 +559,8 @@ function startFight(opts = {}) {
   }
   $('pips').replaceChildren(...plan.rounds.map(() => h('span')));
   setHp(true);
-  if (F.daily) history.replaceState(null, '', `#today=${F.daily.no}`); else writeHashFight();
-  if (!F.recording) track(F.daily ? `today/${F.daily.no}` : `fight/${a.id}-vs-${b.id}`);
+  if (F.daily) history.replaceState(null, '', `#today=${F.daily.no}`); else if (F.title) history.replaceState(null, '', `#title=${titleKey(F.title)}`); else writeHashFight();
+  if (!F.recording) track(F.daily ? `today/${F.daily.no}` : F.title ? `title/${titleKey(F.title)}` : `fight/${a.id}-vs-${b.id}`);
   $('arena').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   enterPhase();
   cancelAnimationFrame(raf);
@@ -1358,12 +1359,13 @@ function showResult() {
   const w = p.winner >= 0 ? p.fighters[p.winner] : null;
   $('verdict').style.setProperty('--c', w ? F.colors[p.winner] : '#F3F4F8');
   $('verdict').textContent = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
-  $('verdictSub').textContent = !w ? `Same HP after the last round` : `${decisionText(p)} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${p.decision === 'split' ? (p.roundsWon[0] === p.roundsWon[1] ? ': same rounds won, bigger wins' : ': fewer rounds, but bigger wins') : ''}`;
+  $('verdictSub').textContent = (!w ? `Same HP after the last round` : `${decisionText(p)} · ${p.roundsWon[p.winner]}–${p.roundsWon[1 - p.winner]} in rounds${p.decision === 'split' ? (p.roundsWon[0] === p.roundsWon[1] ? ': same rounds won, bigger wins' : ': fewer rounds, but bigger wins') : ''}`)
+    + (F.title ? ` · ${titleOutcome(F.title)}` : '');
   drawVictory($('winCv'), p, F.looks);
   const isToday = F.daily && F.daily.no === DAILY?.no, rec = isToday ? todayRec() : null;
   $('yourCall').hidden = !F.daily;
   if (F.daily) $('yourCall').replaceChildren(...(isToday ? callBadge(rec) : [h('span', { class: 'pill meh' }, `Replay of Brawl #${F.daily.no}`)]));
-  $('rematch').textContent = F.daily ? '▶ WATCH AGAIN' : 'REMATCH';
+  $('rematch').textContent = F.daily || F.title ? '▶ WATCH AGAIN' : 'REMATCH';
   $('copy').textContent = F.daily ? 'Share' : 'Share result';
   $('th1').textContent = a.name; $('th1').style.color = F.colors[0];
   $('th2').textContent = b.name; $('th2').style.color = F.colors[1];
@@ -1380,7 +1382,7 @@ function showResult() {
           : s ? h('span', { class: 't' }, `${s.setting} setting · ${s.se != null ? `±${(1.96 * s.se).toFixed(1)}` : 'no margin published'}`) : R.bench?.kind === 'price' ? h('span', { class: 't' }, 'per M tokens') : '');
     }),
     h('td', { class: 'num' }, R.winner == null ? 'skipped' : R.winner < 0 ? h('span', null, R.tie === 'margin' ? 'tie (margin)' : 'tie', h('span', { class: 't' }, grazeText(R))) : `−${R.dmg} HP`))));
-  $('share').textContent = F.daily ? dailyText(p, rec, F.daily) : shareText();
+  $('share').textContent = F.daily ? dailyText(p, rec, F.daily) : F.title ? titleText(F.title, p) : shareText();
   $('skippedNote').hidden = !p.skipped.length;
   $('skippedNote').textContent = p.skipped.length ? `Left out: ${p.skipped.map((r) => r.name).join(', ')}. These two have no benchmark in common there, so the fight skipped ${p.skipped.length === 1 ? 'it' : 'them'} instead of playing empty rounds.` : '';
   $('backToBracket').hidden = !fromBracket;
@@ -1421,9 +1423,9 @@ async function copyText(text, done) {
 }
 
 $('fight').addEventListener('click', () => (mode === 'royale' ? startRoyale() : startFight()));
-$('rematch').addEventListener('click', () => { if (F) startFight({ daily: F.daily, fighters: F.plan.fighters, rounds: F.roundIds, replay: !!F.daily }); });
+$('rematch').addEventListener('click', () => { if (F) startFight({ daily: F.daily, title: F.title, fighters: F.plan.fighters, rounds: F.roundIds, replay: !!(F.daily || F.title) }); });
 $('again').addEventListener('click', () => { cancelAnimationFrame(raf); fromBracket = false; openTab('play'); });
-$('copy').addEventListener('click', () => { track(F.daily ? 'share-today' : 'share'); shareOrCopy($('share').textContent, 'Copied result and link'); });
+$('copy').addEventListener('click', () => { track(F.daily ? 'share-today' : F.title ? 'share-title' : 'share'); shareOrCopy($('share').textContent, 'Copied result and link'); });
 $('card').addEventListener('click', () => { track('card'); shareCard(F.plan, F.looks, F.daily && F.daily.no === DAILY?.no ? todayRec() : null, F.daily); });
 $('skip').addEventListener('click', () => {
   if (F?.royale) return skipRoyale();
@@ -1451,7 +1453,7 @@ async function recordClip() {
   rec.start(250);
   const finished = F; // record the fight that was just watched, not whatever the builder now says
   picks = finished.plan.fighters.map((m) => m.id);
-  startFight({ recording: true, fighters: finished.plan.fighters, rounds: finished.roundIds, daily: finished.daily, replay: true, onDone: () => rec.state !== 'inactive' && rec.stop() });
+  startFight({ recording: true, fighters: finished.plan.fighters, rounds: finished.roundIds, daily: finished.daily, title: finished.title, replay: true, onDone: () => rec.state !== 'inactive' && rec.stop() });
   try { await done; } finally {
     for (const tr of stream.getTracks()) tr.stop();
     if (recDest) { try { master?.disconnect(recDest); } catch { /* fine */ } recDest = null; }
@@ -1827,9 +1829,110 @@ $('claimsClose').addEventListener('click', () => openTab('today'));
 $('claimLab').addEventListener('change', (e) => openClaims(e.target.value));
 $('claimCopy').addEventListener('click', () => { track('share-claims'); copyText($('claimShare').textContent, 'Copied claim check and link'); });
 
+// ---------- overfit fc: title belts ----------
+// The title log is append-only and written by the data build; the page only reads it. A build records one day ahead
+// (so tonight's title fight is ready before midnight), so everything shown here is cut at today.
+const TODAY_DAY = NOW.toISOString().slice(0, 10);
+const TITLE_LOG = DATA.titles?.events ?? [];
+const TITLES = TITLE_LOG.filter((e) => e.day <= TODAY_DAY);
+const TITLE_ST = standings(DATA, TITLES);
+const OPEN_BELTS = BELTS.map((b) => b.id).filter((b) => TITLE_ST.opened[b]);
+const titleKey = (e) => `${e.day}-${e.belt}`;
+/** A recorded title fight on a given day (one title night per day). */
+const titleOn = (day) => TITLES.find((e) => e.day === day && fightersOf(e));
+/** A model as the log last saved it (for a champion who has since left the roster). */
+function snapshotOf(id) {
+  for (let i = TITLES.length - 1; i >= 0; i--) {
+    const e = TITLES[i], f = fightersOf(e)?.find((m) => m.id === id) ?? (e.kind === 'opening' ? e.field.find((m) => m.id === id) : null);
+    if (f) return byId.get(id) ?? f;
+  }
+  return byId.get(id) ?? null;
+}
+const nameOf = (id) => snapshotOf(id)?.name ?? id;
+function titleOutcome(e) {
+  const [a, b] = fightersOf(e), belt = beltName(e.belt);
+  if (e.kind === 'vacant') return e.winner === -1 ? `${a.name} takes the vacant ${belt} belt (ranked higher)` : `${(e.winner === 1 ? b : a).name} wins the vacant ${belt} belt`;
+  return e.winner === 1 ? `${b.name} is the new ${belt} champion` : e.winner === -1 ? `a draw: ${a.name} keeps the ${belt} belt` : `${a.name} keeps the ${belt} belt`;
+}
+function titleText(e, p) {
+  const [a, b] = p.fighters, row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
+  return [`🏅 Overfit FC · ${beltName(e.belt)} title · ${fmtDate(e.day)}`, `${a.name} vs ${b.name}`, row, titleOutcome(e), `${SITE_URL}#title=${titleKey(e)}`].join('\n');
+}
+function playTitle(e, final = null) {
+  const f = final ?? fightersOf(e);
+  if (!f) return;
+  picks = f.map((m) => m.id);
+  startFight({ fighters: f, rounds: CHAMPIONSHIP_ROUNDS.filter((id) => roundById.has(id)), title: e, replay: true });
+}
+/** The opening tournament's final, from the saved field. */
+function openingFinal(e) {
+  const m = e.matches[e.matches.length - 1], get = (id) => e.field.find((x) => x.id === id);
+  return [get(m.a), get(m.b)];
+}
+/** The next title night for a belt, from tomorrow on (alternating between the open belts). */
+function nextNight(belt) {
+  for (let i = 0; i < 28; i++) {
+    const d = new Date(Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), NOW.getUTCDate() + i)), day = d.toISOString().slice(0, 10);
+    if (d.getUTCDay() !== TITLE_NIGHT || day < TODAY_DAY) continue;
+    const open = BELTS.map((b) => b.id).filter((b) => TITLE_ST.opened[b] && TITLE_ST.opened[b] < day);
+    if (open.length && titleNightBelt(day, open) === belt) return day;
+  }
+  return null;
+}
+const daysBetween = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+let historyBelt = 'all';
+function renderBelts() {
+  $('beltCards').replaceChildren(...OPEN_BELTS.map((belt) => {
+    const id = TITLE_ST.champions[belt], reign = TITLE_ST.reigns.findLast((r) => r.belt === belt);
+    const night = nextNight(belt), booked = night && TITLE_LOG.find((e) => e.day === night && e.belt === belt);
+    const next = h('div', { class: 'next' }, h('span', { class: 'fine' }, night ? `Next title night: ${night === TODAY_DAY ? 'tonight' : fmtDate(night)}` : 'Next title night: not scheduled'),
+      night === TODAY_DAY && booked && fightersOf(booked) ? h('button', { type: 'button', class: 'linkbtn', onclick: () => openTab('today') }, `${fightersOf(booked).map((m) => m.name).join(' vs ')}: watch it in Today`)
+      : night && booked?.kind === 'quiet' ? h('span', null, 'No challenger this time: a normal daily brawl')
+      : h('span', { class: 'fine' }, 'The challenger is picked the day before'));
+    if (!id) return h('article', { class: 'beltcard vacant' }, h('div', { class: 'buckle' }, `${beltName(belt).toUpperCase()}`, h('br'), 'VACANT'),
+      h('p', { class: 'fine' }, reign?.ended ? `${reign.name}: ${reign.ended.replace(/^vacated: /, '')}` : ''), next);
+    const m = snapshotOf(id);
+    return h('article', { class: 'beltcard', style: `--c:${colorOf(m)}` },
+      h('div', { class: 'buckle' }, `${beltName(belt).toUpperCase()}`, h('br'), 'CHAMPION'),
+      botCanvas(m, 110, 130, 'win'),
+      h('div', { class: 'who2' }, m.name), h('div', { class: 'meta' }, `${m.org} · ${m.open ? 'open weights' : 'closed weights'}`),
+      h('div', { class: 'reign' }, h('span', null, h('b', null, String(daysBetween(reign.from, TODAY_DAY))), ' days'), h('span', null, h('b', null, String(reign.defenses)), ` defense${reign.defenses === 1 ? '' : 's'}`), h('span', null, reign.how)),
+      next);
+  }));
+  const belts = [['all', 'All belts'], ...OPEN_BELTS.map((b) => [b, beltName(b)])];
+  $('historyFilter').replaceChildren(...belts.map(([id, label]) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(historyBelt === id), onclick: () => { historyBelt = id; renderBelts(); } }, label)));
+  const watch = (e, final) => h('button', { type: 'button', class: 'btn small', onclick: () => playTitle(e, final) }, '▶ Watch');
+  const list = (ids) => ids.map(nameOf).join(ids.length > 2 ? ', ' : ' and ').replace(/, ([^,]+)$/, ' and $1');
+  const quietText = (e) => {
+    if (e.blocked) {
+      const met = e.blocked.filter((x) => x.why === 'met').map((x) => x.id), far = e.blocked.filter((x) => x.why !== 'met').map((x) => x.id);
+      if (!e.blocked.length) return 'No ranked contender to challenge.';
+      return [met.length ? `${list(met)} already fought the champion on these scores.` : '', far.length ? `${list(far)} ${far.length > 1 ? "don't" : "doesn't"} share 3 comparable rounds with the champion.` : ''].join(' ').trim();
+    }
+    if (e.pairs) return `Vacant, and no two contenders can fight yet: ${e.pairs.met} pairs already met, ${e.pairs['not comparable']} share too few rounds.`;
+    return '';
+  };
+  $('history').replaceChildren(...[...TITLES].reverse().filter((e) => historyBelt === 'all' || e.belt === historyBelt).map((e) => {
+    const when = h('span', { class: 'when' }, fmtDate(e.day)), belt = beltName(e.belt);
+    if (e.kind === 'title' || e.kind === 'vacant') {
+      const [a, b] = fightersOf(e);
+      const chip = e.kind === 'vacant' ? ['change', 'Vacant belt won'] : e.winner === 1 ? ['change', 'New champion'] : e.winner === -1 ? ['draw', 'Draw, keeps belt'] : ['keep', 'Defends'];
+      return h('li', null, when, h('span', { class: 'what' }, `${a.name} vs ${b.name}`, h('span', { class: 't' }, `${belt} · ${titleOutcome(e)}${e.decision === 'ko' ? ' by K.O.' : ''} · ${e.hp[0]}–${e.hp[1]} HP · rules ${e.rules}, data ${fmtDate(e.dataDate)}`)),
+        h('span', { class: 'acts' }, h('span', { class: `chip2 ${chip[0]}` }, chip[1]), watch(e)));
+    }
+    if (e.kind === 'opening') return h('li', null, when, h('span', { class: 'what' }, `${belt} belt opens: ${nameOf(e.champion)} wins the tournament`, h('span', { class: 't' }, `8 fighters: ${e.field.map((m) => m.name).join(', ')}`)),
+      h('span', { class: 'acts' }, h('span', { class: 'chip2 open2' }, 'Opening'), watch(e, openingFinal(e))));
+    if (e.kind === 'quiet') return h('li', null, when, h('span', { class: 'what' }, `${belt}: no title fight`, h('span', { class: 't' }, `${quietText(e)} A normal daily brawl instead.`)),
+      h('span', { class: 'chip2 quiet' }, 'Quiet night'));
+    return h('li', null, when, h('span', { class: 'what' }, `${nameOf(e.model)} gives up the ${belt} belt`, h('span', { class: 't' }, e.reason.replace(/^vacated: /, ''))), h('span', { class: 'chip2 keep' }, 'Vacated'));
+  }));
+}
+$('beltsClose').addEventListener('click', () => openTab('today'));
+$('tabs').querySelector('[data-tab="belts"]').hidden = !OPEN_BELTS.length;
+
 // ---------- views and tabs ----------
-const SECTIONS = ['today', 'builder', 'select', 'ready', 'arena', 'result', 'royaleResult', 'tourney', 'claims'];
-const VIEW_SECTIONS = { today: ['today'], play: ['builder', 'select', 'ready'], royale: ['builder', 'select', 'ready'], tournament: ['tourney'], claims: ['claims'], arena: ['arena'], result: ['result'], royaleResult: ['royaleResult'] };
+const SECTIONS = ['today', 'builder', 'select', 'ready', 'arena', 'result', 'royaleResult', 'tourney', 'claims', 'belts'];
+const VIEW_SECTIONS = { today: ['today'], play: ['builder', 'select', 'ready'], royale: ['builder', 'select', 'ready'], tournament: ['tourney'], claims: ['claims'], belts: ['belts'], arena: ['arena'], result: ['result'], royaleResult: ['royaleResult'] };
 let tab = 'today';
 function setView(view) {
   for (const id of SECTIONS) $(id).hidden = !VIEW_SECTIONS[view].includes(id);
@@ -1844,6 +1947,7 @@ function openTab(t) {
   else if (t === 'play' || t === 'royale') { mode = t === 'royale' ? 'royale' : '1v1'; if (mode === '1v1') picks = picks.slice(0, 2); setView(t); renderAll(); }
   else if (t === 'tournament') { if (bracket?.key === `${classId}|${rounds.join(',')}`) showBracket(); else openTournament(); }
   else if (t === 'claims') openClaims(claimLab);
+  else if (t === 'belts') { setView('belts'); history.replaceState(null, '', '#belts'); track('belts'); renderBelts(); }
   scrollTo({ top: 0 });
 }
 for (const b of document.querySelectorAll('#tabs button')) b.addEventListener('click', () => openTab(b.dataset.tab));
@@ -1854,8 +1958,14 @@ function brawlFromEntry(e) {
   const d = e && dailyFromEntry(e, byId);
   return d ? { ...d, rounds: d.rounds.filter((id) => roundById.has(id)) } : null;
 }
+/** On title night, the day's brawl is the recorded title fight (same number, same call and streak). */
+function titleBrawl(day) {
+  const e = titleOn(day), f = e && fightersOf(e);
+  return f ? { no: brawlNumber(new Date(`${day}T12:00:00Z`)), day, a: f[0], b: f[1], rounds: CHAMPIONSHIP_ROUNDS.filter((id) => roundById.has(id)), featured: false, title: e } : null;
+}
+const brawlDay = (no) => new Date(Date.parse(FIRST_BRAWL_DAY) + (no - 1) * 864e5).toISOString().slice(0, 10);
 // today's fight comes from the published schedule, so it never changes during the day; computed only as a fallback
-const DAILY = brawlFromEntry(DATA.daily?.find((e) => e.day === NOW.toISOString().slice(0, 10))) ?? dailyBrawl(DATA, NOW);
+const DAILY = titleBrawl(TODAY_DAY) ?? brawlFromEntry(DATA.daily?.find((e) => e.day === TODAY_DAY)) ?? dailyBrawl(DATA, NOW);
 const DAILY_KEY = 'brawl-daily-v1';
 let daily = { days: {} };
 try { daily = JSON.parse(localStorage.getItem(DAILY_KEY)) || daily; } catch { /* a private window: nothing saved */ }
@@ -1874,7 +1984,8 @@ function todayRec(create = false) {
  * before the schedule existed, are ignored). Days older than the published schedule are trusted as saved.
  */
 function validRec(no, r) {
-  const e = no === DAILY?.no ? { a: DAILY.a.id, b: DAILY.b.id } : DATA.daily?.find((x) => x.no === no);
+  const t = no === DAILY?.no ? null : titleBrawl(brawlDay(no));
+  const e = no === DAILY?.no ? { a: DAILY.a.id, b: DAILY.b.id } : t ? { a: t.a.id, b: t.b.id } : DATA.daily?.find((x) => x.no === no);
   return !!r && (!e || (r.a === e.a && r.b === e.b));
 }
 function dailyStats() {
@@ -1896,22 +2007,22 @@ function recordDaily(p) {
 function dailyText(p, rec, brawl = DAILY) {
   const [a, b] = p.fighters, st = dailyStats();
   const row = p.rounds.map((R) => (R.winner == null ? '⬛' : R.winner < 0 ? '🟨' : R.winner === 0 ? '🟩' : '🟥')).join('');
-  return [`Benchmark Brawl #${brawl.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${brawl.no}`].join('\n');
+  return [brawl.title ? `Benchmark Brawl #${brawl.no} 🏅 ${beltName(brawl.title.belt)} title night` : `Benchmark Brawl #${brawl.no} 🥊`, `${a.name} vs ${b.name}`, row, rec?.pick ? `My call: ${rec.correct ? '✅' : '❌'} · 🔥 ${st.streak}` : 'Watched it 👀', `${SITE_URL}#today=${brawl.no}`].join('\n');
 }
 function renderToday() {
   if (!DAILY) { $('callBox').hidden = true; $('doneBox').hidden = true; $('brawlNo').textContent = 'NO BRAWL TODAY'; return; }
   const looks = looksFor([DAILY.a, DAILY.b]), rec = todayRec(), st = dailyStats();
-  $('brawlNo').textContent = `BRAWL #${DAILY.no}`;
+  $('brawlNo').replaceChildren(...(DAILY.title ? [h('span', { class: 'titlechip' }, '🏅 TITLE NIGHT'), DAILY.no >= 1 ? `#${DAILY.no}` : ''] : [`BRAWL #${DAILY.no}`]));
   $('streakChip').textContent = st.streak ? `🔥 ${st.streak}-day streak` : '🔥 Start a streak';
   [[DAILY.a, 'A', 0], [DAILY.b, 'B', 1]].forEach(([m, k, i]) => {
-    $(`tag${k}`).textContent = DAILY.featured ? (i ? 'TOP CONTENDER' : 'NEW CHALLENGER') : (i ? 'BLUE CORNER' : 'RED CORNER');
+    $(`tag${k}`).textContent = DAILY.title ? (DAILY.title.kind === 'vacant' ? 'CONTENDER' : i ? 'CHALLENGER' : 'CHAMPION') : DAILY.featured ? (i ? 'TOP CONTENDER' : 'NEW CHALLENGER') : (i ? 'BLUE CORNER' : 'RED CORNER');
     $(`tag${k}`).style.color = i ? 'var(--sky)' : 'var(--red)';
     $(`nm${k}`).textContent = m.name; $(`nm${k}`).style.color = looks[i].ui;
     $(`sub${k}`).textContent = `${m.org}${m.eci != null ? ` · ECI ${m.eci.toFixed(0)}` : ''}`;
     const btn = $(`call${k}`);
     btn.textContent = m.name; btn.style.setProperty('--c', looks[i].ui); btn.setAttribute('aria-pressed', String(rec?.pick === m.id));
   });
-  $('roundsToday').textContent = `Today's rounds: ${DAILY.rounds.map((id) => roundById.get(id).name).join(' · ')}`;
+  $('roundsToday').textContent = `${DAILY.title ? `For the ${beltName(DAILY.title.belt)} belt · championship rounds` : "Today's rounds"}: ${DAILY.rounds.map((id) => roundById.get(id).name).join(' · ')}`;
   $('todayFight').disabled = !rec?.pick;
   $('todayFight').textContent = rec?.pick ? 'FIGHT!' : 'PICK A WINNER';
   const done = !!rec?.winner;
@@ -1977,7 +2088,7 @@ async function shareCard(p, looks, rec, brawl) {
   const txt2 = (t, x, y, px, col, font = 'arcade') => { c.font = font === 'arcade' ? `400 ${px}px "Press Start 2P", monospace` : `700 ${px}px Inter, sans-serif`; c.textAlign = 'center'; c.fillStyle = '#000'; c.fillText(t, x + 5, y + 5); c.fillStyle = col; c.fillText(t, x, y); };
   const fit = (t, px) => { c.font = `400 ${px}px "Press Start 2P", monospace`; while (c.measureText(t).width > 980 && px > 20) { px -= 2; c.font = `400 ${px}px "Press Start 2P", monospace`; } return px; };
   txt2('BENCHMARK BRAWL', 540, 96, 40, '#FF6B6B');
-  if (brawl) txt2(`#${brawl.no}`, 540, 160, 32, '#F2B544');
+  if (brawl) txt2(brawl.title ? `#${brawl.no} · ${beltName(brawl.title.belt).toUpperCase()} TITLE` : `#${brawl.no}`, 540, 160, brawl.title ? 26 : 32, '#F2B544');
   const w = p.winner >= 0 ? p.fighters[p.winner] : null, title = w ? `${w.name.toUpperCase()} WINS` : 'A DRAW';
   txt2(title, 540, 880, fit(title, 52), w ? looks[p.winner].ui : '#F3F4F8');
   txt2(`${p.fighters[0].name}  vs  ${p.fighters[1].name}`, 540, 950, 34, '#C9CFDC', 'ui');
@@ -2002,10 +2113,18 @@ function claimLabFromHash(raw) {
   return DATA.claims.some((c) => byId.get(c.modelId)?.org === lab) ? lab : 'all';
 }
 const shared = claimsHash ? false : readHash();
-const tabHash = location.hash.match(/^#(today|play|royale|tournament)$/)?.[1];
+const tabHash = location.hash.match(/^#(today|play|royale|tournament)$/)?.[1] ?? (location.hash === '#belts' && OPEN_BELTS.length ? 'belts' : undefined);
+const titleHash = location.hash.match(/^#title=(\d{4}-\d{2}-\d{2})-([a-z]+)$/);
 const pastBrawl = Number(location.hash.match(/^#today=(\d+)$/)?.[1]) || null;
 renderAll();
 if (claimsHash) { claimLab = claimLabFromHash(claimsHash[1]); openTab('claims'); }
+else if (titleHash) {
+  // a link to a recorded title fight (or an opening final) replays it from the saved scores
+  const e = TITLES.find((x) => x.day === titleHash[1] && x.belt === titleHash[2] && (fightersOf(x) || x.kind === 'opening'));
+  openTab(OPEN_BELTS.length ? 'belts' : 'today');
+  if (e) { toast(`Replaying the ${beltName(e.belt)} ${e.kind === 'opening' ? 'opening final' : 'title fight'} from ${fmtDate(e.day)}`); playTitle(e, e.kind === 'opening' ? openingFinal(e) : null); }
+  else toast("That title fight isn't in the history.");
+}
 else if (wantTourney) openTab('tournament');
 else if (shared && mode === 'royale') {
   openTab('royale');
@@ -2016,7 +2135,7 @@ else if (shared && mode === 'royale') {
   toast(`Shared fight: ${a.name} vs ${b.name}. Press FIGHT!`);
 } else if (pastBrawl && pastBrawl !== DAILY?.no) {
   // a link to an earlier daily brawl replays that exact fight
-  const old = brawlFromEntry(DATA.daily?.find((e) => e.no === pastBrawl));
+  const old = titleBrawl(brawlDay(pastBrawl)) ?? brawlFromEntry(DATA.daily?.find((e) => e.no === pastBrawl));
   if (old) { openTab('today'); toast(`Replaying Brawl #${old.no}: ${old.a.name} vs ${old.b.name}`); startFight({ daily: old, fighters: [old.a, old.b], rounds: old.rounds, replay: true }); }
   else { openTab('today'); toast(`Brawl #${pastBrawl} is too old to replay. Here's today's.`); }
 } else openTab(tabHash ?? 'today');

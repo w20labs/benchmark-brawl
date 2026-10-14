@@ -9,11 +9,12 @@ import { build } from 'esbuild';
 const siteUrl = process.argv[2] || '';
 /** Anonymous, cookie-free visit counts for the published site (dashboard: benchmark-brawl.goatcounter.com). */
 const GOATCOUNTER = 'https://benchmark-brawl.goatcounter.com/count';
-const OUT = '_site';
+/** BRAWL_DATA and BRAWL_OUT let the Season 2 preview build from its own data into its own folder. */
+const OUT = process.env.BRAWL_OUT || '_site';
 
 // The page carries the last 30 days of daily brawls (for replay links) and tomorrow's (so a page built before
 // midnight UTC still has the next day's fight), but no further: no peeking at future matchups, and a smaller page.
-const full = JSON.parse(readFileSync('data/brawl.json', 'utf8'));
+const full = JSON.parse(readFileSync(process.env.BRAWL_DATA || 'data/brawl.json', 'utf8'));
 const today = Date.now(), dayOf = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 full.daily = (full.daily ?? []).filter((e: { day: string }) => e.day >= dayOf(today - 30 * 864e5) && e.day <= dayOf(today + 864e5));
 const data = JSON.stringify(full);

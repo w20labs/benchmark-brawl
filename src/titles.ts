@@ -118,7 +118,12 @@ export function standings(data: BrawlData, events: TitleEvent[]): Standings {
 const DAY = 864e5;
 const addDays = (d: string, n: number) => new Date(Date.parse(d) + n * DAY).toISOString().slice(0, 10);
 /** Belt order on title nights: alternate between the belts already open, by week. */
-const beltFor = (day: string, open: BeltId[]) => open[Math.floor(Date.parse(day) / (7 * DAY)) % open.length];
+export const titleNightBelt = (day: string, open: BeltId[]) => open[Math.floor(Date.parse(day) / (7 * DAY)) % open.length];
+/** The data build records this many days ahead, so a page built the day before already has the night's fight (like the daily schedule). */
+export const TITLE_LOOKAHEAD_DAYS = 1;
+/** The two fighters of a recorded fight, champion (or higher-ranked) first. */
+export const fightersOf = (e: TitleEvent): [Snapshot, Snapshot] | null => (e.kind === 'title' ? [e.champion, e.challenger] : e.kind === 'vacant' ? [e.a, e.b] : null);
+export const beltName = (id: BeltId) => BELTS.find((b) => b.id === id)!.name;
 
 /**
  * Adds the days after `log.through`, up to and including `today`, using the roster as it is now. Earlier entries are
@@ -152,7 +157,7 @@ export function advanceTitles(data: BrawlData, log: TitleLog, today: string, sea
     if (new Date(`${day}T00:00:00Z`).getUTCDay() !== TITLE_NIGHT) continue;
     const open = BELTS.map((b) => b.id).filter((b) => st.opened[b] && st.opened[b]! < day);
     if (!open.length) continue;
-    const belt = beltFor(day, open), pool = roster.filter((m) => eligibleFor(data, belt, m)), eligible = pool.map((m) => m.id);
+    const belt = titleNightBelt(day, open), pool = roster.filter((m) => eligibleFor(data, belt, m)), eligible = pool.map((m) => m.id);
     const champId = st.champions[belt];
     let champion = champId ? pool.find((m) => m.id === champId) ?? null : null;
 

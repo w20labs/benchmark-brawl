@@ -16,5 +16,6 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - run: npm run preview:season -- 2026-08-02 2026-11-29 # Season 2 screens, tested in e2e/belts.spec.ts
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
