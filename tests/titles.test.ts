@@ -329,6 +329,43 @@ describe('newcomer title shots (v1.2)', () => {
     expect(standings(roster(indexedNa), jan18.events).pending.undisputed?.has('na')).toBe(false);
   });
 
+  it('carries the line through a vacancy: qualify, vacant quiet night, belt filled, then the shot', () => {
+    const na = unindexed('na', full(90)), nb = unindexed('nb', full(95));
+    // Jan 4: both beat #3 (m4); na goes first and takes the belt from m1; nb waits in line
+    const jan4 = run(withArrivals(roster([...eight, na, nb]), { na: '2026-01-02', nb: '2026-01-03' }), '2026-01-04', opened);
+    expect(lastTitle(jan4)).toMatchObject({ challenger: { id: 'na' }, winner: 1, pending: ['nb'] });
+    // Jan 11: na has left the roster, and only m1 and m2 have an index (and they've met): the belt stays vacant
+    const thin = eight.map((m, k) => (k < 2 ? m : { ...m, eci: null }));
+    const jan11 = run(withArrivals(roster([...thin, nb]), {}), '2026-01-11', jan4);
+    expect(jan11.events.slice(jan4.events.length).map((e) => e.kind)).toEqual(['vacated', 'quiet']);
+    expect(jan11.events.at(-1)).toMatchObject({ pairs: { met: 1 }, pending: ['nb'] });
+    // Jan 18: indexes are back; a vacant-title fight fills the belt, and the line is carried through it
+    const full8 = withArrivals(roster([...eight, nb]), {});
+    const jan18 = run(full8, '2026-01-18', jan11);
+    expect(jan18.events.at(-1)).toMatchObject({ kind: 'vacant', pending: ['nb'] });
+    // Jan 25: nb gets its shot ahead of the established top 3
+    const jan25 = run(full8, '2026-01-25', jan18);
+    expect(lastTitle(jan25)).toMatchObject({ day: '2026-01-25', challenger: { id: 'nb' }, why: 'new challenger', qualified: { by: 'beat #3' } });
+    expect(jan25.events.slice(0, jan4.events.length)).toEqual(jan4.events);
+    expect(() => checkAppendOnly(jan18, jan25)).not.toThrow();
+  });
+
+  it('on a quiet title night, says why a qualifier in line cannot fight this champion', () => {
+    // m1 has DeepSWE and OTIS AIME instead of SWE-bench and FrontierMath; na has the reverse, plus Facts and Puzzles.
+    // na beats #3 (m4, comparable on 4 rounds) but shares only Facts and Puzzles with m1: it waits in line.
+    const m1 = model('m1', 150, { deepswe: 80, aime: 80, gpqa: 80, simpleqa: 80, mystery: 80 }), ms = [m1, ...eight.slice(1)];
+    const na = unindexed('na', { swebench: 90, frontiermath: 90, simpleqa: 90, mystery: 90 });
+    expect(sharedRounds(real, na, m1)).toBe(2);
+    expect(qualifies(real, na, eight[3])).toBe(true);
+    const log = run(withArrivals(roster([...ms, na]), {}), '2026-01-11', run(roster(ms), START));
+    expect(lastTitle(log)).toMatchObject({ day: '2026-01-04', challenger: { id: 'm3' }, pending: ['na'] });
+    // Jan 11: m2, m3 and m4 have all met m1, so it's quiet; na is still in line, and why it can't fight is on record
+    expect(log.events.at(-1)).toMatchObject({ kind: 'quiet', day: '2026-01-11', pending: ['na'] });
+    const q = log.events.at(-1)!;
+    if (q.kind !== 'quiet') throw new Error();
+    expect(q.blocked?.find((x) => x.id === 'na')).toEqual({ id: 'na', why: 'not comparable' });
+  });
+
   it('never books the same pairing twice on unchanged scores', () => {
     const n = unindexed('n', full(70)), d = withArrivals(roster([...eight, n]), {});
     const log = night([...eight, n], {}, '2026-02-28');

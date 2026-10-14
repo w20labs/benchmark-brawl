@@ -222,3 +222,20 @@ test('a qualifier that waits behind a top-3 newcomer keeps its place in line, an
   expect(titles.events.find((e) => e.day === '2026-10-18')).toMatchObject({ pending: ['rawbie'] });
   expect(errors).toEqual([]);
 });
+
+test("a qualifier still in line that no longer beats #3: the quiet night gives both facts", async ({ page }) => {
+  // Oct 18: Newbie (top 3) is booked and takes the belt; Rawbie (all 75, beats #3) waits in line. Then Rawbie's scores
+  // drop to 60. By Nov 8 every top-3 contender has met Newbie: a quiet night, with Rawbie rechecked and still in line.
+  const rawbie75 = { ...model('Rawbie', 0, 75, '2026-10-01'), eci: null }, rawbie60 = { ...rawbie75, scores: model('Rawbie', 0, 60).scores };
+  const arrivals2 = { since: '2026-09-20', seen: { ...Object.fromEntries(before.map((m) => [m.id, null])), newbie: ARRIVED, rawbie: ARRIVED } };
+  const opened = advanceTitles({ ...preview, models: before, claims: [] }, { through: null, events: [] }, '2026-10-15', START);
+  const oct18 = advanceTitles({ ...preview, models: [...before, newbie, rawbie75], claims: [], arrivals: arrivals2 }, opened, '2026-10-18', START);
+  const d = { ...preview, models: [...before, newbie, rawbie60], claims: [], arrivals: arrivals2 };
+  const titles = advanceTitles(d, oct18, '2026-11-08', START);
+  expect(titles.events.at(-1)).toMatchObject({ kind: 'quiet', day: '2026-11-08', pending: ['rawbie'], waiting: [{ id: 'rawbie', why: 'did not beat #3' }] });
+  const errors = await open(page, pageFor({ ...d, daily: [], seasonStart: START, titles }, 'newcomers-v12-recheck'), '2026-11-08', '#belts');
+  const quiet = page.locator('#history li', { hasText: 'no title fight' }).first();
+  await expect(quiet).toContainText("Rawbie keeps its place in line, but it didn't beat #3 on tonight's scores.");
+  await expect(quiet).not.toContainText('has earned a title shot');
+  expect(errors).toEqual([]);
+});

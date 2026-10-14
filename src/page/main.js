@@ -1914,16 +1914,18 @@ function renderBelts() {
   const list = (ids) => ids.map(nameOf).join(ids.length > 2 ? ', ' : ' and ').replace(/, ([^,]+)$/, ' and $1');
   const quietText = (e) => {
     const WAIT = { 'no #3 contender': 'there is no #3 contender to beat yet', 'not comparable with #3': "it doesn't share 3 comparable rounds with the #3 contender", 'did not beat #3': "it didn't beat the #3 contender" };
-    const inLine = new Set(e.pending ?? []);
+    // newcomers with no index: those waiting for one, and qualifiers keeping their place in line (with tonight's recheck)
+    const AGAIN = { 'no #3 contender': "there's no #3 contender tonight", 'not comparable with #3': "it doesn't share 3 comparable rounds with tonight's #3", 'did not beat #3': "it didn't beat #3 on tonight's scores" };
+    const recheck = new Map((e.waiting ?? []).map((x) => [x.id, x.why])), inLine = new Set(e.pending ?? []);
     const waiting = [...(e.waiting ?? []).filter((x) => !inLine.has(x.id)).map((x) => `${nameOf(x.id)} has no Capabilities Index yet and waits for one: ${WAIT[x.why]}.`),
-      ...(e.pending ?? []).map((id) => `${nameOf(id)} has earned a title shot and keeps its place in line.`)].join(' ');
+      ...(e.pending ?? []).map((id) => (recheck.has(id) ? `${nameOf(id)} keeps its place in line, but ${AGAIN[recheck.get(id)]}.` : `${nameOf(id)} has earned a title shot and keeps its place in line.`))].join(' ');
     if (e.blocked) {
       const met = e.blocked.filter((x) => x.why === 'met').map((x) => x.id), far = e.blocked.filter((x) => x.why !== 'met').map((x) => x.id);
       if (!e.blocked.length) return ['No ranked contender to challenge.', waiting].join(' ').trim();
       return [met.length ? `${list(met)} already fought the champion on these scores.` : '', far.length ? `${list(far)} ${far.length > 1 ? "don't" : "doesn't"} share 3 comparable rounds with the champion.` : '', waiting].join(' ').trim();
     }
-    if (e.reason === 'vacant: fewer than two ranked contenders') return 'Vacant, and fewer than two ranked contenders are eligible.';
-    if (e.pairs) return `Vacant, and no two contenders can fight yet: ${e.pairs.met} pairs already met, ${e.pairs['not comparable']} share too few rounds.`;
+    if (e.reason === 'vacant: fewer than two ranked contenders') return ['Vacant, and fewer than two ranked contenders are eligible.', waiting].join(' ').trim();
+    if (e.pairs) return [`Vacant, and no two contenders can fight yet: ${e.pairs.met} pairs already met, ${e.pairs['not comparable']} share too few rounds.`, waiting].join(' ').trim();
     return '';
   };
   $('history').replaceChildren(...[...TITLES].reverse().filter((e) => historyBelt === 'all' || e.belt === historyBelt).map((e) => {
