@@ -1,3 +1,7 @@
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 import { advanceTitles, type TitleLog } from '../src/titles.ts';
 import type { BrawlData, Model } from '../src/types.ts';
@@ -138,3 +142,32 @@ for (const width of [1280, 390, 320]) {
     expect(errors).toEqual([]);
   });
 }
+
+/** The deploy's page build (scripts/build-site.ts) run on saved data, as after a failed refresh. */
+function siteFrom(saved: BrawlData, env: Record<string, string> = {}) {
+  const dir = mkdtempSync(join(tmpdir(), 'brawl-fallback-')), file = join(dir, 'saved.json');
+  writeFileSync(file, JSON.stringify(saved));
+  const run = spawnSync(resolve('node_modules/.bin/tsx'), ['scripts/build-site.ts'], { encoding: 'utf8', env: { ...process.env, BRAWL_DATA: file, BRAWL_OUT: join(dir, 'out'), ...env } });
+  expect(run.status, run.stderr).toBe(0);
+  return `file://${join(dir, 'out/index.html')}`;
+}
+
+test('a page built from saved data with the season on stays off when the code has no start date', async ({ page }) => {
+  const errors = await open(page, siteFrom(data({ titles: logOn('2026-10-18') })), '2026-10-18');
+  await expect(page.locator('#today')).toBeVisible();
+  await expect(page.locator('#newcomers')).toBeHidden();
+  await expect(page.locator('#tabs [data-tab="belts"]')).toBeHidden();
+  await expect(page.locator('body')).not.toContainText(/NEW CHALLENGER|TITLE NIGHT/);
+  expect(errors).toEqual([]);
+});
+
+test('a start postponed past the saved one keeps the season hidden until the new day', async ({ page }) => {
+  const url = siteFrom(data({ titles: logOn('2026-10-18') }), { BRAWL_SEASON_START: '2026-10-20' }); // saved data says Oct 14
+  await open(page, url, '2026-10-19');
+  await expect(page.locator('#newcomers')).toBeHidden();
+  await expect(page.locator('#tabs [data-tab="belts"]')).toBeHidden();
+  await page.goto('about:blank');
+  await open(page, url, '2026-10-20');
+  await expect(page.locator('#tabs [data-tab="belts"]')).toBeVisible();
+  await expect(card(page, 'Newbie')).toBeVisible();
+});

@@ -18,6 +18,17 @@ export const SEASON_START: string | null = null;
  * new-challenger announcements). The data build checks the day being booked; the page checks today.
  */
 export const seasonOn = (day: string, start: string | null | undefined = SEASON_START) => !!start && day >= start;
+/**
+ * The start day a page is built with: always this code's SEASON_START, never one saved in the data, so a page built
+ * from older data (after a failed refresh) can't switch the season on, or start it earlier, than the code says.
+ * `override` is for local previews only (BRAWL_SEASON_START): a YYYY-MM-DD day, or '' for off.
+ */
+export function pageSeasonStart(override?: string): string | null {
+  if (override === undefined) return SEASON_START;
+  if (override === '') return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(override) || Number.isNaN(Date.parse(override))) throw new Error(`BRAWL_SEASON_START must be YYYY-MM-DD or empty, not "${override}"`);
+  return override;
+}
 /** Every title fight uses these rounds, in this order. */
 export const CHAMPIONSHIP_ROUNDS = ['coding', 'math', 'science', 'facts', 'puzzles'];
 /** Title night: Sunday (UTC). */

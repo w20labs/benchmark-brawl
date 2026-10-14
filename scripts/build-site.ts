@@ -5,6 +5,7 @@
  */
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { build } from 'esbuild';
+import { pageSeasonStart } from '../src/titles.ts';
 
 const siteUrl = process.argv[2] || '';
 /** Anonymous, cookie-free visit counts for the published site (dashboard: benchmark-brawl.goatcounter.com). */
@@ -16,6 +17,9 @@ const OUT = process.env.BRAWL_OUT || '_site';
 // midnight UTC still has the next day's fight), but no further: no peeking at future matchups, and a smaller page.
 const full = JSON.parse(readFileSync(process.env.BRAWL_DATA || 'data/brawl.json', 'utf8'));
 const today = Date.now(), dayOf = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+// Season 2's start comes from this code, never from the data: the data may be older than the code (a failed refresh
+// deploys the last good data), and must not switch the season on. Local previews set BRAWL_SEASON_START.
+full.seasonStart = pageSeasonStart(process.env.BRAWL_SEASON_START);
 full.daily = (full.daily ?? []).filter((e: { day: string }) => e.day >= dayOf(today - 30 * 864e5) && e.day <= dayOf(today + 864e5));
 const data = JSON.stringify(full);
 const template = readFileSync('src/page/index.html', 'utf8');

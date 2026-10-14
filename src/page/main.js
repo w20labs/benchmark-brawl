@@ -1835,7 +1835,8 @@ $('claimCopy').addEventListener('click', () => { track('share-claims'); copyText
 // (so tonight's title fight is ready before midnight), so everything shown here is cut at today.
 const TODAY_DAY = NOW.toISOString().slice(0, 10);
 // Season 2 is on from its start day (UTC). Before that, or with no start date, nothing of it shows: no belts, no title
-// nights, no new-challenger announcements, whatever the data holds.
+// nights, no new-challenger announcements, whatever the data holds. The start day is stamped by the site build from
+// the code (SEASON_START), not taken from saved data.
 const SEASON_ON = seasonOn(TODAY_DAY, DATA.seasonStart);
 const TITLE_LOG = SEASON_ON ? DATA.titles?.events ?? [] : [];
 const TITLES = TITLE_LOG.filter((e) => e.day <= TODAY_DAY);
