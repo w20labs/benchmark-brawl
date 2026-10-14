@@ -1913,13 +1913,19 @@ function renderBelts() {
   const watch = (e, final) => h('button', { type: 'button', class: 'btn small', onclick: () => playTitle(e, final) }, '▶ Watch');
   const list = (ids) => ids.map(nameOf).join(ids.length > 2 ? ', ' : ' and ').replace(/, ([^,]+)$/, ' and $1');
   const quietText = (e) => {
+    const WAIT = { 'no #3 contender': 'there is no #3 contender to beat yet', 'not comparable with #3': "it doesn't share 3 comparable rounds with the #3 contender", 'did not beat #3': "it didn't beat the #3 contender" };
+    // newcomers with no index: those waiting for one, and qualifiers keeping their place in line (with tonight's recheck)
+    const AGAIN = { 'no #3 contender': "there's no #3 contender tonight", 'not comparable with #3': "it doesn't share 3 comparable rounds with tonight's #3", 'did not beat #3': "it didn't beat #3 on tonight's scores" };
+    const recheck = new Map((e.waiting ?? []).map((x) => [x.id, x.why])), inLine = new Set(e.pending ?? []);
+    const waiting = [...(e.waiting ?? []).filter((x) => !inLine.has(x.id)).map((x) => `${nameOf(x.id)} has no Capabilities Index yet and waits for one: ${WAIT[x.why]}.`),
+      ...(e.pending ?? []).map((id) => (recheck.has(id) ? `${nameOf(id)} keeps its place in line, but ${AGAIN[recheck.get(id)]}.` : `${nameOf(id)} has earned a title shot and keeps its place in line.`))].join(' ');
     if (e.blocked) {
       const met = e.blocked.filter((x) => x.why === 'met').map((x) => x.id), far = e.blocked.filter((x) => x.why !== 'met').map((x) => x.id);
-      if (!e.blocked.length) return 'No ranked contender to challenge.';
-      return [met.length ? `${list(met)} already fought the champion on these scores.` : '', far.length ? `${list(far)} ${far.length > 1 ? "don't" : "doesn't"} share 3 comparable rounds with the champion.` : ''].join(' ').trim();
+      if (!e.blocked.length) return ['No ranked contender to challenge.', waiting].join(' ').trim();
+      return [met.length ? `${list(met)} already fought the champion on these scores.` : '', far.length ? `${list(far)} ${far.length > 1 ? "don't" : "doesn't"} share 3 comparable rounds with the champion.` : '', waiting].join(' ').trim();
     }
-    if (e.reason === 'vacant: fewer than two ranked contenders') return 'Vacant, and fewer than two ranked contenders are eligible.';
-    if (e.pairs) return `Vacant, and no two contenders can fight yet: ${e.pairs.met} pairs already met, ${e.pairs['not comparable']} share too few rounds.`;
+    if (e.reason === 'vacant: fewer than two ranked contenders') return ['Vacant, and fewer than two ranked contenders are eligible.', waiting].join(' ').trim();
+    if (e.pairs) return [`Vacant, and no two contenders can fight yet: ${e.pairs.met} pairs already met, ${e.pairs['not comparable']} share too few rounds.`, waiting].join(' ').trim();
     return '';
   };
   $('history').replaceChildren(...[...TITLES].reverse().filter((e) => historyBelt === 'all' || e.belt === historyBelt).map((e) => {
@@ -1927,7 +1933,8 @@ function renderBelts() {
     if (e.kind === 'title' || e.kind === 'vacant') {
       const [a, b] = fightersOf(e);
       const chip = e.kind === 'vacant' ? ['change', 'Vacant belt won'] : e.winner === 1 ? ['change', 'New champion'] : e.winner === -1 ? ['draw', 'Draw, keeps belt'] : ['keep', 'Defends'];
-      return h('li', null, when, h('span', { class: 'what' }, `${a.name} vs ${newChallenger(e) ? '🆕 ' : ''}${b.name}`, h('span', { class: 't' }, `${belt}${newChallenger(e) ? ' · new challenger' : ''} · ${titleOutcome(e)}${e.decision === 'ko' ? ' by K.O.' : ''} · ${e.hp[0]}–${e.hp[1]} HP · rules ${e.rules}, data ${fmtDate(e.dataDate)}`)),
+      const how = e.qualified ? ` (no index yet: earned the shot by beating #3 ${nameOf(e.qualified.ref)})` : '';
+      return h('li', null, when, h('span', { class: 'what' }, `${a.name} vs ${newChallenger(e) ? '🆕 ' : ''}${b.name}`, h('span', { class: 't' }, `${belt}${newChallenger(e) ? ` · new challenger${how}` : ''} · ${titleOutcome(e)}${e.decision === 'ko' ? ' by K.O.' : ''} · ${e.hp[0]}–${e.hp[1]} HP · rules ${e.rules}, data ${fmtDate(e.dataDate)}`)),
         h('span', { class: 'acts' }, h('span', { class: `chip2 ${chip[0]}` }, chip[1]), watch(e)));
     }
     if (e.kind === 'opening') return h('li', null, when, h('span', { class: 'what' }, `${belt} belt opens: ${nameOf(e.champion)} wins the tournament`, h('span', { class: 't' }, `8 fighters: ${e.field.map((m) => m.name).join(', ')}`)),
