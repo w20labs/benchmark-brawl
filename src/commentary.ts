@@ -109,48 +109,70 @@ function resultLine(p: FightResult): string {
  */
 export type HankContext = {
   belt: string;
-  /** A title fight puts the champion first and the challenger second; a vacant belt has no champion. */
-  kind: 'title' | 'vacant';
+  /**
+   * A title fight puts the champion first and the challenger second. A vacant belt and an opening final have no
+   * champion yet; an opening final's belt goes to `crowned`, the tournament's recorded winner (a draw goes to the
+   * higher seed by tiebreak), so Hank never names a winner the record doesn't.
+   */
+  kind: 'title' | 'vacant' | 'opening';
   newChallenger: boolean;
-  /** Per round played, the move the arena shows (a tie shows both fighters' moves), and whether it's a signature move. */
-  moves: { name: string; signature: boolean }[];
+  crowned?: { k: 0 | 1; tiebreak: boolean };
 };
+/** The move the arena showed for a round (a tie shows both fighters' moves), and whether it was a signature move. */
+export type HankMove = { name: string; signature: boolean };
 export type HankCall = { intro: string; rounds: string[]; result: string };
 
-export function hankLines(p: FightResult, ctx: HankContext): HankCall {
-  const [a, b] = p.fighters.map((m) => m.name), name = (k: 0 | 1) => p.fighters[k].name;
-  let seed = 0; for (const ch of `${p.fighters[0].id}|${p.fighters[1].id}|${ctx.belt}`) seed = (Math.imul(seed, 31) + ch.charCodeAt(0)) >>> 0;
-  // the same fight always picks the same wording; neighbouring rounds rotate through the options
-  const pick = (options: string[], k: number) => options[(seed + k) % options.length];
-  const intro = ctx.kind === 'vacant'
+const hankSeed = (p: FightResult, ctx: HankContext) => { let x = 0; for (const ch of `${p.fighters[0].id}|${p.fighters[1].id}|${ctx.belt}`) x = (Math.imul(x, 31) + ch.charCodeAt(0)) >>> 0; return x; };
+/** The same fight always picks the same wording; neighbouring rounds rotate through the options. */
+const hankPick = (p: FightResult, ctx: HankContext) => { const seed = hankSeed(p, ctx); return (options: string[], k: number) => options[(seed + k) % options.length]; };
+
+/** Hank's intro and result, and a call for each round from the moves the arena showed (see hankRound). */
+export function hankLines(p: FightResult, ctx: HankContext, moves: HankMove[]): HankCall {
+  const [a, b] = p.fighters.map((m) => m.name), name = (k: 0 | 1) => p.fighters[k].name, pick = hankPick(p, ctx);
+  const intro = ctx.kind === 'opening'
+    ? pick([`It's the FINAL of the opening tournament! The very first ${ctx.belt} belt goes home tonight! ${a} versus ${b}! LET'S GET IT ON!`,
+      `One fight left in the opening tournament, folks, and the brand-new ${ctx.belt} belt is waiting! ${a}! ${b}!`], 0)
+    : ctx.kind === 'vacant'
     ? pick([`The ${ctx.belt} belt is VACANT, and somebody takes it home tonight! ${a} versus ${b}! LET'S GET IT ON!`,
       `Nobody holds the ${ctx.belt} belt, folks, and that ends TONIGHT! ${a}! ${b}! One belt!`], 0)
     : pick([`It's TITLE NIGHT at Overfit FC! The ${ctx.belt} belt is on the line! In this corner, the champion, ${a}! And ${ctx.newChallenger ? 'a NEW CHALLENGER' : 'the challenger'}, ${b}!`,
       `Ladies and gentlemen, the ${ctx.belt} championship! ${a} walks in with the belt, ${ctx.newChallenger ? `and a NEW CHALLENGER, ${b}, wants it` : `and ${b} wants it`}! LET'S GET IT ON!`], 0);
-  let trouble = false; // "the champ is in trouble" is said once, the first time the challenger takes the HP lead
-  const rounds = p.rounds.map((R, i) => {
-    // every call opens with the move, so a lab's signature move reads as well as a weapon
-    const move = `${ctx.moves[i]?.signature ? 'THE SIGNATURE MOVE! ' : ''}${ctx.moves[i]?.name || 'WHAT A SHOT'}!`;
-    if (R.winner == null) return pick(["Nothing on the board this round, folks! They're just staring each other down!", 'A quiet round! Catch your breath, everybody!'], i);
-    if (R.winner === -1) {
-      const graze = R.graze[0] === R.graze[1] ? `${R.graze[0]} HP each` : `${a} loses ${R.graze[0]}, ${b} ${R.graze[1]}`;
-      return pick([`${move} DOUBLE KNOCKDOWN! They BOTH connect! ${graze}!`, `${move} They hit each other at the SAME TIME! What a war! ${graze}!`], i);
-    }
-    const w = R.winner, l = (1 - w) as 0 | 1, d = R.dmg, hp = `${d} HP`;
-    let call: string;
-    if (R.hpAfter[l] === 0) call = pick([`${move} ${name(l)} IS DOWN! IT'S OVER! IT'S OVER!`, `${move} ${name(w)} hits for ${d} and ${name(l)} is FLAT on the canvas! GOOD NIGHT!`], i);
-    else if (d >= 20) call = pick([`${move} OH MY! ${name(w)} lands ${hp} on ${name(l)}!`, `${move} That's ${hp} GONE! Somebody check on ${name(l)}!`], i);
-    else if (d >= 4) call = pick([`${move} ${name(w)} connects for ${d}!`, `${move} ${name(w)} rocks ${name(l)}! ${hp}!`], i);
-    else call = pick([`${move} WHAT A SHOT by ${name(w)}! ${hp}! That one's gonna leave a MARK!`, `${move} ${name(w)} lands a DEVASTATING ${hp}!`], i);
-    if (ctx.kind === 'title' && w === 1 && !trouble && R.hpAfter[1] > R.hpAfter[0] && R.hpAfter[0] > 0) { trouble = true; call += ' The champ is in TROUBLE!'; }
-    return call;
-  });
   const how = p.ko ? 'By K.O.!' : p.decision === 'unanimous' ? 'By unanimous decision!' : p.decision === 'split' ? 'By SPLIT decision!' : '';
-  const belt = ctx.belt.toUpperCase();
-  const result = ctx.kind === 'vacant'
+  const belt = ctx.belt.toUpperCase(), crowned = ctx.crowned;
+  const result = ctx.kind === 'opening' && crowned
+    ? (crowned.tiebreak ? `A DRAW! The tiebreak decides it: ${name(crowned.k)}, the higher seed, wins the opening tournament and the FIRST ${ctx.belt} belt!` : `${name(crowned.k)} wins the opening tournament and the FIRST ${ctx.belt} belt! ${how}`)
+    : ctx.kind !== 'title'
     ? (p.winner === -1 ? `A DRAW! ${a} takes the ${ctx.belt} belt as the higher-ranked fighter!` : `${name(p.winner)} takes the VACANT ${ctx.belt} belt! ${how}`)
     : p.winner === -1 ? `A DRAW! And a draw means ${a} KEEPS the ${ctx.belt} belt!`
     : p.winner === 1 ? `AND THE NEW ${belt} CHAMPION... ${b}!!! ${how}`
     : `AND STILL ${belt} CHAMPION... ${a}!!! ${how}`;
-  return { intro, rounds, result };
+  return { intro, rounds: p.rounds.map((_, i) => hankRound(p, ctx, i, moves[i])), result };
+}
+
+/**
+ * Hank's call for round `i`, from the move the arena actually showed: made as the attack starts, so a change of
+ * motion settings mid-fight can't leave him calling a move that never played.
+ */
+export function hankRound(p: FightResult, ctx: HankContext, i: number, shown: HankMove | undefined): string {
+  const [a, b] = p.fighters.map((m) => m.name), name = (k: 0 | 1) => p.fighters[k].name, pick = hankPick(p, ctx), R = p.rounds[i];
+  // every call opens with the move, so a lab's signature move reads as well as a weapon
+  const move = `${shown?.signature ? 'THE SIGNATURE MOVE! ' : ''}${shown?.name || 'WHAT A SHOT'}!`;
+  if (R.winner == null) return pick(["Nothing on the board this round, folks! They're just staring each other down!", 'A quiet round! Catch your breath, everybody!'], i);
+  if (R.winner === -1) {
+    // a tie grazes both (never below 1 HP): a double hit, not a knockdown
+    const [g0, g1] = R.graze;
+    const graze = g0 === g1 ? (g0 ? `${g0} HP each!` : 'Neither one can go below 1 HP!')
+      : !g0 || !g1 ? `${g0 ? a : b} loses ${g0 || g1}, and ${g0 ? b : a} hangs on at 1 HP!` : `${a} loses ${g0}, ${b} ${g1}!`;
+    return pick([`${move} CROSSFIRE! They BOTH connect! ${graze}`, `${move} DOUBLE HIT! They tag each other at the SAME TIME! ${graze}`], i);
+  }
+  const w = R.winner, l = (1 - w) as 0 | 1, d = R.dmg, hp = `${d} HP`;
+  let call: string;
+  if (R.hpAfter[l] === 0) call = pick([`${move} ${name(l)} IS DOWN! IT'S OVER! IT'S OVER!`, `${move} ${name(w)} hits for ${d} and ${name(l)} is FLAT on the canvas! GOOD NIGHT!`], i);
+  else if (d >= 20) call = pick([`${move} OH MY! ${name(w)} lands ${hp} on ${name(l)}!`, `${move} That's ${hp} GONE! Somebody check on ${name(l)}!`], i);
+  else if (d >= 4) call = pick([`${move} ${name(w)} connects for ${d}!`, `${move} ${name(w)} rocks ${name(l)}! ${hp}!`], i);
+  else call = pick([`${move} WHAT A SHOT by ${name(w)}! ${hp}! That one's gonna leave a MARK!`, `${move} ${name(w)} lands a DEVASTATING ${hp}!`], i);
+  // said once: the first round the challenger takes the HP lead from the champion
+  const lead = (j: number) => p.rounds[j].hpAfter[1] > p.rounds[j].hpAfter[0] && p.rounds[j].hpAfter[0] > 0;
+  if (ctx.kind === 'title' && w === 1 && lead(i) && !p.rounds.slice(0, i).some((Q, j) => Q.winner === 1 && lead(j))) call += ' The champ is in TROUBLE!';
+  return call;
 }

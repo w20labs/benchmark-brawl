@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { hankLines, samLines, type HankContext } from '../src/commentary.ts';
+import { hankLines, hankRound, samLines, type HankContext, type HankMove } from '../src/commentary.ts';
 import { formatValue, planFight } from '../src/fight.ts';
 import { CHAMPIONSHIP_ROUNDS } from '../src/titles.ts';
 import type { BrawlData, Model, Score } from '../src/types.ts';
@@ -134,9 +134,9 @@ describe('Sigma Sam', () => {
 
 
 describe('Hype Hank', () => {
-  const hank = (a: Model, b: Model, ctx: Partial<HankContext> = {}) => {
+  const hank = (a: Model, b: Model, ctx: Partial<HankContext> = {}, moves?: HankMove[]) => {
     const p = planFight(real, a, b, CHAMPIONSHIP_ROUNDS);
-    return { p, call: hankLines(p, { belt: 'Undisputed', kind: 'title', newChallenger: false, moves: p.rounds.map(() => ({ name: 'PIANO DROP', signature: false })), ...ctx }) };
+    return { p, call: hankLines(p, { belt: 'Undisputed', kind: 'title', newChallenger: false, ...ctx }, moves ?? p.rounds.map(() => ({ name: 'PIANO DROP', signature: false }))) };
   };
   const numbers = (s: string) => (s.match(/\d+(\.\d+)?/g) ?? []).map(Number);
 
@@ -166,14 +166,44 @@ describe('Hype Hank', () => {
     expect(line(sam(a, b).lines, 'Coding')).toContain('A leads by 0.20 points');
   });
 
-  it('calls a tie a double knockdown, with the HP each loses', () => {
+  it('calls a tie a double hit, never a knockdown, with the HP each loses', () => {
     const { call } = hank(model('A', all(80)), model('B', all(80)));
-    expect(call.rounds[0]).toMatch(/DOUBLE KNOCKDOWN|SAME TIME/);
-    expect(call.rounds[0]).toContain('3 HP each');
+    expect(call.rounds[0]).toMatch(/CROSSFIRE!|DOUBLE HIT!/);
+    expect(call.rounds.join(' ')).not.toMatch(/KNOCKDOWN/i);
+    expect(call.rounds[0]).toContain('3 HP each!');
+  });
+
+  it("says when a tie can't take a fighter below 1 HP", () => {
+    // Coding takes B to 2 HP; Math's tie can only take 1; Science's tie then takes A 3 and B none
+    const { p, call } = hank(model('A', { ...all(80), swebench: S(90) }), model('B', { ...all(80), swebench: S(41) }));
+    expect(p.rounds[1].graze).toEqual([3, 1]);
+    expect(call.rounds[1]).toMatch(/A loses 3, B 1!$/);
+    expect(p.rounds[2].graze).toEqual([3, 0]);
+    expect(call.rounds[2]).toMatch(/A loses 3, and B hangs on at 1 HP!$/);
+    expect(numbers(call.rounds[2]).every((n) => n === 3 || n === 1)).toBe(true);
+  });
+
+  it('calls each round from the move actually thrown', () => {
+    const { p } = hank(model('A', all(80)), model('B', all(75)));
+    const ctx: HankContext = { belt: 'Undisputed', kind: 'title', newChallenger: false };
+    expect(hankRound(p, ctx, 0, { name: 'BOWLING BALL', signature: false })).toMatch(/^BOWLING BALL! /);
+    expect(hankRound(p, ctx, 0, { name: 'CONTEXT CRUSHER', signature: true })).toMatch(/^THE SIGNATURE MOVE! CONTEXT CRUSHER! /);
+  });
+
+  it("introduces an opening final with no champion, and crowns the tournament's recorded winner", () => {
+    const opening = (a: Model, b: Model, crowned: HankContext['crowned']) => hank(a, b, { kind: 'opening', crowned }).call;
+    const won = opening(model('Fixture 4', all(75)), model('Fixture 2', all(80)), { k: 1, tiebreak: false });
+    expect(won.intro).toContain('opening tournament');
+    expect(won.intro).not.toMatch(/champion|walks in with the belt/i);
+    expect(won.result).toBe('Fixture 2 wins the opening tournament and the FIRST Undisputed belt! By unanimous decision!');
+    // the review's repro: a drawn final that the higher seed wins by tiebreak, listed second
+    const drawn = opening(model('Fixture 4', all(80)), model('Fixture 2', all(80)), { k: 1, tiebreak: true });
+    expect(drawn.result).toBe('A DRAW! The tiebreak decides it: Fixture 2, the higher seed, wins the opening tournament and the FIRST Undisputed belt!');
+    expect([won, drawn].map((c) => [c.intro, ...c.rounds, c.result].join(' ')).join(' ')).not.toMatch(/KEEPS|STILL|TROUBLE|NEW .* CHAMPION/);
   });
 
   it('calls the K.O. and the signature move', () => {
-    const { p, call } = hank(model('A', { ...all(80), swebench: S(95) }), model('B', { ...all(80), swebench: S(30) }), { moves: [{ name: 'CONTEXT CRUSHER', signature: true }] });
+    const { p, call } = hank(model('A', { ...all(80), swebench: S(95) }), model('B', { ...all(80), swebench: S(30) }), {}, [{ name: 'CONTEXT CRUSHER', signature: true }]);
     expect(p.ko).toBe(true);
     expect(call.rounds[0]).toMatch(/^THE SIGNATURE MOVE! CONTEXT CRUSHER!/);
     expect(call.rounds[0]).toMatch(/B IS DOWN|B is FLAT/);

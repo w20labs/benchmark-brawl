@@ -6,7 +6,7 @@ import { drawMove, moveNameFor, startMove, updateMove } from './specials.js';
 import { brawlNumber, CLASSES, dailyBrawl, dailyFromEntry, FIRST_BRAWL_DAY, inClass, MAX_ROUNDS, MIN_ROUNDS, newChallengers, PRESETS, runTournament } from '../league.ts';
 import { BELTS, beltName, CHAMPIONSHIP_ROUNDS, fightersOf, seasonOn, standings, TITLE_NIGHT, titleNightBelt } from '../titles.ts';
 import { recentArrivals } from '../arrivals.ts';
-import { hankLines, samLines } from '../commentary.ts';
+import { hankLines, hankRound, samLines } from '../commentary.ts';
 
 /** @type {import('../types.ts').BrawlData} */
 const DATA = JSON.parse(document.getElementById('brawl-data').textContent);
@@ -554,7 +554,9 @@ function startFight(opts = {}) {
   // Sigma Sam calls Season 2 title fights: an opening line now, each round's once its hit lands, then the result.
   // Hype Hank calls each hit as it's thrown, so he's always a beat ahead of Sam
   F.sam = F.title && SEASON_ON ? samLines(DATA, plan, F.roundIds.map((id) => roundById.get(id)).filter(Boolean)) : null;
-  F.hank = F.sam ? hankLines(plan, { belt: beltName(F.title.belt), kind: F.title.kind === 'vacant' ? 'vacant' : 'title', newChallenger: newChallenger(F.title), moves: plan.rounds.map(moveOf) }) : null;
+  // (his round calls are made as each attack starts, from the move actually thrown; see enterPhase)
+  F.hankCtx = F.sam ? hankContext(F.title, plan) : null;
+  F.hank = F.hankCtx ? { ...hankLines(plan, F.hankCtx, []), rounds: [] } : null;
   say(F.sam?.[0].text ?? null);
   hype(F.hank?.intro ?? null);
   $('arena').classList.toggle('sam', !!F.sam);
@@ -621,11 +623,21 @@ function resultLine(R) {
   const by = R.bench.kind === 'price' ? `${(Math.max(...R.values) / Math.min(...R.values)).toFixed(1)}× cheaper` : `by ${R.points} point${R.points === 1 ? '' : 's'}`;
   return `${moveOf(R, F.plan.rounds.indexOf(R)).name}! ${w.name} ${by}${R.bench.kind === 'score' && R.margin == null ? ' (no margin published)' : ''} → −${R.dmg} HP`;
 }
-/** The move the arena shows for round `i`: the winner's weapon (or signature move), or both weapons in a tie. */
+/** Hank's context: an opening final's belt goes to the tournament's recorded winner, by tiebreak on a draw. */
+function hankContext(e, plan) {
+  const m = e.kind === 'opening' ? e.matches.at(-1) : null;
+  return { belt: beltName(e.belt), kind: e.kind === 'opening' || e.kind === 'vacant' ? e.kind : 'title', newChallenger: newChallenger(e),
+    crowned: m ? { k: m.winner === plan.fighters[0].id ? 0 : 1, tiebreak: m.tiebreak } : undefined };
+}
+/**
+ * The move the arena shows for round `i`: the winner's weapon (or signature move), or both weapons in a tie. Once the
+ * round's attack has started, it's the move actually thrown (F.moves); before that, the one it would throw now.
+ */
 function moveOf(R, i) {
+  if (F.moves?.[i]) return F.moves[i];
   if (R.winner === -1) return { name: R.tieStyles.map((st) => STYLE_NAMES[st]).join(' VS '), signature: false };
   if (R.winner == null) return { name: '', signature: false };
-  const signature = F.special?.[R.winner] === i;
+  const signature = F.special?.[R.winner] === i && !reduced;
   return { name: signature ? moveNameFor(F.plan.fighters[R.winner].org) : (STYLE_NAMES[R.style] || weaponName(R.weapon)), signature };
 }
 function enterPhase() {
@@ -639,7 +651,12 @@ function enterPhase() {
     F.pose = ['idle', 'idle'];
     sfx.bell();
   } else if (name === 'reveal') banner('', '');
-  else if (name === 'attack') { F.fx = startFx(R); roundBar(R, R.values.map((v) => formatValue(R.bench, v)), resultLine(R)); if (F.hank) hype(F.hank.rounds[F.i]); }
+  else if (name === 'attack') {
+    F.fx = startFx(R);
+    (F.moves ??= [])[F.i] = { name: F.fx.title.toUpperCase(), signature: F.fx.kind === 'special' }; // what the canvas throws
+    roundBar(R, R.values.map((v) => formatValue(R.bench, v)), resultLine(R));
+    if (F.hank) hype(F.hank.rounds[F.i] = hankRound(F.plan, F.hankCtx, F.i, F.moves[F.i]));
+  }
   else if (name === 'after') {
     banner('', '');
     if (F.sam) say(F.sam[F.i + 1].text);
@@ -1434,7 +1451,8 @@ function showResult() {
   $('share').textContent = F.daily ? dailyText(p, rec, F.daily) : F.title ? titleText(F.title, p) : shareText();
   $('samCard').hidden = !F.sam;
   // Hank's call above each of Sam's lines: the intro over Sam's opener, each hit over its round, the result over his
-  const hankFor = (i) => (!F.hank ? null : i === 0 ? F.hank.intro : i <= p.rounds.length ? F.hank.rounds[i - 1] : i === F.sam.length - 1 ? F.hank.result : null);
+  // (rounds a skip jumped over get their call from the move they would have thrown)
+  const hankFor = (i) => (!F.hank ? null : i === 0 ? F.hank.intro : i <= p.rounds.length ? F.hank.rounds[i - 1] ?? hankRound(p, F.hankCtx, i - 1, moveOf(p.rounds[i - 1], i - 1)) : i === F.sam.length - 1 ? F.hank.result : null);
   $('samList').replaceChildren(...(F.sam ?? []).map((l, i) => h('li', null,
     hankFor(i) ? h('span', { class: 'hank-q' }, h('b', null, 'HANK '), hankFor(i)) : null,
     h('span', { class: 'sam-t' }, l.round ? h('span', { class: 'rn' }, `${l.round}: `) : null, l.text))));
