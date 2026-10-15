@@ -630,14 +630,15 @@ function hankContext(e, plan) {
     crowned: m ? { k: m.winner === plan.fighters[0].id ? 0 : 1, tiebreak: m.tiebreak } : undefined };
 }
 /**
- * The move the arena shows for round `i`: the winner's weapon (or signature move), or both weapons in a tie. Once the
- * round's attack has started, it's the move actually thrown (F.moves); before that, the one it would throw now.
+ * The move named for round `i`: the winner's weapon (or signature move), or both weapons in a tie. In a fight Hank
+ * calls, it's the move actually thrown once the round's attack has started (F.moves), and before that the one it
+ * would throw now. Other fights keep naming the planned move, as before Season 2.
  */
 function moveOf(R, i) {
-  if (F.moves?.[i]) return F.moves[i];
+  if (F.hank && F.moves?.[i]) return F.moves[i];
   if (R.winner === -1) return { name: R.tieStyles.map((st) => STYLE_NAMES[st]).join(' VS '), signature: false };
   if (R.winner == null) return { name: '', signature: false };
-  const signature = F.special?.[R.winner] === i && !reduced;
+  const signature = F.special?.[R.winner] === i && !(F.hank && reduced);
   return { name: signature ? moveNameFor(F.plan.fighters[R.winner].org) : (STYLE_NAMES[R.style] || weaponName(R.weapon)), signature };
 }
 function enterPhase() {
@@ -653,7 +654,7 @@ function enterPhase() {
   } else if (name === 'reveal') banner('', '');
   else if (name === 'attack') {
     F.fx = startFx(R);
-    (F.moves ??= [])[F.i] = { name: F.fx.title.toUpperCase(), signature: F.fx.kind === 'special' }; // what the canvas throws
+    if (F.hank) (F.moves ??= [])[F.i] = { name: F.fx.title.toUpperCase(), signature: F.fx.kind === 'special' }; // what the canvas throws
     roundBar(R, R.values.map((v) => formatValue(R.bench, v)), resultLine(R));
     if (F.hank) hype(F.hank.rounds[F.i] = hankRound(F.plan, F.hankCtx, F.i, F.moves[F.i]));
   }
