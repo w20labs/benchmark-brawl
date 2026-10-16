@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-15T06:50:57.633Z",
+ "generatedAt": "2026-10-16T06:51:04.941Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -1232,8 +1232,8 @@
      "setting": "high"
     },
     "chess": {
-     "v": 47,
-     "se": 5.02,
+     "v": 66,
+     "se": 4.76,
      "setting": "high"
     }
    }
@@ -1788,7 +1788,7 @@
    "name": "GLM-5.3",
    "org": "Z.ai (Zhipu AI)",
    "released": "2026-08-14",
-   "open": false,
+   "open": true,
    "eci": 155.91,
    "price": {
     "input": 1.4,
@@ -3642,6 +3642,16 @@
    "eci": 146.9,
    "price": null,
    "scores": {
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "high"
+    },
+    "frontiermath": {
+     "v": 58.6,
+     "se": 2.92,
+     "setting": "high"
+    },
     "aime": {
      "v": 98.3,
      "se": 0.64,
@@ -3660,6 +3670,11 @@
     "mystery": {
      "v": 17,
      "se": 3.78,
+     "setting": "high"
+    },
+    "chess": {
+     "v": 33,
+     "se": 4.73,
      "setting": "high"
     }
    }
@@ -4248,41 +4263,38 @@
    }
   },
   {
-   "id": "claudehaiku45",
-   "name": "Claude Haiku 4.5",
-   "org": "Anthropic",
-   "released": "2025-10-15",
-   "open": false,
-   "eci": 142.4,
-   "price": {
-    "input": 1,
-    "output": 5,
-    "blended": 2,
-    "provider": "anthropic",
-    "modelsDevId": "claude-haiku-4-5"
-   },
+   "id": "musesparkopen",
+   "name": "Muse Spark Open",
+   "org": "Meta AI",
+   "released": "2026-10-15",
+   "open": true,
+   "eci": null,
+   "price": null,
    "scores": {
+    "frontiermath-t4": {
+     "v": 31.7,
+     "se": 7.36,
+     "setting": "xhigh"
+    },
+    "frontiermath": {
+     "v": 69.8,
+     "se": 2.72,
+     "setting": "xhigh"
+    },
     "aime": {
-     "v": 66.7,
-     "se": 7.11,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FneZvEzLi6yeL9z5KjGef7H.eval"
+     "v": 98.1,
+     "se": 1.25,
+     "setting": "xhigh"
     },
     "gpqa": {
-     "v": 71.2,
-     "se": 3.23,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGEaAdb9UmoUFbEtBx7WzAR.eval"
+     "v": 88.6,
+     "se": 1.87,
+     "setting": "xhigh"
     },
     "simpleqa": {
-     "v": 13.2,
-     "se": 1.07,
-     "setting": "default"
-    },
-    "chess": {
-     "v": 8,
-     "se": 2.73,
-     "setting": "59K"
+     "v": 56.6,
+     "se": 1.57,
+     "setting": "xhigh"
     }
    }
   }
@@ -7219,6 +7231,126 @@
      }
     }
    ]
+  },
+  {
+   "no": 18,
+   "day": "2026-10-30",
+   "a": "claudesonnet55",
+   "b": "gpt61sol",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudesonnet55",
+     "name": "Claude Sonnet 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-28",
+     "open": false,
+     "eci": 164.45,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "anthropic",
+      "modelsDevId": "claude-sonnet-5-5"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 19.9,
+       "se": 0.82,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 80.5,
+       "se": 6.27,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 88.8,
+       "se": 1.87,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.6,
+       "se": 1.37,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 46.5,
+       "se": 1.58,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 65,
+       "se": 4.79,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt61sol",
+     "name": "GPT-6.1 Sol",
+     "org": "OpenAI",
+     "released": "2026-09-29",
+     "open": false,
+     "eci": 166.32,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-sol"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 38.3,
+       "se": 1.08,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.4,
+       "se": 1.38,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 73.9,
+       "se": 1.39,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 80,
+       "se": 4.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -7298,7 +7430,8 @@
    "qwen35flashhosted35ba3b": null,
    "qwen36flash": null,
    "gemma431bit": null,
-   "claudehaiku45": null
+   "claudehaiku45": null,
+   "musesparkopen": "2026-10-16"
   }
  },
  "titles": {
