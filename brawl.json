@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-18T06:46:10.969Z",
+ "generatedAt": "2026-10-19T07:04:46.356Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -7519,6 +7519,131 @@
        "v": 25,
        "se": 4.35,
        "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 21,
+   "day": "2026-11-02",
+   "a": "gpt6astra",
+   "b": "gemini4argon",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt6astra",
+     "name": "GPT-6 Astra",
+     "org": "OpenAI",
+     "released": "2026-09-03",
+     "open": false,
+     "eci": 166.41,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "openai",
+      "modelsDevId": "gpt-6-astra"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 74.1,
+       "se": 1.46,
+       "setting": "xhigh"
+      },
+      "mirrorcode": {
+       "v": 46.7,
+       "se": 11.86,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 42.2,
+       "se": 1.01,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 97.6,
+       "se": 2.4,
+       "setting": "high"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 95.8,
+       "se": 1.37,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 75.6,
+       "se": 1.36,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 84,
+       "se": 3.68,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gemini4argon",
+     "name": "Gemini 4 Argon",
+     "org": "Google DeepMind",
+     "released": "2026-09-30",
+     "open": false,
+     "eci": 164.56,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "google",
+      "modelsDevId": "gemini-4-argon"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 78,
+       "se": 6.54,
+       "setting": "high"
+      },
+      "frontiermath": {
+       "v": 86,
+       "se": 2.06,
+       "setting": "high"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "high"
+      },
+      "gpqa": {
+       "v": 96.4,
+       "se": 1.19,
+       "setting": "high"
+      },
+      "simpleqa": {
+       "v": 76,
+       "se": 1.35,
+       "setting": "high"
+      },
+      "mystery": {
+       "v": 64,
+       "se": 4.82,
+       "setting": "high"
       }
      }
     }
