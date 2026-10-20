@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-19T07:04:46.356Z",
+ "generatedAt": "2026-10-20T06:50:18.395Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -236,7 +236,7 @@
     },
     "weirdml": {
      "v": 31.2,
-     "se": 0.63,
+     "se": 0.62,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -303,7 +303,7 @@
     },
     "weirdml": {
      "v": 42.2,
-     "se": 1.01,
+     "se": 0.99,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -360,7 +360,7 @@
    "scores": {
     "weirdml": {
      "v": 38.3,
-     "se": 1.08,
+     "se": 1.06,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -422,7 +422,7 @@
     },
     "weirdml": {
      "v": 26,
-     "se": 0.71,
+     "se": 0.69,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -472,6 +472,11 @@
     "modelsDevId": "gemini-4-argon"
    },
    "scores": {
+    "weirdml": {
+     "v": 20.2,
+     "se": 0.9,
+     "setting": "high"
+    },
     "frontiermath-t4": {
      "v": 78,
      "se": 6.54,
@@ -526,7 +531,7 @@
    "scores": {
     "weirdml": {
      "v": 19.9,
-     "se": 0.82,
+     "se": 0.81,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -588,7 +593,7 @@
     },
     "weirdml": {
      "v": 19,
-     "se": 0.9,
+     "se": 0.86,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -647,7 +652,7 @@
    "scores": {
     "weirdml": {
      "v": 19.7,
-     "se": 0.68,
+     "se": 0.66,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -714,7 +719,7 @@
     },
     "weirdml": {
      "v": 15.6,
-     "se": 1.08,
+     "se": 1.04,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -785,7 +790,7 @@
     },
     "weirdml": {
      "v": 15,
-     "se": 0.72,
+     "se": 0.7,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -946,6 +951,11 @@
     "modelsDevId": "claude-haiku-5-5"
    },
    "scores": {
+    "weirdml": {
+     "v": 11.7,
+     "se": 0.81,
+     "setting": "xhigh"
+    },
     "frontiermath-t4": {
      "v": 46.3,
      "se": 7.88,
@@ -1135,8 +1145,8 @@
      "setting": "max"
     },
     "weirdml": {
-     "v": 7.3,
-     "se": 0.79,
+     "v": 7.5,
+     "se": 0.7,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -1260,7 +1270,7 @@
     },
     "weirdml": {
      "v": 7.4,
-     "se": 0.53,
+     "se": 0.51,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -1370,8 +1380,8 @@
    "price": null,
    "scores": {
     "weirdml": {
-     "v": 6.9,
-     "se": 0.71,
+     "v": 6.7,
+     "se": 0.66,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1556,7 +1566,7 @@
     },
     "weirdml": {
      "v": 5.2,
-     "se": 0.74,
+     "se": 0.71,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1683,7 +1693,7 @@
    "scores": {
     "weirdml": {
      "v": 7.9,
-     "se": 0.53,
+     "se": 0.52,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1852,7 +1862,7 @@
    "scores": {
     "weirdml": {
      "v": 5.9,
-     "se": 0.96,
+     "se": 0.91,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -2256,8 +2266,8 @@
    },
    "scores": {
     "weirdml": {
-     "v": 8.6,
-     "se": 0.68,
+     "v": 8.5,
+     "se": 0.62,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -2493,6 +2503,11 @@
      "se": 2,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9owdbpnWJ5pkQQC3GWKP5L.eval"
+    },
+    "weirdml": {
+     "v": 5,
+     "se": 0.5,
+     "setting": "xhigh"
     },
     "frontiermath-t4": {
      "v": 31.7,
@@ -2960,7 +2975,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5"
+    "modelsDevId": "claude-opus-4-5-20251101"
    },
    "scores": {
     "swebench": {
@@ -2971,7 +2986,7 @@
     },
     "weirdml": {
      "v": 6.5,
-     "se": 0.82,
+     "se": 0.79,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -3391,6 +3406,11 @@
     "modelsDevId": "thinkingmachines/Inkling"
    },
    "scores": {
+    "weirdml": {
+     "v": 3.9,
+     "se": 0.49,
+     "setting": "xhigh"
+    },
     "frontiermath-t4": {
      "v": 4.9,
      "se": 3.41,
@@ -3606,6 +3626,11 @@
    "eci": 146.9,
    "price": null,
    "scores": {
+    "weirdml": {
+     "v": 4.4,
+     "se": 0.73,
+     "setting": "high"
+    },
     "frontiermath-t4": {
      "v": 26.8,
      "se": 7.01,
@@ -3987,9 +4012,9 @@
    "open": true,
    "eci": 144.11,
    "price": {
-    "input": 0.248,
-    "output": 1.485,
-    "blended": 0.55725,
+    "input": 0.375,
+    "output": 2.25,
+    "blended": 0.84375,
     "provider": "alibaba",
     "modelsDevId": "qwen3.6-35b-a3b"
    },
@@ -4112,9 +4137,9 @@
    "open": false,
    "eci": 143.05,
    "price": {
-    "input": 0.1875,
-    "output": 1.125,
-    "blended": 0.421875,
+    "input": 0.25,
+    "output": 1.5,
+    "blended": 0.5625,
     "provider": "alibaba",
     "modelsDevId": "qwen3.6-flash"
    },
@@ -4217,6 +4242,42 @@
      "v": 56.6,
      "se": 1.57,
      "setting": "xhigh"
+    }
+   }
+  },
+  {
+   "id": "musewonder",
+   "name": "Muse Wonder",
+   "org": "Meta AI",
+   "released": "2026-10-12",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "weirdml": {
+     "v": 15.2,
+     "se": 0.62,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 70.7,
+     "se": 7.19,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 82.1,
+     "se": 2.27,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 99.4,
+     "se": 0.39,
+     "setting": "max"
+    },
+    "mystery": {
+     "v": 51,
+     "se": 5.02,
+     "setting": "max"
     }
    }
   }
@@ -7648,6 +7709,131 @@
      }
     }
    ]
+  },
+  {
+   "no": 22,
+   "day": "2026-11-03",
+   "a": "deepseekv41flash",
+   "b": "claudeopus47",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "deepseekv41flash",
+     "name": "DeepSeek V4.1 Flash",
+     "org": "DeepSeek",
+     "released": "2026-09-09",
+     "open": true,
+     "eci": 155.57,
+     "price": null,
+     "scores": {
+      "weirdml": {
+       "v": 5.9,
+       "se": 0.91,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 26.8,
+       "se": 7.01,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 67.4,
+       "se": 2.78,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 0.64,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 89.8,
+       "se": 1.73,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 42.9,
+       "se": 1.57,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 43,
+       "se": 4.98,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudeopus47",
+     "name": "Claude Opus 4.7",
+     "org": "Anthropic",
+     "released": "2026-04-16",
+     "open": false,
+     "eci": 156.32,
+     "price": {
+      "input": 5,
+      "output": 25,
+      "blended": 10,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-4-7"
+     },
+     "scores": {
+      "swebench": {
+       "v": 83.5,
+       "se": 1.69,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnCmGWWMBip2s9AVEZNYXDX.eval"
+      },
+      "mirrorcode": {
+       "v": 31.1,
+       "se": 9.04,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 31.7,
+       "se": 7.36,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FP4LXQ9PyDDziEANMB5jVRd.eval"
+      },
+      "frontiermath": {
+       "v": 70.2,
+       "se": 2.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZkNQ7GER7Mc9FSPmpUzgKH.eval"
+      },
+      "aime": {
+       "v": 97.8,
+       "se": 2.2,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjyCZnpXG2bh9G43X8pT75m.eval"
+      },
+      "gpqa": {
+       "v": 90.2,
+       "se": 1.85,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVJezHrJ5YPCbpui8pZgcJg.eval"
+      },
+      "simpleqa": {
+       "v": 51.7,
+       "se": 1.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2c4rvmf5N7QXTugrFLMZ83.eval"
+      },
+      "mystery": {
+       "v": 28,
+       "se": 4.51,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -7728,7 +7914,8 @@
    "qwen36flash": null,
    "gemma431bit": null,
    "claudehaiku45": null,
-   "musesparkopen": "2026-10-16"
+   "musesparkopen": "2026-10-16",
+   "musewonder": "2026-10-20"
   }
  },
  "titles": {
