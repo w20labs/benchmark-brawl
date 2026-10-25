@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-24T06:47:24.201Z",
+ "generatedAt": "2026-10-25T06:47:22.644Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3004,11 +3004,11 @@
    "open": true,
    "eci": 150.32,
    "price": {
-    "input": 0.58,
-    "output": 1.44,
-    "blended": 0.795,
+    "input": 0.3,
+    "output": 1.2,
+    "blended": 0.525,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
    },
    "scores": {
     "frontiermath-t4": {
@@ -8404,6 +8404,143 @@
       "mystery": {
        "v": 28,
        "se": 4.51,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 27,
+   "day": "2026-11-08",
+   "a": "gpt55",
+   "b": "claudeopus48",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt55",
+     "name": "GPT-5.5",
+     "org": "OpenAI",
+     "released": "2026-04-23",
+     "open": false,
+     "eci": 159.68,
+     "price": {
+      "input": 5,
+      "output": 30,
+      "blended": 11.25,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.5"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 67,
+       "se": 3.3,
+       "setting": "xhigh"
+      },
+      "swebench": {
+       "v": 80.6,
+       "se": 1.8,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLbhPRqUkXrs5KJ7vyT4CR7.eval"
+      },
+      "mirrorcode": {
+       "v": 10,
+       "se": 6.04,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 72.5,
+       "se": 7.15,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 85.3,
+       "se": 2.1,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdP6L7ViZSdcTiWxooLCTUh.eval"
+      },
+      "gpqa": {
+       "v": 94,
+       "se": 1.55,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFUv4EUwR78nAsdGbiwiLEr.eval"
+      },
+      "simpleqa": {
+       "v": 63,
+       "se": 1.53,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTijCafTTJUFrJ6jPGvBbgq.eval"
+      },
+      "mystery": {
+       "v": 56,
+       "se": 4.99,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "claudeopus48",
+     "name": "Claude Opus 4.8",
+     "org": "Anthropic",
+     "released": "2026-05-28",
+     "open": false,
+     "eci": 159.01,
+     "price": {
+      "input": 5,
+      "output": 25,
+      "blended": 10,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-4-8"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 59,
+       "se": 0.9,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 56.1,
+       "se": 7.85,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJiqgqBTfkGx797uowZgJbk.eval"
+      },
+      "frontiermath": {
+       "v": 80,
+       "se": 2.37,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVmgtgKMwEqc54f3jA7auP.eval"
+      },
+      "aime": {
+       "v": 98.3,
+       "se": 1.41,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 91,
+       "se": 1.92,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 53,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FViC6pxQZUVS3E9M9iEubF7.eval"
+      },
+      "mystery": {
+       "v": 36,
+       "se": 4.82,
        "setting": "max"
       }
      }
