@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-25T06:47:22.644Z",
+ "generatedAt": "2026-10-26T07:06:06.492Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -8541,6 +8541,126 @@
       "mystery": {
        "v": 36,
        "se": 4.82,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 28,
+   "day": "2026-11-09",
+   "a": "deepseekv41flash1017",
+   "b": "claudeopus55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "deepseekv41flash1017",
+     "name": "DeepSeek V4.1 Flash 1017",
+     "org": "DeepSeek",
+     "released": "2026-10-17",
+     "open": true,
+     "eci": null,
+     "price": {
+      "input": 0.15,
+      "output": 0.6,
+      "blended": 0.2625,
+      "provider": "deepseek",
+      "modelsDevId": "deepseek-flash"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 71.2,
+       "se": 2.69,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 93.2,
+       "se": 1.57,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 42.5,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 49,
+       "se": 5.02,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudeopus55",
+     "name": "Claude Opus 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-22",
+     "open": false,
+     "eci": 168.83,
+     "price": {
+      "input": 4,
+      "output": 20,
+      "blended": 8,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 77.4,
+       "se": 8.31,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 31.2,
+       "se": 0.62,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 95,
+       "se": 4.12,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 91.2,
+       "se": 1.68,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.6,
+       "se": 1.94,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 72.2,
+       "se": 1.42,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 71,
+       "se": 4.56,
        "setting": "max"
       }
      }
