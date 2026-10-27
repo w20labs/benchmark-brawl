@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-26T07:06:06.492Z",
+ "generatedAt": "2026-10-27T06:53:09.259Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3004,11 +3004,11 @@
    "open": true,
    "eci": 150.32,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small"
    },
    "scores": {
     "frontiermath-t4": {
@@ -3115,7 +3115,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5"
+    "modelsDevId": "claude-opus-4-5-20251101"
    },
    "scores": {
     "swebench": {
@@ -8661,6 +8661,130 @@
       "mystery": {
        "v": 71,
        "se": 4.56,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 29,
+   "day": "2026-11-10",
+   "a": "glm53",
+   "b": "claudesonnet5",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "glm53",
+     "name": "GLM-5.3",
+     "org": "Z.ai (Zhipu AI)",
+     "released": "2026-08-14",
+     "open": true,
+     "eci": 155.99,
+     "price": {
+      "input": 1.4,
+      "output": 4.4,
+      "blended": 2.15,
+      "provider": "zai",
+      "modelsDevId": "glm-5.3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 69,
+       "se": 1.54,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 29.3,
+       "se": 7.19,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 68.8,
+       "se": 2.75,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 91.1,
+       "se": 3.45,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.9,
+       "se": 1.59,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 41,
+       "se": 1.56,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTY8R8FV7zCwByEipkqyg2P.eval"
+      },
+      "mystery": {
+       "v": 33,
+       "se": 4.73,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudesonnet5",
+     "name": "Claude Sonnet 5",
+     "org": "Anthropic",
+     "released": "2026-06-30",
+     "open": false,
+     "eci": 156.88,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "anthropic",
+      "modelsDevId": "claude-sonnet-5"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 53.8,
+       "se": 2.16,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 29.3,
+       "se": 7.19,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbqiVinHXFcgyFGPstJwXJN.eval"
+      },
+      "frontiermath": {
+       "v": 65.6,
+       "se": 2.82,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FV6YuGpcu8MCbJNXKoJMA6b.eval"
+      },
+      "aime": {
+       "v": 94.7,
+       "se": 2.26,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 90.5,
+       "se": 1.78,
+       "setting": "xhigh"
+      },
+      "simpleqa": {
+       "v": 33.7,
+       "se": 1.5,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLPo74T9L3CawnKX5LLUrSZ.eval"
+      },
+      "mystery": {
+       "v": 35,
+       "se": 4.79,
        "setting": "max"
       }
      }
