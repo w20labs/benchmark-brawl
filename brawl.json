@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-27T06:53:09.259Z",
+ "generatedAt": "2026-10-28T06:40:01.391Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3008,7 +3008,7 @@
     "output": 1.44,
     "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144"
    },
    "scores": {
     "frontiermath-t4": {
@@ -4283,6 +4283,53 @@
      "v": 12,
      "se": 3.27,
      "setting": "default"
+    }
+   }
+  },
+  {
+   "id": "gpt61terra",
+   "name": "GPT-6.1 Terra",
+   "org": "OpenAI",
+   "released": "2026-10-26",
+   "open": false,
+   "eci": null,
+   "price": {
+    "input": 1,
+    "output": 5,
+    "blended": 2,
+    "provider": "openai",
+    "modelsDevId": "gpt-6.1-terra"
+   },
+   "scores": {
+    "frontiermath-t4": {
+     "v": 92.7,
+     "se": 4.12,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 90.9,
+     "se": 1.71,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "max"
+    },
+    "gpqa": {
+     "v": 94.3,
+     "se": 1.49,
+     "setting": "max"
+    },
+    "simpleqa": {
+     "v": 57.3,
+     "se": 1.56,
+     "setting": "max"
+    },
+    "mystery": {
+     "v": 74,
+     "se": 4.41,
+     "setting": "max"
     }
    }
   },
@@ -8790,6 +8837,129 @@
      }
     }
    ]
+  },
+  {
+   "no": 30,
+   "day": "2026-11-11",
+   "a": "gemini37flash",
+   "b": "claudehaiku55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gemini37flash",
+     "name": "Gemini 3.7 Flash",
+     "org": "Google DeepMind",
+     "released": "2026-08-13",
+     "open": false,
+     "eci": 157.97,
+     "price": {
+      "input": 0.75,
+      "output": 3.75,
+      "blended": 1.5,
+      "provider": "google",
+      "modelsDevId": "gemini-3.7-flash"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 65.5,
+       "se": 1.57,
+       "setting": "medium"
+      },
+      "frontiermath-t4": {
+       "v": 36.6,
+       "se": 7.62,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKptKXK5nE2Ns2WbiaSSnbc.eval"
+      },
+      "frontiermath": {
+       "v": 71.6,
+       "se": 2.68,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaxMdgNDC8UYYLnZYLHZpF5.eval"
+      },
+      "aime": {
+       "v": 97.2,
+       "se": 1.86,
+       "setting": "high"
+      },
+      "gpqa": {
+       "v": 94.8,
+       "se": 1.35,
+       "setting": "high"
+      },
+      "simpleqa": {
+       "v": 69.2,
+       "se": 1.46,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F84ARuGyhQsjgh8umRmBvas.eval"
+      },
+      "mystery": {
+       "v": 37,
+       "se": 4.85,
+       "setting": "high"
+      }
+     }
+    },
+    {
+     "id": "claudehaiku55",
+     "name": "Claude Haiku 5.5",
+     "org": "Anthropic",
+     "released": "2026-10-07",
+     "open": false,
+     "eci": 159.32,
+     "price": {
+      "input": 0.1,
+      "output": 0.5,
+      "blended": 0.2,
+      "provider": "anthropic",
+      "modelsDevId": "claude-haiku-5-5"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 11.7,
+       "se": 0.81,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 75.1,
+       "se": 2.57,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 98.9,
+       "se": 0.54,
+       "setting": "xhigh"
+      },
+      "gpqa": {
+       "v": 89.6,
+       "se": 1.98,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 23.8,
+       "se": 1.35,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 30,
+       "se": 4.61,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -8872,7 +9042,8 @@
    "claudehaiku45": null,
    "musesparkopen": "2026-10-16",
    "musewonder": "2026-10-20",
-   "deepseekv41flash1017": "2026-10-22"
+   "deepseekv41flash1017": "2026-10-22",
+   "gpt61terra": "2026-10-28"
   }
  },
  "titles": {
