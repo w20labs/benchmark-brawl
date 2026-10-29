@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-28T06:40:01.391Z",
+ "generatedAt": "2026-10-29T06:40:05.216Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -236,7 +236,7 @@
     },
     "weirdml": {
      "v": 31.2,
-     "se": 0.62,
+     "se": 0.61,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -422,7 +422,7 @@
     },
     "weirdml": {
      "v": 26,
-     "se": 0.69,
+     "se": 0.68,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -478,8 +478,8 @@
      "setting": "high"
     },
     "weirdml": {
-     "v": 20.2,
-     "se": 0.9,
+     "v": 20.1,
+     "se": 0.79,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -724,7 +724,7 @@
     },
     "weirdml": {
      "v": 15.6,
-     "se": 1.04,
+     "se": 1.03,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1065,7 +1065,7 @@
    "scores": {
     "weirdml": {
      "v": 11.7,
-     "se": 0.81,
+     "se": 0.8,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1185,6 +1185,11 @@
      "se": 1.57,
      "setting": "medium"
     },
+    "mirrorcode": {
+     "v": 41.1,
+     "se": 12.16,
+     "setting": "high"
+    },
     "frontiermath-t4": {
      "v": 36.6,
      "se": 7.62,
@@ -1247,7 +1252,7 @@
     },
     "weirdml": {
      "v": 7.5,
-     "se": 0.7,
+     "se": 0.69,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -1311,7 +1316,7 @@
     },
     "weirdml": {
      "v": 7.4,
-     "se": 0.51,
+     "se": 0.5,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -1668,9 +1673,14 @@
     "modelsDevId": "gpt-6-luna"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 26.7,
+     "se": 9.03,
+     "setting": "max"
+    },
     "weirdml": {
      "v": 7.9,
-     "se": 0.52,
+     "se": 0.51,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -1729,6 +1739,11 @@
      "v": 67.5,
      "se": 1.16,
      "setting": "medium"
+    },
+    "mirrorcode": {
+     "v": 41.1,
+     "se": 11.02,
+     "setting": "xhigh"
     },
     "frontiermath-t4": {
      "v": 31.7,
@@ -1792,7 +1807,7 @@
     },
     "weirdml": {
      "v": 5.2,
-     "se": 0.71,
+     "se": 0.7,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -2464,6 +2479,11 @@
      "se": 1.16,
      "setting": "high"
     },
+    "mirrorcode": {
+     "v": 32.2,
+     "se": 10.72,
+     "setting": "high"
+    },
     "frontiermath-t4": {
      "v": 24.4,
      "se": 6.79,
@@ -2583,7 +2603,7 @@
     },
     "weirdml": {
      "v": 5,
-     "se": 0.5,
+     "se": 0.49,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -3004,11 +3024,11 @@
    "open": true,
    "eci": 150.32,
    "price": {
-    "input": 0.58,
-    "output": 1.44,
-    "blended": 0.795,
+    "input": 0.3,
+    "output": 1.2,
+    "blended": 0.525,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
    },
    "scores": {
     "frontiermath-t4": {
@@ -3115,7 +3135,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5-20251101"
+    "modelsDevId": "claude-opus-4-5"
    },
    "scores": {
     "swebench": {
@@ -3126,7 +3146,7 @@
     },
     "weirdml": {
      "v": 6.5,
-     "se": 0.79,
+     "se": 0.78,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -3182,7 +3202,7 @@
    "scores": {
     "weirdml": {
      "v": 4.4,
-     "se": 0.73,
+     "se": 0.72,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -3542,7 +3562,7 @@
    "scores": {
     "weirdml": {
      "v": 3.9,
-     "se": 0.49,
+     "se": 0.48,
      "setting": "xhigh"
     },
     "frontiermath-t4": {
@@ -4348,6 +4368,11 @@
     "modelsDevId": "deepseek-flash"
    },
    "scores": {
+    "weirdml": {
+     "v": 9.2,
+     "se": 0.61,
+     "setting": "high"
+    },
     "frontiermath-t4": {
      "v": 46.3,
      "se": 7.88,
@@ -8955,6 +8980,126 @@
       "mystery": {
        "v": 30,
        "se": 4.61,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 31,
+   "day": "2026-11-12",
+   "a": "gpt61terra",
+   "b": "claudeopus55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "gpt61terra",
+     "name": "GPT-6.1 Terra",
+     "org": "OpenAI",
+     "released": "2026-10-26",
+     "open": false,
+     "eci": null,
+     "price": {
+      "input": 1,
+      "output": 5,
+      "blended": 2,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-terra"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 92.7,
+       "se": 4.12,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 90.9,
+       "se": 1.71,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 94.3,
+       "se": 1.49,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 57.3,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 74,
+       "se": 4.41,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudeopus55",
+     "name": "Claude Opus 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-22",
+     "open": false,
+     "eci": 168.83,
+     "price": {
+      "input": 4,
+      "output": 20,
+      "blended": 8,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 77.4,
+       "se": 8.31,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 31.2,
+       "se": 0.61,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 95,
+       "se": 4.12,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 91.2,
+       "se": 1.68,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.6,
+       "se": 1.94,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 72.2,
+       "se": 1.42,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 71,
+       "se": 4.56,
        "setting": "max"
       }
      }
