@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-31T06:33:07.348Z",
+ "generatedAt": "2026-11-01T06:34:58.019Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3249,11 +3249,11 @@
    "open": true,
    "eci": 150.46,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small"
    },
    "scores": {
     "frontiermath-t4": {
@@ -9432,6 +9432,131 @@
       "mystery": {
        "v": 36,
        "se": 4.82,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 34,
+   "day": "2026-11-15",
+   "a": "gpt61terra",
+   "b": "claudeopus55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "gpt61terra",
+     "name": "GPT-6.1 Terra",
+     "org": "OpenAI",
+     "released": "2026-10-26",
+     "open": false,
+     "eci": 168.11,
+     "price": {
+      "input": 1,
+      "output": 5,
+      "blended": 2,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-terra"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 28.1,
+       "se": 0.77,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 92.7,
+       "se": 4.12,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 90.9,
+       "se": 1.71,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 94.3,
+       "se": 1.49,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 57.3,
+       "se": 1.56,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 74,
+       "se": 4.41,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudeopus55",
+     "name": "Claude Opus 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-22",
+     "open": false,
+     "eci": 168.4,
+     "price": {
+      "input": 4,
+      "output": 20,
+      "blended": 8,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 78.9,
+       "se": 7.88,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 31.2,
+       "se": 0.61,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 95,
+       "se": 4.12,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 91.2,
+       "se": 1.68,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 90.6,
+       "se": 1.94,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 72.2,
+       "se": 1.42,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 71,
+       "se": 4.56,
        "setting": "max"
       }
      }
