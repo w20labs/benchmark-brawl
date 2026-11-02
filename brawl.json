@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-01T06:34:58.019Z",
+ "generatedAt": "2026-11-02T06:43:39.534Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -235,9 +235,9 @@
      "setting": "xhigh"
     },
     "mirrorcode": {
-     "v": 60,
-     "se": 11.82,
-     "setting": "max"
+     "v": 46.7,
+     "se": 11.86,
+     "setting": "high"
     },
     "weirdml": {
      "v": 42.2,
@@ -410,11 +410,6 @@
     "modelsDevId": "gpt-6.1-sol"
    },
    "scores": {
-    "mirrorcode": {
-     "v": 61.1,
-     "se": 11.35,
-     "setting": "max"
-    },
     "weirdml": {
      "v": 38.3,
      "se": 1.06,
@@ -472,11 +467,6 @@
     "modelsDevId": "claude-sonnet-5-5"
    },
    "scores": {
-    "mirrorcode": {
-     "v": 97.8,
-     "se": 1.51,
-     "setting": "max"
-    },
     "weirdml": {
      "v": 19.9,
      "se": 0.81,
@@ -535,9 +525,9 @@
    },
    "scores": {
     "mirrorcode": {
-     "v": 93.3,
-     "se": 3.92,
-     "setting": "max"
+     "v": 73.3,
+     "se": 9.17,
+     "setting": "high"
     },
     "weirdml": {
      "v": 26,
@@ -656,11 +646,6 @@
     "deepswe": {
      "v": 73.6,
      "se": 1.98,
-     "setting": "max"
-    },
-    "mirrorcode": {
-     "v": 87.8,
-     "se": 7.18,
      "setting": "max"
     },
     "weirdml": {
@@ -913,11 +898,6 @@
    "eci": 161.71,
    "price": null,
    "scores": {
-    "mirrorcode": {
-     "v": 45.6,
-     "se": 10.6,
-     "setting": "max"
-    },
     "weirdml": {
      "v": 15.2,
      "se": 0.62,
@@ -960,11 +940,6 @@
     "modelsDevId": "claude-haiku-5-5"
    },
    "scores": {
-    "mirrorcode": {
-     "v": 78.9,
-     "se": 8.05,
-     "setting": "max"
-    },
     "weirdml": {
      "v": 11.7,
      "se": 0.8,
@@ -1025,11 +1000,6 @@
     "deepswe": {
      "v": 69.6,
      "se": 1.3,
-     "setting": "max"
-    },
-    "mirrorcode": {
-     "v": 41.1,
-     "se": 12.37,
      "setting": "max"
     },
     "frontiermath-t4": {
@@ -1134,11 +1104,6 @@
     "deepswe": {
      "v": 59,
      "se": 0.9,
-     "setting": "max"
-    },
-    "mirrorcode": {
-     "v": 65.6,
-     "se": 10.85,
      "setting": "max"
     },
     "frontiermath-t4": {
@@ -1329,11 +1294,6 @@
      "se": 2.31,
      "setting": "max"
     },
-    "mirrorcode": {
-     "v": 54.4,
-     "se": 11.44,
-     "setting": "max"
-    },
     "weirdml": {
      "v": 7.5,
      "se": 0.69,
@@ -1463,11 +1423,6 @@
      "se": 1.36,
      "setting": "xhigh"
     },
-    "mirrorcode": {
-     "v": 52.2,
-     "se": 10.89,
-     "setting": "xhigh"
-    },
     "frontiermath-t4": {
      "v": 46.3,
      "se": 7.88,
@@ -1526,11 +1481,6 @@
     "deepswe": {
      "v": 73.8,
      "se": 0.72,
-     "setting": "high"
-    },
-    "mirrorcode": {
-     "v": 38.9,
-     "se": 11.92,
      "setting": "high"
     },
     "weirdml": {
@@ -2017,11 +1967,6 @@
    "eci": 156.24,
    "price": null,
    "scores": {
-    "mirrorcode": {
-     "v": 47.8,
-     "se": 10.27,
-     "setting": "xhigh"
-    },
     "frontiermath-t4": {
      "v": 34.1,
      "se": 7.5,
@@ -2178,11 +2123,6 @@
     "modelsDevId": "deepseek-v4-pro"
    },
    "scores": {
-    "mirrorcode": {
-     "v": 33.3,
-     "se": 10.03,
-     "setting": "max"
-    },
     "frontiermath-t4": {
      "v": 26.8,
      "se": 7.01,
@@ -2243,11 +2183,6 @@
      "se": 1.86,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2hH2GAPUFaJR7pfVKhhicg.eval"
-    },
-    "mirrorcode": {
-     "v": 33.3,
-     "se": 10.03,
-     "setting": "max"
     },
     "frontiermath-t4": {
      "v": 26.8,
@@ -3249,11 +3184,11 @@
    "open": true,
    "eci": 150.46,
    "price": {
-    "input": 0.58,
-    "output": 1.44,
-    "blended": 0.795,
+    "input": 0.3,
+    "output": 1.2,
+    "blended": 0.525,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
    },
    "scores": {
     "frontiermath-t4": {
@@ -9557,6 +9492,110 @@
       "mystery": {
        "v": 71,
        "se": 4.56,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 35,
+   "day": "2026-11-16",
+   "a": "claudefable51",
+   "b": "musewonder",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudefable51",
+     "name": "Claude Fable 5.1",
+     "org": "Anthropic",
+     "released": "2026-09-01",
+     "open": false,
+     "eci": 166.36,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5-1"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 73.3,
+       "se": 9.17,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 26,
+       "se": 0.68,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 87.8,
+       "se": 5.17,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 90.2,
+       "se": 1.77,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 70.8,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 58,
+       "se": 4.96,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "musewonder",
+     "name": "Muse Wonder",
+     "org": "Meta AI",
+     "released": "2026-10-12",
+     "open": false,
+     "eci": 161.71,
+     "price": null,
+     "scores": {
+      "weirdml": {
+       "v": 15.2,
+       "se": 0.62,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 70.7,
+       "se": 7.19,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 82.1,
+       "se": 2.27,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 51,
+       "se": 5.02,
        "setting": "max"
       }
      }
