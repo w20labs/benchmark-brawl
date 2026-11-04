@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-03T06:35:58.178Z",
+ "generatedAt": "2026-11-04T06:36:23.446Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3257,6 +3257,46 @@
    }
   },
   {
+   "id": "mistrallarge4",
+   "name": "Mistral Large 4",
+   "org": "Mistral AI",
+   "released": "2026-10-29",
+   "open": true,
+   "eci": 150.59,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 99.4,
+     "se": 0.39,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgmJrht9jW92sRXiYyfSqEP.eval"
+    },
+    "gpqa": {
+     "v": 90.2,
+     "se": 1.81,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbrFy5AcCtkxoccgJToWYmR.eval"
+    },
+    "simpleqa": {
+     "v": 22.4,
+     "se": 1.32,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJYSfRXRddi6hYzpnSD3G7V.eval"
+    },
+    "mystery": {
+     "v": 20,
+     "se": 4.02,
+     "setting": "high"
+    },
+    "chess": {
+     "v": 29,
+     "se": 4.56,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPuHzUbC9C2fJAq7iA5wQpv.eval"
+    }
+   }
+  },
+  {
    "id": "inklingsmall",
    "name": "Inkling-Small",
    "org": "Thinking Machines",
@@ -3264,11 +3304,11 @@
    "open": true,
    "eci": 150.46,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small"
    },
    "scores": {
     "frontiermath-t4": {
@@ -3378,7 +3418,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5"
+    "modelsDevId": "claude-opus-4-5-20251101"
    },
    "scores": {
     "swebench": {
@@ -4519,6 +4559,35 @@
    }
   },
   {
+   "id": "doubaoseedevolving",
+   "name": "Doubao Seed Evolving",
+   "org": "ByteDance",
+   "released": "2026-11-02",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 99.2,
+     "se": 0.47,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRG3zEJdwgXxoYZjFkHc6pa.eval"
+    },
+    "gpqa": {
+     "v": 93.1,
+     "se": 1.57,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKWK3fWVchTtVXd4kAEhwK5.eval"
+    },
+    "simpleqa": {
+     "v": 41.9,
+     "se": 1.56,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPWieWgMJqvCcm7zkN9iYqH.eval"
+    }
+   }
+  },
+  {
    "id": "mistrallarge4preview",
    "name": "Mistral Large 4 Preview",
    "org": "Mistral AI",
@@ -4570,6 +4639,122 @@
      "se": 4.73,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeNdDCt2u6A8mPisK56SApU.eval"
+    }
+   }
+  },
+  {
+   "id": "doubaoseed21turbo",
+   "name": "Doubao Seed 2.1 Turbo",
+   "org": "ByteDance",
+   "released": "2026-06-23",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 96.1,
+     "se": 2.48,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmXHskR6CPxcMBRzmWaPvcq.eval"
+    },
+    "gpqa": {
+     "v": 89.6,
+     "se": 1.79,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeMBLN26MgdzXLL6XgwmKB9.eval"
+    },
+    "simpleqa": {
+     "v": 29.7,
+     "se": 1.45,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9wS2NJacFaJp9tkq8FSRyF.eval"
+    }
+   }
+  },
+  {
+   "id": "doubaoseed21pro",
+   "name": "Doubao Seed 2.1 Pro",
+   "org": "ByteDance",
+   "released": "2026-06-23",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 95.6,
+     "se": 2.92,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjL9Sf6dcoTTRSSUFXTG7py.eval"
+    },
+    "gpqa": {
+     "v": 89.3,
+     "se": 1.84,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7RKgYb6sU9XB5RVBRQ3nCB.eval"
+    },
+    "simpleqa": {
+     "v": 44.7,
+     "se": 1.57,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7TdGnviq5zZhNSXK5nJSAL.eval"
+    }
+   }
+  },
+  {
+   "id": "doubaoseed20lite260428",
+   "name": "Doubao Seed 2.0 Lite 260428",
+   "org": "ByteDance",
+   "released": "2026-04-28",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 91.1,
+     "se": 3.61,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRpVeo88Yf93kMhHgwz6jcj.eval"
+    },
+    "gpqa": {
+     "v": 88.1,
+     "se": 1.94,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTJUDw6vaSyDFKZ2UacuD5L.eval"
+    },
+    "simpleqa": {
+     "v": 31.5,
+     "se": 1.47,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F3rTiRa2THK8MWXtVJZQHxS.eval"
+    }
+   }
+  },
+  {
+   "id": "doubaoseed20pro",
+   "name": "Doubao-Seed-2.0 Pro",
+   "org": "ByteDance",
+   "released": "2026-02-14",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 93.9,
+     "se": 2.74,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVKTrNdpeZhFRevQFSFkRY.eval"
+    },
+    "gpqa": {
+     "v": 88.2,
+     "se": 1.94,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2z8ecBVZbXKHtpyFyxpJyB.eval"
+    },
+    "simpleqa": {
+     "v": 39.4,
+     "se": 1.55,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGvNEYw523w8aUy63WpgovD.eval"
     }
    }
   }
@@ -9887,6 +10072,116 @@
      }
     }
    ]
+  },
+  {
+   "no": 37,
+   "day": "2026-11-18",
+   "a": "doubaoseedevolving",
+   "b": "gpt6astra",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "doubaoseedevolving",
+     "name": "Doubao Seed Evolving",
+     "org": "ByteDance",
+     "released": "2026-11-02",
+     "open": false,
+     "eci": null,
+     "price": null,
+     "scores": {
+      "aime": {
+       "v": 99.2,
+       "se": 0.47,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRG3zEJdwgXxoYZjFkHc6pa.eval"
+      },
+      "gpqa": {
+       "v": 93.1,
+       "se": 1.57,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKWK3fWVchTtVXd4kAEhwK5.eval"
+      },
+      "simpleqa": {
+       "v": 41.9,
+       "se": 1.56,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPWieWgMJqvCcm7zkN9iYqH.eval"
+      }
+     }
+    },
+    {
+     "id": "gpt6astra",
+     "name": "GPT-6 Astra",
+     "org": "OpenAI",
+     "released": "2026-09-03",
+     "open": false,
+     "eci": 169.06,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "openai",
+      "modelsDevId": "gpt-6-astra"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 74.1,
+       "se": 1.46,
+       "setting": "xhigh"
+      },
+      "mirrorcode": {
+       "v": 46.7,
+       "se": 11.86,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 42.2,
+       "se": 0.99,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 97.6,
+       "se": 2.4,
+       "setting": "high"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FL7kW8yxFKCjVXhxNnt3VTq.eval"
+      },
+      "gpqa": {
+       "v": 95.8,
+       "se": 1.37,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F3h8STJpG2VzY9LiBUzwotv.eval"
+      },
+      "simpleqa": {
+       "v": 75.6,
+       "se": 1.36,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPppwnX7EjXx2SeTcFN8Ujn.eval"
+      },
+      "mystery": {
+       "v": 84,
+       "se": 3.68,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -9971,7 +10266,12 @@
    "musewonder": "2026-10-20",
    "deepseekv41flash1017": "2026-10-22",
    "gpt61terra": "2026-10-28",
-   "mistrallarge4preview": "2026-11-03"
+   "mistrallarge4preview": "2026-11-03",
+   "doubaoseedevolving": "2026-11-04",
+   "doubaoseed21turbo": "2026-11-04",
+   "doubaoseed21pro": "2026-11-04",
+   "doubaoseed20lite260428": "2026-11-04",
+   "doubaoseed20pro": "2026-11-04"
   }
  },
  "titles": {
