@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-04T06:36:23.446Z",
+ "generatedAt": "2026-11-05T06:37:01.147Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -220,7 +220,7 @@
    "org": "OpenAI",
    "released": "2026-09-03",
    "open": false,
-   "eci": 169.06,
+   "eci": 169.07,
    "price": {
     "input": 10,
     "output": 50,
@@ -286,12 +286,73 @@
    }
   },
   {
+   "id": "gpt61sol",
+   "name": "GPT-6.1 Sol",
+   "org": "OpenAI",
+   "released": "2026-09-29",
+   "open": false,
+   "eci": 168.94,
+   "price": {
+    "input": 2,
+    "output": 10,
+    "blended": 4,
+    "provider": "openai",
+    "modelsDevId": "gpt-6.1-sol"
+   },
+   "scores": {
+    "weirdml": {
+     "v": 38.3,
+     "se": 1.06,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 100,
+     "se": 0,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 93.7,
+     "se": 1.44,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDi7y6sES4PGQbXNkXYhdqM.eval"
+    },
+    "gpqa": {
+     "v": 95.4,
+     "se": 1.38,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLspviLnbeZ82WCngWp6rwR.eval"
+    },
+    "simpleqa": {
+     "v": 73.9,
+     "se": 1.39,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdfT5VD7cQug8XW6GQHyJUF.eval"
+    },
+    "mystery": {
+     "v": 80,
+     "se": 4.02,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 68,
+     "se": 4.69,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKkGEgrjYDnofMoUJBCykcH.eval"
+    }
+   }
+  },
+  {
    "id": "claudeopus55",
    "name": "Claude Opus 5.5",
    "org": "Anthropic",
    "released": "2026-09-22",
    "open": false,
-   "eci": 168.4,
+   "eci": 168.36,
    "price": {
     "input": 4,
     "output": 20,
@@ -357,7 +418,7 @@
    "org": "OpenAI",
    "released": "2026-10-26",
    "open": false,
-   "eci": 168.11,
+   "eci": 167.82,
    "price": {
     "input": 1,
     "output": 5,
@@ -407,134 +468,12 @@
    }
   },
   {
-   "id": "gpt61sol",
-   "name": "GPT-6.1 Sol",
-   "org": "OpenAI",
-   "released": "2026-09-29",
-   "open": false,
-   "eci": 167.82,
-   "price": {
-    "input": 2,
-    "output": 10,
-    "blended": 4,
-    "provider": "openai",
-    "modelsDevId": "gpt-6.1-sol"
-   },
-   "scores": {
-    "weirdml": {
-     "v": 38.3,
-     "se": 1.06,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 100,
-     "se": 0,
-     "setting": "max"
-    },
-    "frontiermath": {
-     "v": 93.7,
-     "se": 1.44,
-     "setting": "max"
-    },
-    "aime": {
-     "v": 100,
-     "se": 0,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDi7y6sES4PGQbXNkXYhdqM.eval"
-    },
-    "gpqa": {
-     "v": 95.4,
-     "se": 1.38,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLspviLnbeZ82WCngWp6rwR.eval"
-    },
-    "simpleqa": {
-     "v": 73.9,
-     "se": 1.39,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdfT5VD7cQug8XW6GQHyJUF.eval"
-    },
-    "mystery": {
-     "v": 80,
-     "se": 4.02,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 68,
-     "se": 4.69,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKkGEgrjYDnofMoUJBCykcH.eval"
-    }
-   }
-  },
-  {
-   "id": "claudesonnet55",
-   "name": "Claude Sonnet 5.5",
-   "org": "Anthropic",
-   "released": "2026-09-28",
-   "open": false,
-   "eci": 166.74,
-   "price": {
-    "input": 2,
-    "output": 10,
-    "blended": 4,
-    "provider": "anthropic",
-    "modelsDevId": "claude-sonnet-5-5"
-   },
-   "scores": {
-    "weirdml": {
-     "v": 19.9,
-     "se": 0.81,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 80.5,
-     "se": 6.27,
-     "setting": "max"
-    },
-    "frontiermath": {
-     "v": 88.8,
-     "se": 1.87,
-     "setting": "max"
-    },
-    "aime": {
-     "v": 100,
-     "se": 0,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbSEaZLPehiNVDQL7HP9EJS.eval"
-    },
-    "gpqa": {
-     "v": 95.6,
-     "se": 1.37,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQPk8jbJvo4986sbWtdte6J.eval"
-    },
-    "simpleqa": {
-     "v": 46.5,
-     "se": 1.58,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGtJ5yd3ZPQ7HVcm6Q9ssQz.eval"
-    },
-    "mystery": {
-     "v": 65,
-     "se": 4.79,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 59,
-     "se": 4.94,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FkXU32N6tFkQLx5ei6nRJFS.eval"
-    }
-   }
-  },
-  {
    "id": "claudefable51",
    "name": "Claude Fable 5.1",
    "org": "Anthropic",
    "released": "2026-09-01",
    "open": false,
-   "eci": 166.36,
+   "eci": 166.9,
    "price": {
     "input": 10,
     "output": 50,
@@ -594,7 +533,7 @@
    "org": "Google DeepMind",
    "released": "2026-09-30",
    "open": false,
-   "eci": 166.07,
+   "eci": 166.45,
    "price": {
     "input": 2,
     "output": 10,
@@ -655,12 +594,73 @@
    }
   },
   {
+   "id": "claudesonnet55",
+   "name": "Claude Sonnet 5.5",
+   "org": "Anthropic",
+   "released": "2026-09-28",
+   "open": false,
+   "eci": 166.24,
+   "price": {
+    "input": 2,
+    "output": 10,
+    "blended": 4,
+    "provider": "anthropic",
+    "modelsDevId": "claude-sonnet-5-5"
+   },
+   "scores": {
+    "weirdml": {
+     "v": 19.9,
+     "se": 0.81,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 80.5,
+     "se": 6.27,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 88.8,
+     "se": 1.87,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbSEaZLPehiNVDQL7HP9EJS.eval"
+    },
+    "gpqa": {
+     "v": 95.6,
+     "se": 1.37,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQPk8jbJvo4986sbWtdte6J.eval"
+    },
+    "simpleqa": {
+     "v": 46.5,
+     "se": 1.58,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGtJ5yd3ZPQ7HVcm6Q9ssQz.eval"
+    },
+    "mystery": {
+     "v": 65,
+     "se": 4.79,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 59,
+     "se": 4.94,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FkXU32N6tFkQLx5ei6nRJFS.eval"
+    }
+   }
+  },
+  {
    "id": "claudeopus5",
    "name": "Claude Opus 5",
    "org": "Anthropic",
    "released": "2026-07-24",
    "open": false,
-   "eci": 164.47,
+   "eci": 164.45,
    "price": {
     "input": 5,
     "output": 25,
@@ -722,73 +722,12 @@
    }
   },
   {
-   "id": "gpt6sol",
-   "name": "GPT-6 Sol",
-   "org": "OpenAI",
-   "released": "2026-09-22",
-   "open": false,
-   "eci": 163.78,
-   "price": {
-    "input": 2,
-    "output": 10,
-    "blended": 4,
-    "provider": "openai",
-    "modelsDevId": "gpt-6-sol"
-   },
-   "scores": {
-    "weirdml": {
-     "v": 19.7,
-     "se": 0.66,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 90,
-     "se": 5.17,
-     "setting": "max"
-    },
-    "frontiermath": {
-     "v": 89.8,
-     "se": 1.79,
-     "setting": "max"
-    },
-    "aime": {
-     "v": 100,
-     "se": 0,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVZAUcNkzeMSMm9paxBhj6B.eval"
-    },
-    "gpqa": {
-     "v": 94.3,
-     "se": 1.49,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaJD7ZfFftu2cZoToJhhzF7.eval"
-    },
-    "simpleqa": {
-     "v": 60.7,
-     "se": 1.55,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdonMeEKBZZdqpQsojKWJEm.eval"
-    },
-    "mystery": {
-     "v": 56,
-     "se": 4.99,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 56,
-     "se": 4.99,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FN9uFn7EZFsvHNcHEwEy3J6.eval"
-    }
-   }
-  },
-  {
    "id": "claudefable5",
    "name": "Claude Fable 5",
    "org": "Anthropic",
    "released": "2026-06-09",
    "open": false,
-   "eci": 163.02,
+   "eci": 164.19,
    "price": {
     "input": 10,
     "output": 50,
@@ -855,12 +794,73 @@
    }
   },
   {
+   "id": "gpt6sol",
+   "name": "GPT-6 Sol",
+   "org": "OpenAI",
+   "released": "2026-09-22",
+   "open": false,
+   "eci": 164.06,
+   "price": {
+    "input": 2,
+    "output": 10,
+    "blended": 4,
+    "provider": "openai",
+    "modelsDevId": "gpt-6-sol"
+   },
+   "scores": {
+    "weirdml": {
+     "v": 19.7,
+     "se": 0.66,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 90,
+     "se": 5.17,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 89.8,
+     "se": 1.79,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVZAUcNkzeMSMm9paxBhj6B.eval"
+    },
+    "gpqa": {
+     "v": 94.3,
+     "se": 1.49,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaJD7ZfFftu2cZoToJhhzF7.eval"
+    },
+    "simpleqa": {
+     "v": 60.7,
+     "se": 1.55,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdonMeEKBZZdqpQsojKWJEm.eval"
+    },
+    "mystery": {
+     "v": 56,
+     "se": 4.99,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 56,
+     "se": 4.99,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FN9uFn7EZFsvHNcHEwEy3J6.eval"
+    }
+   }
+  },
+  {
    "id": "gpt56sol",
    "name": "GPT-5.6 Sol",
    "org": "OpenAI",
    "released": "2026-07-09",
    "open": false,
-   "eci": 162.55,
+   "eci": 162.99,
    "price": {
     "input": 4,
     "output": 20,
@@ -932,7 +932,7 @@
    "org": "Meta AI",
    "released": "2026-10-12",
    "open": false,
-   "eci": 161.71,
+   "eci": 162.02,
    "price": null,
    "scores": {
     "weirdml": {
@@ -964,73 +964,12 @@
    }
   },
   {
-   "id": "claudehaiku55",
-   "name": "Claude Haiku 5.5",
-   "org": "Anthropic",
-   "released": "2026-10-07",
-   "open": false,
-   "eci": 160.37,
-   "price": {
-    "input": 0.1,
-    "output": 0.5,
-    "blended": 0.2,
-    "provider": "anthropic",
-    "modelsDevId": "claude-haiku-5-5"
-   },
-   "scores": {
-    "weirdml": {
-     "v": 11.7,
-     "se": 0.8,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 46.3,
-     "se": 7.88,
-     "setting": "max"
-    },
-    "frontiermath": {
-     "v": 75.1,
-     "se": 2.57,
-     "setting": "max"
-    },
-    "aime": {
-     "v": 98.9,
-     "se": 0.54,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FiiEPrSjWXHH6Zq9CK4Zmcr.eval"
-    },
-    "gpqa": {
-     "v": 89.6,
-     "se": 1.98,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZEKWTGJiWFscHimMkiUmec.eval"
-    },
-    "simpleqa": {
-     "v": 23.8,
-     "se": 1.35,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNwnrUMtveqHDYB2Um4ycmA.eval"
-    },
-    "mystery": {
-     "v": 30,
-     "se": 4.61,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 55,
-     "se": 5,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKEyuvehfRGtcdgNfNavy62.eval"
-    }
-   }
-  },
-  {
    "id": "gpt56terra",
    "name": "GPT-5.6 Terra",
    "org": "OpenAI",
    "released": "2026-07-09",
    "open": false,
-   "eci": 160.09,
+   "eci": 160.89,
    "price": {
     "input": 2,
     "output": 12,
@@ -1087,12 +1026,73 @@
    }
   },
   {
+   "id": "claudehaiku55",
+   "name": "Claude Haiku 5.5",
+   "org": "Anthropic",
+   "released": "2026-10-07",
+   "open": false,
+   "eci": 160.22,
+   "price": {
+    "input": 0.1,
+    "output": 0.5,
+    "blended": 0.2,
+    "provider": "anthropic",
+    "modelsDevId": "claude-haiku-5-5"
+   },
+   "scores": {
+    "weirdml": {
+     "v": 11.7,
+     "se": 0.8,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 46.3,
+     "se": 7.88,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 75.1,
+     "se": 2.57,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 98.9,
+     "se": 0.54,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FiiEPrSjWXHH6Zq9CK4Zmcr.eval"
+    },
+    "gpqa": {
+     "v": 89.6,
+     "se": 1.98,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZEKWTGJiWFscHimMkiUmec.eval"
+    },
+    "simpleqa": {
+     "v": 23.8,
+     "se": 1.35,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNwnrUMtveqHDYB2Um4ycmA.eval"
+    },
+    "mystery": {
+     "v": 30,
+     "se": 4.61,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 55,
+     "se": 5,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKEyuvehfRGtcdgNfNavy62.eval"
+    }
+   }
+  },
+  {
    "id": "gpt54pro",
    "name": "GPT-5.4 Pro",
    "org": "OpenAI",
    "released": "2026-03-05",
    "open": false,
-   "eci": 159.81,
+   "eci": 160.21,
    "price": {
     "input": 30,
     "output": 180,
@@ -1133,75 +1133,12 @@
    }
   },
   {
-   "id": "claudeopus48",
-   "name": "Claude Opus 4.8",
-   "org": "Anthropic",
-   "released": "2026-05-28",
-   "open": false,
-   "eci": 159.57,
-   "price": {
-    "input": 5,
-    "output": 25,
-    "blended": 10,
-    "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-8"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 59,
-     "se": 0.9,
-     "setting": "max"
-    },
-    "frontiermath-t4": {
-     "v": 56.1,
-     "se": 7.85,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJiqgqBTfkGx797uowZgJbk.eval"
-    },
-    "frontiermath": {
-     "v": 80,
-     "se": 2.37,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVmgtgKMwEqc54f3jA7auP.eval"
-    },
-    "aime": {
-     "v": 98.3,
-     "se": 1.41,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F37pJqPpXTE6ia9ikmmGPJ4.eval"
-    },
-    "gpqa": {
-     "v": 91,
-     "se": 1.92,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdqgqP2uEPswfECCVj2Kbr9.eval"
-    },
-    "simpleqa": {
-     "v": 53,
-     "se": 1.58,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FViC6pxQZUVS3E9M9iEubF7.eval"
-    },
-    "mystery": {
-     "v": 36,
-     "se": 4.82,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 52,
-     "se": 5.02,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPEZpuEuU65bu3ZtvjLytHq.eval"
-    }
-   }
-  },
-  {
    "id": "gpt55",
    "name": "GPT-5.5",
    "org": "OpenAI",
    "released": "2026-04-23",
    "open": false,
-   "eci": 159.38,
+   "eci": 160.04,
    "price": {
     "input": 5,
     "output": 30,
@@ -1268,12 +1205,75 @@
    }
   },
   {
+   "id": "claudeopus48",
+   "name": "Claude Opus 4.8",
+   "org": "Anthropic",
+   "released": "2026-05-28",
+   "open": false,
+   "eci": 159.89,
+   "price": {
+    "input": 5,
+    "output": 25,
+    "blended": 10,
+    "provider": "anthropic",
+    "modelsDevId": "claude-opus-4-8"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 59,
+     "se": 0.9,
+     "setting": "max"
+    },
+    "frontiermath-t4": {
+     "v": 56.1,
+     "se": 7.85,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJiqgqBTfkGx797uowZgJbk.eval"
+    },
+    "frontiermath": {
+     "v": 80,
+     "se": 2.37,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVmgtgKMwEqc54f3jA7auP.eval"
+    },
+    "aime": {
+     "v": 98.3,
+     "se": 1.41,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F37pJqPpXTE6ia9ikmmGPJ4.eval"
+    },
+    "gpqa": {
+     "v": 91,
+     "se": 1.92,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdqgqP2uEPswfECCVj2Kbr9.eval"
+    },
+    "simpleqa": {
+     "v": 53,
+     "se": 1.58,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FViC6pxQZUVS3E9M9iEubF7.eval"
+    },
+    "mystery": {
+     "v": 36,
+     "se": 4.82,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 52,
+     "se": 5.02,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPEZpuEuU65bu3ZtvjLytHq.eval"
+    }
+   }
+  },
+  {
    "id": "deepseekv41flash1017",
    "name": "DeepSeek V4.1 Flash 1017",
    "org": "DeepSeek",
    "released": "2026-10-17",
    "open": true,
-   "eci": 158.83,
+   "eci": 159.31,
    "price": {
     "input": 0.15,
     "output": 0.6,
@@ -1329,12 +1329,78 @@
    }
   },
   {
+   "id": "gemini38flash",
+   "name": "Gemini 3.8 Flash",
+   "org": "Google DeepMind",
+   "released": "2026-09-02",
+   "open": false,
+   "eci": 158.63,
+   "price": {
+    "input": 0.75,
+    "output": 3.75,
+    "blended": 1.5,
+    "provider": "google",
+    "modelsDevId": "gemini-3.8-flash"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 73.8,
+     "se": 0.72,
+     "setting": "high"
+    },
+    "weirdml": {
+     "v": 7.4,
+     "se": 0.5,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 22,
+     "se": 6.54,
+     "setting": "high"
+    },
+    "frontiermath": {
+     "v": 68.4,
+     "se": 2.76,
+     "setting": "high"
+    },
+    "aime": {
+     "v": 98.9,
+     "se": 0.87,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNeYuqgQyWtFWAHEjQYPm5Z.eval"
+    },
+    "gpqa": {
+     "v": 95.4,
+     "se": 1.4,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBr3mjs2GrYcCwX9AMwcihU.eval"
+    },
+    "simpleqa": {
+     "v": 69.7,
+     "se": 1.45,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZ4bwozTKtpmZTqnqX3a33.eval"
+    },
+    "mystery": {
+     "v": 47,
+     "se": 5.02,
+     "setting": "high"
+    },
+    "chess": {
+     "v": 58,
+     "se": 4.96,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHpyy6CpmXmd5q7Zbdq63CR.eval"
+    }
+   }
+  },
+  {
    "id": "kimik3",
    "name": "Kimi K3",
    "org": "Moonshot",
    "released": "2026-07-16",
    "open": true,
-   "eci": 158.33,
+   "eci": 158.51,
    "price": {
     "input": 3,
     "output": 15,
@@ -1401,7 +1467,7 @@
    "org": "Google DeepMind",
    "released": "2026-08-13",
    "open": false,
-   "eci": 158.17,
+   "eci": 158.4,
    "price": {
     "input": 0.75,
     "output": 3.75,
@@ -1464,141 +1530,12 @@
    }
   },
   {
-   "id": "qwen38max",
-   "name": "Qwen 3.8 Max",
-   "org": "Alibaba",
-   "released": "2026-08-02",
-   "open": false,
-   "eci": 157.98,
-   "price": {
-    "input": 2,
-    "output": 6,
-    "blended": 3,
-    "provider": "alibaba",
-    "modelsDevId": "qwen3.8-max"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 57.5,
-     "se": 1.36,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 46.3,
-     "se": 7.88,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
-    },
-    "frontiermath": {
-     "v": 74.7,
-     "se": 2.58,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
-    },
-    "aime": {
-     "v": 99.4,
-     "se": 0.39,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaGRKHaq9uSawfYVpC565zU.eval"
-    },
-    "gpqa": {
-     "v": 92.7,
-     "se": 1.69,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTEVNDC9QXBh7PQvX9kHZip.eval"
-    },
-    "simpleqa": {
-     "v": 45.8,
-     "se": 1.58,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
-    },
-    "mystery": {
-     "v": 38,
-     "se": 4.88,
-     "setting": "xhigh"
-    },
-    "chess": {
-     "v": 46,
-     "se": 5.01,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbq5y6Tp83KLtxC58UDfpyN.eval"
-    }
-   }
-  },
-  {
-   "id": "gemini38flash",
-   "name": "Gemini 3.8 Flash",
-   "org": "Google DeepMind",
-   "released": "2026-09-02",
-   "open": false,
-   "eci": 157.64,
-   "price": {
-    "input": 0.75,
-    "output": 3.75,
-    "blended": 1.5,
-    "provider": "google",
-    "modelsDevId": "gemini-3.8-flash"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 73.8,
-     "se": 0.72,
-     "setting": "high"
-    },
-    "weirdml": {
-     "v": 7.4,
-     "se": 0.5,
-     "setting": "high"
-    },
-    "frontiermath-t4": {
-     "v": 22,
-     "se": 6.54,
-     "setting": "high"
-    },
-    "frontiermath": {
-     "v": 68.4,
-     "se": 2.76,
-     "setting": "high"
-    },
-    "aime": {
-     "v": 98.9,
-     "se": 0.87,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNeYuqgQyWtFWAHEjQYPm5Z.eval"
-    },
-    "gpqa": {
-     "v": 95.4,
-     "se": 1.4,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBr3mjs2GrYcCwX9AMwcihU.eval"
-    },
-    "simpleqa": {
-     "v": 69.7,
-     "se": 1.45,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZ4bwozTKtpmZTqnqX3a33.eval"
-    },
-    "mystery": {
-     "v": 47,
-     "se": 5.02,
-     "setting": "high"
-    },
-    "chess": {
-     "v": 58,
-     "se": 4.96,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHpyy6CpmXmd5q7Zbdq63CR.eval"
-    }
-   }
-  },
-  {
    "id": "musespark13",
    "name": "Muse Spark 1.3",
    "org": "Meta AI",
    "released": "2026-09-02",
    "open": false,
-   "eci": 157.37,
+   "eci": 157.98,
    "price": null,
    "scores": {
     "weirdml": {
@@ -1636,12 +1573,80 @@
    }
   },
   {
+   "id": "grok46",
+   "name": "Grok 4.6",
+   "org": "xAI",
+   "released": "2026-08-12",
+   "open": false,
+   "eci": 157.92,
+   "price": {
+    "input": 2,
+    "output": 6,
+    "blended": 3,
+    "provider": "xai",
+    "modelsDevId": "grok-4.6"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 67.5,
+     "se": 1.16,
+     "setting": "medium"
+    },
+    "mirrorcode": {
+     "v": 41.1,
+     "se": 11.02,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 31.7,
+     "se": 7.36,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbg3JRdd33iWfvRoGSvyXXE.eval"
+    },
+    "frontiermath": {
+     "v": 66,
+     "se": 2.81,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZb2AKwa942D7dBTTcebAba.eval"
+    },
+    "aime": {
+     "v": 99.2,
+     "se": 0.47,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7crLvnfQc987dC6mr3iGbf.eval"
+    },
+    "gpqa": {
+     "v": 94,
+     "se": 1.45,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhnP6Z88x8bPEBRZ2PW6kps.eval"
+    },
+    "simpleqa": {
+     "v": 49.3,
+     "se": 1.58,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTpHYtuPG6kYZFvMK7Z6Hqj.eval"
+    },
+    "mystery": {
+     "v": 34,
+     "se": 4.76,
+     "setting": "xhigh"
+    },
+    "chess": {
+     "v": 33,
+     "se": 4.73,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNiuExVccWkWbWqi6ex6vvf.eval"
+    }
+   }
+  },
+  {
    "id": "gpt54",
    "name": "GPT-5.4",
    "org": "OpenAI",
    "released": "2026-03-05",
    "open": false,
-   "eci": 157.14,
+   "eci": 157.82,
    "price": {
     "input": 2.5,
     "output": 15,
@@ -1710,209 +1715,12 @@
    }
   },
   {
-   "id": "claudesonnet5",
-   "name": "Claude Sonnet 5",
-   "org": "Anthropic",
-   "released": "2026-06-30",
-   "open": false,
-   "eci": 157.03,
-   "price": {
-    "input": 2,
-    "output": 10,
-    "blended": 4,
-    "provider": "anthropic",
-    "modelsDevId": "claude-sonnet-5"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 53.8,
-     "se": 2.16,
-     "setting": "max"
-    },
-    "frontiermath-t4": {
-     "v": 29.3,
-     "se": 7.19,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbqiVinHXFcgyFGPstJwXJN.eval"
-    },
-    "frontiermath": {
-     "v": 65.6,
-     "se": 2.82,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FV6YuGpcu8MCbJNXKoJMA6b.eval"
-    },
-    "aime": {
-     "v": 94.7,
-     "se": 2.26,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FT2wFfuSkUdyjpyqurxNmNK.eval"
-    },
-    "gpqa": {
-     "v": 90.5,
-     "se": 1.78,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHhiYxEx3Bf8YDPUh34K4DC.eval"
-    },
-    "simpleqa": {
-     "v": 33.7,
-     "se": 1.5,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLPo74T9L3CawnKX5LLUrSZ.eval"
-    },
-    "mystery": {
-     "v": 35,
-     "se": 4.79,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 45,
-     "se": 5,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPN9exWpeJGXJB8tZGX32e4.eval"
-    }
-   }
-  },
-  {
-   "id": "grok46",
-   "name": "Grok 4.6",
-   "org": "xAI",
-   "released": "2026-08-12",
-   "open": false,
-   "eci": 156.91,
-   "price": {
-    "input": 2,
-    "output": 6,
-    "blended": 3,
-    "provider": "xai",
-    "modelsDevId": "grok-4.6"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 67.5,
-     "se": 1.16,
-     "setting": "medium"
-    },
-    "mirrorcode": {
-     "v": 41.1,
-     "se": 11.02,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 31.7,
-     "se": 7.36,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbg3JRdd33iWfvRoGSvyXXE.eval"
-    },
-    "frontiermath": {
-     "v": 66,
-     "se": 2.81,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZb2AKwa942D7dBTTcebAba.eval"
-    },
-    "aime": {
-     "v": 99.2,
-     "se": 0.47,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7crLvnfQc987dC6mr3iGbf.eval"
-    },
-    "gpqa": {
-     "v": 94,
-     "se": 1.45,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhnP6Z88x8bPEBRZ2PW6kps.eval"
-    },
-    "simpleqa": {
-     "v": 49.3,
-     "se": 1.58,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTpHYtuPG6kYZFvMK7Z6Hqj.eval"
-    },
-    "mystery": {
-     "v": 34,
-     "se": 4.76,
-     "setting": "xhigh"
-    },
-    "chess": {
-     "v": 33,
-     "se": 4.73,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNiuExVccWkWbWqi6ex6vvf.eval"
-    }
-   }
-  },
-  {
-   "id": "gpt6luna",
-   "name": "GPT-6 Luna",
-   "org": "OpenAI",
-   "released": "2026-09-22",
-   "open": false,
-   "eci": 156.75,
-   "price": {
-    "input": 0.1,
-    "output": 0.5,
-    "blended": 0.2,
-    "provider": "openai",
-    "modelsDevId": "gpt-6-luna"
-   },
-   "scores": {
-    "mirrorcode": {
-     "v": 26.7,
-     "se": 9.03,
-     "setting": "max"
-    },
-    "weirdml": {
-     "v": 7.9,
-     "se": 0.51,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 56.1,
-     "se": 7.85,
-     "setting": "max"
-    },
-    "frontiermath": {
-     "v": 78.9,
-     "se": 2.42,
-     "setting": "max"
-    },
-    "aime": {
-     "v": 98.9,
-     "se": 0.67,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4uDz9b6SosxDSZf7swMD9D.eval"
-    },
-    "gpqa": {
-     "v": 90.5,
-     "se": 1.85,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7F3QFMAkwnCV62HcvxP96q.eval"
-    },
-    "simpleqa": {
-     "v": 41.4,
-     "se": 1.56,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHX9sRVWJtZiNvneALnVzs8.eval"
-    },
-    "mystery": {
-     "v": 7,
-     "se": 2.56,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 36,
-     "se": 4.82,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJevnk9hi9oRBbGcFu2JxBC.eval"
-    }
-   }
-  },
-  {
    "id": "claudeopus47",
    "name": "Claude Opus 4.7",
    "org": "Anthropic",
    "released": "2026-04-16",
    "open": false,
-   "eci": 156.7,
+   "eci": 157.55,
    "price": {
     "input": 5,
     "output": 25,
@@ -1976,12 +1784,136 @@
    }
   },
   {
+   "id": "qwen38max",
+   "name": "Qwen 3.8 Max",
+   "org": "Alibaba",
+   "released": "2026-08-02",
+   "open": false,
+   "eci": 157.43,
+   "price": {
+    "input": 2,
+    "output": 6,
+    "blended": 3,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.8-max"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 57.5,
+     "se": 1.36,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 46.3,
+     "se": 7.88,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
+    },
+    "frontiermath": {
+     "v": 74.7,
+     "se": 2.58,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
+    },
+    "aime": {
+     "v": 99.4,
+     "se": 0.39,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaGRKHaq9uSawfYVpC565zU.eval"
+    },
+    "gpqa": {
+     "v": 92.7,
+     "se": 1.69,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTEVNDC9QXBh7PQvX9kHZip.eval"
+    },
+    "simpleqa": {
+     "v": 45.8,
+     "se": 1.58,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
+    },
+    "mystery": {
+     "v": 38,
+     "se": 4.88,
+     "setting": "xhigh"
+    },
+    "chess": {
+     "v": 46,
+     "se": 5.01,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbq5y6Tp83KLtxC58UDfpyN.eval"
+    }
+   }
+  },
+  {
+   "id": "glm53",
+   "name": "GLM-5.3",
+   "org": "Z.ai (Zhipu AI)",
+   "released": "2026-08-14",
+   "open": true,
+   "eci": 156.91,
+   "price": {
+    "input": 1.4,
+    "output": 4.4,
+    "blended": 2.15,
+    "provider": "zai",
+    "modelsDevId": "glm-5.3"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 69,
+     "se": 1.54,
+     "setting": "max"
+    },
+    "frontiermath-t4": {
+     "v": 29.3,
+     "se": 7.19,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 68.8,
+     "se": 2.75,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 91.1,
+     "se": 3.45,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgoZR5yGxZic9TZ23ezCL3w.eval"
+    },
+    "gpqa": {
+     "v": 90.9,
+     "se": 1.59,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdLDBahYBTGRNjbsXA5pyr3.eval"
+    },
+    "simpleqa": {
+     "v": 41,
+     "se": 1.56,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTY8R8FV7zCwByEipkqyg2P.eval"
+    },
+    "mystery": {
+     "v": 33,
+     "se": 4.73,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 37,
+     "se": 4.85,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FkG3hbd8qLEd6fLAJHyQTiN.eval"
+    }
+   }
+  },
+  {
    "id": "gpt56luna",
    "name": "GPT-5.6 Luna",
    "org": "OpenAI",
    "released": "2026-07-09",
    "open": false,
-   "eci": 156.67,
+   "eci": 156.79,
    "price": {
     "input": 0.2,
     "output": 1.2,
@@ -2043,108 +1975,131 @@
    }
   },
   {
-   "id": "qwen38max0902",
-   "name": "Qwen3.8 Max (0902)",
-   "org": "Alibaba",
-   "released": "2026-09-01",
+   "id": "claudesonnet5",
+   "name": "Claude Sonnet 5",
+   "org": "Anthropic",
+   "released": "2026-06-30",
    "open": false,
-   "eci": 156.24,
-   "price": null,
-   "scores": {
-    "frontiermath-t4": {
-     "v": 34.1,
-     "se": 7.5,
-     "setting": "xhigh"
-    },
-    "frontiermath": {
-     "v": 65.6,
-     "se": 2.82,
-     "setting": "xhigh"
-    },
-    "aime": {
-     "v": 100,
-     "se": 0,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2f8Vn5QBdJnc9i5y9jzXS7.eval"
-    },
-    "gpqa": {
-     "v": 92.3,
-     "se": 1.72,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVzeQXKBH9maR2nDcZJ8b7S.eval"
-    },
-    "simpleqa": {
-     "v": 47.3,
-     "se": 1.58,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnBcLJJomVoeg2zh5F8Mnsu.eval"
-    },
-    "chess": {
-     "v": 37,
-     "se": 4.85,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUt4d4rvkUygdLTRomFb5rh.eval"
-    }
-   }
-  },
-  {
-   "id": "glm53",
-   "name": "GLM-5.3",
-   "org": "Z.ai (Zhipu AI)",
-   "released": "2026-08-14",
-   "open": true,
-   "eci": 156.17,
+   "eci": 156.71,
    "price": {
-    "input": 1.4,
-    "output": 4.4,
-    "blended": 2.15,
-    "provider": "zai",
-    "modelsDevId": "glm-5.3"
+    "input": 2,
+    "output": 10,
+    "blended": 4,
+    "provider": "anthropic",
+    "modelsDevId": "claude-sonnet-5"
    },
    "scores": {
     "deepswe": {
-     "v": 69,
-     "se": 1.54,
+     "v": 53.8,
+     "se": 2.16,
      "setting": "max"
     },
     "frontiermath-t4": {
      "v": 29.3,
      "se": 7.19,
-     "setting": "max"
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbqiVinHXFcgyFGPstJwXJN.eval"
     },
     "frontiermath": {
-     "v": 68.8,
-     "se": 2.75,
-     "setting": "max"
+     "v": 65.6,
+     "se": 2.82,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FV6YuGpcu8MCbJNXKoJMA6b.eval"
     },
     "aime": {
-     "v": 91.1,
-     "se": 3.45,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgoZR5yGxZic9TZ23ezCL3w.eval"
+     "v": 94.7,
+     "se": 2.26,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FT2wFfuSkUdyjpyqurxNmNK.eval"
     },
     "gpqa": {
-     "v": 90.9,
-     "se": 1.59,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdLDBahYBTGRNjbsXA5pyr3.eval"
+     "v": 90.5,
+     "se": 1.78,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHhiYxEx3Bf8YDPUh34K4DC.eval"
     },
     "simpleqa": {
-     "v": 41,
-     "se": 1.56,
+     "v": 33.7,
+     "se": 1.5,
      "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTY8R8FV7zCwByEipkqyg2P.eval"
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLPo74T9L3CawnKX5LLUrSZ.eval"
     },
     "mystery": {
-     "v": 33,
-     "se": 4.73,
+     "v": 35,
+     "se": 4.79,
      "setting": "max"
     },
     "chess": {
-     "v": 37,
-     "se": 4.85,
+     "v": 45,
+     "se": 5,
      "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FkG3hbd8qLEd6fLAJHyQTiN.eval"
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPN9exWpeJGXJB8tZGX32e4.eval"
+    }
+   }
+  },
+  {
+   "id": "gpt6luna",
+   "name": "GPT-6 Luna",
+   "org": "OpenAI",
+   "released": "2026-09-22",
+   "open": false,
+   "eci": 156.68,
+   "price": {
+    "input": 0.1,
+    "output": 0.5,
+    "blended": 0.2,
+    "provider": "openai",
+    "modelsDevId": "gpt-6-luna"
+   },
+   "scores": {
+    "mirrorcode": {
+     "v": 26.7,
+     "se": 9.03,
+     "setting": "max"
+    },
+    "weirdml": {
+     "v": 7.9,
+     "se": 0.51,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 56.1,
+     "se": 7.85,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 78.9,
+     "se": 2.42,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 98.9,
+     "se": 0.67,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4uDz9b6SosxDSZf7swMD9D.eval"
+    },
+    "gpqa": {
+     "v": 90.5,
+     "se": 1.85,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7F3QFMAkwnCV62HcvxP96q.eval"
+    },
+    "simpleqa": {
+     "v": 41.4,
+     "se": 1.56,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHX9sRVWJtZiNvneALnVzs8.eval"
+    },
+    "mystery": {
+     "v": 7,
+     "se": 2.56,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 36,
+     "se": 4.82,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJevnk9hi9oRBbGcFu2JxBC.eval"
     }
    }
   },
@@ -2154,7 +2109,7 @@
    "org": "DeepSeek",
    "released": "2026-09-09",
    "open": true,
-   "eci": 156.11,
+   "eci": 156.49,
    "price": null,
    "scores": {
     "weirdml": {
@@ -2204,70 +2159,12 @@
    }
   },
   {
-   "id": "deepseekv4pro0813",
-   "name": "DeepSeek V4 Pro 0813",
-   "org": "DeepSeek",
-   "released": "2026-08-13",
-   "open": true,
-   "eci": 155.87,
-   "price": {
-    "input": 0.66,
-    "output": 1.98,
-    "blended": 0.99,
-    "provider": "deepseek",
-    "modelsDevId": "deepseek-v4-pro"
-   },
-   "scores": {
-    "frontiermath-t4": {
-     "v": 26.8,
-     "se": 7.01,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fa4uV8HMMBAcHXLVSmZfBgX.eval"
-    },
-    "frontiermath": {
-     "v": 64.6,
-     "se": 2.84,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fb6yWmeFgsWeEiG9Qzs3NSf.eval"
-    },
-    "aime": {
-     "v": 98.6,
-     "se": 0.99,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4HVvM9ZWKKPLQPcC8WYYMT.eval"
-    },
-    "gpqa": {
-     "v": 91.7,
-     "se": 1.52,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnEJGtXGN588zynPkynZkxz.eval"
-    },
-    "simpleqa": {
-     "v": 52.9,
-     "se": 1.58,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2xfFf6KZAp2gUWYhHGkFgs.eval"
-    },
-    "mystery": {
-     "v": 43,
-     "se": 4.98,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 46,
-     "se": 5.01,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FC56VHYLMeww2wXebeJh3gg.eval"
-    }
-   }
-  },
-  {
    "id": "claudeopus46",
    "name": "Claude Opus 4.6",
    "org": "Anthropic",
    "released": "2026-02-05",
    "open": false,
-   "eci": 155.85,
+   "eci": 156.3,
    "price": {
     "input": 5,
     "output": 25,
@@ -2331,7 +2228,7 @@
    "org": "Google DeepMind",
    "released": "2026-02-19",
    "open": false,
-   "eci": 155.24,
+   "eci": 156.24,
    "price": {
     "input": 2,
     "output": 12,
@@ -2399,12 +2296,176 @@
    }
   },
   {
+   "id": "grok47",
+   "name": "Grok 4.7",
+   "org": "xAI",
+   "released": "2026-09-21",
+   "open": false,
+   "eci": 156.07,
+   "price": {
+    "input": 2,
+    "output": 6,
+    "blended": 3,
+    "provider": "xai",
+    "modelsDevId": "grok-4.7"
+   },
+   "scores": {
+    "weirdml": {
+     "v": 8.5,
+     "se": 0.62,
+     "setting": "xhigh"
+    },
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "xhigh"
+    },
+    "frontiermath": {
+     "v": 53,
+     "se": 2.96,
+     "setting": "xhigh"
+    },
+    "aime": {
+     "v": 98.1,
+     "se": 1.43,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJhgwm7QpspGcvm7DUVqUDg.eval"
+    },
+    "gpqa": {
+     "v": 92.7,
+     "se": 1.55,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhxAhYJfXdPNanxatXpG5hC.eval"
+    },
+    "simpleqa": {
+     "v": 56,
+     "se": 1.57,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6izDCw5ygCLZJEKPS8jV5T.eval"
+    },
+    "mystery": {
+     "v": 29,
+     "se": 4.56,
+     "setting": "xhigh"
+    },
+    "chess": {
+     "v": 41,
+     "se": 4.94,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FL5Ck7pMy8bVmVMMLwxJN7f.eval"
+    }
+   }
+  },
+  {
+   "id": "deepseekv4pro0813",
+   "name": "DeepSeek V4 Pro 0813",
+   "org": "DeepSeek",
+   "released": "2026-08-13",
+   "open": true,
+   "eci": 155.87,
+   "price": {
+    "input": 0.66,
+    "output": 1.98,
+    "blended": 0.99,
+    "provider": "deepseek",
+    "modelsDevId": "deepseek-v4-pro"
+   },
+   "scores": {
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fa4uV8HMMBAcHXLVSmZfBgX.eval"
+    },
+    "frontiermath": {
+     "v": 64.6,
+     "se": 2.84,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fb6yWmeFgsWeEiG9Qzs3NSf.eval"
+    },
+    "aime": {
+     "v": 98.6,
+     "se": 0.99,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4HVvM9ZWKKPLQPcC8WYYMT.eval"
+    },
+    "gpqa": {
+     "v": 91.7,
+     "se": 1.52,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnEJGtXGN588zynPkynZkxz.eval"
+    },
+    "simpleqa": {
+     "v": 52.9,
+     "se": 1.58,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2xfFf6KZAp2gUWYhHGkFgs.eval"
+    },
+    "mystery": {
+     "v": 43,
+     "se": 4.98,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 46,
+     "se": 5.01,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FC56VHYLMeww2wXebeJh3gg.eval"
+    }
+   }
+  },
+  {
+   "id": "qwen38max0902",
+   "name": "Qwen3.8 Max (0902)",
+   "org": "Alibaba",
+   "released": "2026-09-01",
+   "open": false,
+   "eci": 155.85,
+   "price": null,
+   "scores": {
+    "frontiermath-t4": {
+     "v": 34.1,
+     "se": 7.5,
+     "setting": "xhigh"
+    },
+    "frontiermath": {
+     "v": 65.6,
+     "se": 2.82,
+     "setting": "xhigh"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2f8Vn5QBdJnc9i5y9jzXS7.eval"
+    },
+    "gpqa": {
+     "v": 92.3,
+     "se": 1.72,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVzeQXKBH9maR2nDcZJ8b7S.eval"
+    },
+    "simpleqa": {
+     "v": 47.3,
+     "se": 1.58,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnBcLJJomVoeg2zh5F8Mnsu.eval"
+    },
+    "chess": {
+     "v": 37,
+     "se": 4.85,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUt4d4rvkUygdLTRomFb5rh.eval"
+    }
+   }
+  },
+  {
    "id": "musesparkopen",
    "name": "Muse Spark Open",
    "org": "Meta AI",
    "released": "2026-10-15",
    "open": true,
-   "eci": 155.05,
+   "eci": 155.42,
    "price": null,
    "scores": {
     "frontiermath-t4": {
@@ -2443,7 +2504,7 @@
    "org": "Google DeepMind",
    "released": "2026-05-19",
    "open": false,
-   "eci": 155.03,
+   "eci": 155.24,
    "price": {
     "input": 1.5,
     "output": 9,
@@ -2507,64 +2568,12 @@
    }
   },
   {
-   "id": "deepseekv4flash0731",
-   "name": "DeepSeek V4 Flash 0731",
-   "org": "DeepSeek",
-   "released": "2026-07-31",
-   "open": true,
-   "eci": 154.94,
-   "price": null,
-   "scores": {
-    "frontiermath-t4": {
-     "v": 24.4,
-     "se": 6.79,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWYs83xB6NwrkMNyQJtuMcQ.eval"
-    },
-    "frontiermath": {
-     "v": 57.5,
-     "se": 2.93,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmKhVMEicZeGjdvJdTRd7mK.eval"
-    },
-    "aime": {
-     "v": 94.4,
-     "se": 2.09,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFQ3Suh2vKacz7UNqJybTWk.eval"
-    },
-    "gpqa": {
-     "v": 91,
-     "se": 1.77,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEDFusDaaFkh5n2MqKNxMBD.eval"
-    },
-    "simpleqa": {
-     "v": 33.6,
-     "se": 1.5,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTqFmiGvqozt7TSZYmhgF8m.eval"
-    },
-    "mystery": {
-     "v": 34,
-     "se": 4.76,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 32,
-     "se": 4.69,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FAzz52eFkXwVJiRCGpaUBwB.eval"
-    }
-   }
-  },
-  {
    "id": "gemini36flash",
    "name": "Gemini 3.6 Flash",
    "org": "Google DeepMind",
    "released": "2026-07-21",
    "open": false,
-   "eci": 154.69,
+   "eci": 155.21,
    "price": {
     "input": 0.75,
     "output": 3.75,
@@ -2622,73 +2631,12 @@
    }
   },
   {
-   "id": "grok47",
-   "name": "Grok 4.7",
-   "org": "xAI",
-   "released": "2026-09-21",
-   "open": false,
-   "eci": 154.55,
-   "price": {
-    "input": 2,
-    "output": 6,
-    "blended": 3,
-    "provider": "xai",
-    "modelsDevId": "grok-4.7"
-   },
-   "scores": {
-    "weirdml": {
-     "v": 8.5,
-     "se": 0.62,
-     "setting": "xhigh"
-    },
-    "frontiermath-t4": {
-     "v": 17.1,
-     "se": 5.95,
-     "setting": "xhigh"
-    },
-    "frontiermath": {
-     "v": 53,
-     "se": 2.96,
-     "setting": "xhigh"
-    },
-    "aime": {
-     "v": 98.1,
-     "se": 1.43,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJhgwm7QpspGcvm7DUVqUDg.eval"
-    },
-    "gpqa": {
-     "v": 92.7,
-     "se": 1.55,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhxAhYJfXdPNanxatXpG5hC.eval"
-    },
-    "simpleqa": {
-     "v": 56,
-     "se": 1.57,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6izDCw5ygCLZJEKPS8jV5T.eval"
-    },
-    "mystery": {
-     "v": 29,
-     "se": 4.56,
-     "setting": "xhigh"
-    },
-    "chess": {
-     "v": 41,
-     "se": 4.94,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FL5Ck7pMy8bVmVMMLwxJN7f.eval"
-    }
-   }
-  },
-  {
    "id": "grok45",
    "name": "Grok 4.5",
    "org": "xAI",
    "released": "2026-07-08",
    "open": false,
-   "eci": 154.36,
+   "eci": 155.08,
    "price": {
     "input": 2,
     "output": 6,
@@ -2744,12 +2692,52 @@
    }
   },
   {
+   "id": "mistrallarge4",
+   "name": "Mistral Large 4",
+   "org": "Mistral AI",
+   "released": "2026-10-29",
+   "open": true,
+   "eci": 154.66,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 99.4,
+     "se": 0.39,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgmJrht9jW92sRXiYyfSqEP.eval"
+    },
+    "gpqa": {
+     "v": 90.2,
+     "se": 1.81,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbrFy5AcCtkxoccgJToWYmR.eval"
+    },
+    "simpleqa": {
+     "v": 22.4,
+     "se": 1.32,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJYSfRXRddi6hYzpnSD3G7V.eval"
+    },
+    "mystery": {
+     "v": 20,
+     "se": 4.02,
+     "setting": "high"
+    },
+    "chess": {
+     "v": 29,
+     "se": 4.56,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPuHzUbC9C2fJAq7iA5wQpv.eval"
+    }
+   }
+  },
+  {
    "id": "qwen37max",
    "name": "Qwen3.7-Max",
    "org": "Alibaba",
    "released": "2026-05-19",
    "open": false,
-   "eci": 154.22,
+   "eci": 154.5,
    "price": {
     "input": 2.5,
     "output": 7.5,
@@ -2800,8 +2788,8 @@
      "setting": "default"
     },
     "chess": {
-     "v": 26,
-     "se": 4.41,
+     "v": 27,
+     "se": 4.46,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FcbQnfsMSA3aQaBtjm3aFx2.eval"
     }
@@ -2813,7 +2801,7 @@
    "org": "OpenAI",
    "released": "2025-12-11",
    "open": false,
-   "eci": 153.83,
+   "eci": 154.42,
    "price": {
     "input": 1.75,
     "output": 14,
@@ -2875,12 +2863,64 @@
    }
   },
   {
+   "id": "deepseekv4flash0731",
+   "name": "DeepSeek V4 Flash 0731",
+   "org": "DeepSeek",
+   "released": "2026-07-31",
+   "open": true,
+   "eci": 154.34,
+   "price": null,
+   "scores": {
+    "frontiermath-t4": {
+     "v": 24.4,
+     "se": 6.79,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWYs83xB6NwrkMNyQJtuMcQ.eval"
+    },
+    "frontiermath": {
+     "v": 57.5,
+     "se": 2.93,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmKhVMEicZeGjdvJdTRd7mK.eval"
+    },
+    "aime": {
+     "v": 94.4,
+     "se": 2.09,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFQ3Suh2vKacz7UNqJybTWk.eval"
+    },
+    "gpqa": {
+     "v": 91,
+     "se": 1.77,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEDFusDaaFkh5n2MqKNxMBD.eval"
+    },
+    "simpleqa": {
+     "v": 33.6,
+     "se": 1.5,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTqFmiGvqozt7TSZYmhgF8m.eval"
+    },
+    "mystery": {
+     "v": 34,
+     "se": 4.76,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 32,
+     "se": 4.69,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FAzz52eFkXwVJiRCGpaUBwB.eval"
+    }
+   }
+  },
+  {
    "id": "glm53flash",
    "name": "GLM-5.3-Flash",
    "org": "Z.ai (Zhipu AI)",
    "released": "2026-08-20",
    "open": true,
-   "eci": 153.22,
+   "eci": 153.64,
    "price": {
     "input": 0.15,
     "output": 0.5,
@@ -2930,150 +2970,12 @@
    }
   },
   {
-   "id": "gemini3pro",
-   "name": "Gemini 3 Pro",
-   "org": "Google DeepMind",
-   "released": "2025-11-18",
-   "open": false,
-   "eci": 153.22,
-   "price": null,
-   "scores": {
-    "swebench": {
-     "v": 72.9,
-     "se": 2.02,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5XdYZBG5Wy8DUMRqcYv4fn.eval"
-    },
-    "aime": {
-     "v": 91.4,
-     "se": 3.66,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4QM4h7ndQiDRL2anjKeddK.eval"
-    },
-    "gpqa": {
-     "v": 92.6,
-     "se": 1.65,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCg54udQGcTCnfDGX2qePLZ.eval"
-    }
-   }
-  },
-  {
-   "id": "claudesonnet46",
-   "name": "Claude Sonnet 4.6",
-   "org": "Anthropic",
-   "released": "2026-02-17",
-   "open": false,
-   "eci": 152.9,
-   "price": {
-    "input": 3,
-    "output": 15,
-    "blended": 6,
-    "provider": "anthropic",
-    "modelsDevId": "claude-sonnet-4-6"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 29.9,
-     "se": 2.09,
-     "setting": "high"
-    },
-    "swebench": {
-     "v": 75.2,
-     "se": 1.96,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKEdgiMmtJKHxgGiS82agYj.eval"
-    },
-    "aime": {
-     "v": 85.8,
-     "se": 4.54,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9LWdzVN5w4ihNvncsaCWMu.eval"
-    },
-    "gpqa": {
-     "v": 87.4,
-     "se": 2,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F58eQmyCfPa3FufhXJFvAL2.eval"
-    },
-    "simpleqa": {
-     "v": 35.5,
-     "se": 1.51,
-     "setting": "high"
-    },
-    "mystery": {
-     "v": 16,
-     "se": 3.68,
-     "setting": "low"
-    },
-    "chess": {
-     "v": 23,
-     "se": 4.23,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6P9AJQmBzaPmE7ossbqLjz.eval"
-    }
-   }
-  },
-  {
-   "id": "grok420",
-   "name": "Grok 4.20",
-   "org": "xAI",
-   "released": "2026-02-17",
-   "open": false,
-   "eci": 152.26,
-   "price": {
-    "input": 1.25,
-    "output": 2.5,
-    "blended": 1.5625,
-    "provider": "xai",
-    "modelsDevId": "grok-4.20-0309-reasoning"
-   },
-   "scores": {
-    "frontiermath-t4": {
-     "v": 17.1,
-     "se": 5.95,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSX5FCWMk3HF83gGsP3WFA6.eval"
-    },
-    "frontiermath": {
-     "v": 44.9,
-     "se": 2.95,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFLDt53waLTeshC7PK9uVy2.eval"
-    },
-    "aime": {
-     "v": 92.2,
-     "se": 3.28,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmM6vdJpgjLY9prnetXzZJS.eval"
-    },
-    "gpqa": {
-     "v": 89.3,
-     "se": 1.86,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSTxFZiSPAPScUuENvXBWLc.eval"
-    },
-    "simpleqa": {
-     "v": 30.2,
-     "se": 1.45,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVm7khGvtdnQKGfkgAHD8q.eval"
-    },
-    "chess": {
-     "v": 29,
-     "se": 4.56,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FETNzxNbPKwj4qxkdo3VVgT.eval"
-    }
-   }
-  },
-  {
    "id": "glm52",
    "name": "GLM-5.2",
    "org": "Z.ai (Zhipu AI)",
    "released": "2026-06-16",
    "open": true,
-   "eci": 152.07,
+   "eci": 152.99,
    "price": {
     "input": 1.4,
     "output": 4.4,
@@ -3136,12 +3038,205 @@
    }
   },
   {
+   "id": "gemini3pro",
+   "name": "Gemini 3 Pro",
+   "org": "Google DeepMind",
+   "released": "2025-11-18",
+   "open": false,
+   "eci": 152.88,
+   "price": null,
+   "scores": {
+    "swebench": {
+     "v": 72.9,
+     "se": 2.02,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5XdYZBG5Wy8DUMRqcYv4fn.eval"
+    },
+    "aime": {
+     "v": 91.4,
+     "se": 3.66,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4QM4h7ndQiDRL2anjKeddK.eval"
+    },
+    "gpqa": {
+     "v": 92.6,
+     "se": 1.65,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCg54udQGcTCnfDGX2qePLZ.eval"
+    }
+   }
+  },
+  {
+   "id": "claudesonnet46",
+   "name": "Claude Sonnet 4.6",
+   "org": "Anthropic",
+   "released": "2026-02-17",
+   "open": false,
+   "eci": 152.86,
+   "price": {
+    "input": 3,
+    "output": 15,
+    "blended": 6,
+    "provider": "anthropic",
+    "modelsDevId": "claude-sonnet-4-6"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 29.9,
+     "se": 2.09,
+     "setting": "high"
+    },
+    "swebench": {
+     "v": 75.2,
+     "se": 1.96,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKEdgiMmtJKHxgGiS82agYj.eval"
+    },
+    "aime": {
+     "v": 85.8,
+     "se": 4.54,
+     "setting": "32K",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9LWdzVN5w4ihNvncsaCWMu.eval"
+    },
+    "gpqa": {
+     "v": 87.4,
+     "se": 2,
+     "setting": "32K",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F58eQmyCfPa3FufhXJFvAL2.eval"
+    },
+    "simpleqa": {
+     "v": 35.5,
+     "se": 1.51,
+     "setting": "high"
+    },
+    "mystery": {
+     "v": 16,
+     "se": 3.68,
+     "setting": "low"
+    },
+    "chess": {
+     "v": 23,
+     "se": 4.23,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6P9AJQmBzaPmE7ossbqLjz.eval"
+    }
+   }
+  },
+  {
+   "id": "mistrallarge4preview",
+   "name": "Mistral Large 4 Preview",
+   "org": "Mistral AI",
+   "released": "2026-10-06",
+   "open": true,
+   "eci": 152.62,
+   "price": null,
+   "scores": {
+    "weirdml": {
+     "v": 4.4,
+     "se": 0.72,
+     "setting": "high"
+    },
+    "frontiermath-t4": {
+     "v": 26.8,
+     "se": 7.01,
+     "setting": "high"
+    },
+    "frontiermath": {
+     "v": 58.6,
+     "se": 2.92,
+     "setting": "high"
+    },
+    "aime": {
+     "v": 98.3,
+     "se": 0.64,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPby5WuP8Muu6Jzs2v5gB7F.eval"
+    },
+    "gpqa": {
+     "v": 88.1,
+     "se": 1.93,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEkx5phukyiJhAcQodMfS2p.eval"
+    },
+    "simpleqa": {
+     "v": 20,
+     "se": 1.27,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhvNNKdnzLvr9X8zVxWKcfk.eval"
+    },
+    "mystery": {
+     "v": 17,
+     "se": 3.78,
+     "setting": "high"
+    },
+    "chess": {
+     "v": 33,
+     "se": 4.73,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeNdDCt2u6A8mPisK56SApU.eval"
+    }
+   }
+  },
+  {
+   "id": "grok420",
+   "name": "Grok 4.20",
+   "org": "xAI",
+   "released": "2026-02-17",
+   "open": false,
+   "eci": 152.27,
+   "price": {
+    "input": 1.25,
+    "output": 2.5,
+    "blended": 1.5625,
+    "provider": "xai",
+    "modelsDevId": "grok-4.20-0309-reasoning"
+   },
+   "scores": {
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSX5FCWMk3HF83gGsP3WFA6.eval"
+    },
+    "frontiermath": {
+     "v": 44.9,
+     "se": 2.95,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFLDt53waLTeshC7PK9uVy2.eval"
+    },
+    "aime": {
+     "v": 92.2,
+     "se": 3.28,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmM6vdJpgjLY9prnetXzZJS.eval"
+    },
+    "gpqa": {
+     "v": 89.3,
+     "se": 1.86,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSTxFZiSPAPScUuENvXBWLc.eval"
+    },
+    "simpleqa": {
+     "v": 30.2,
+     "se": 1.45,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGVm7khGvtdnQKGfkgAHD8q.eval"
+    },
+    "chess": {
+     "v": 29,
+     "se": 4.56,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FETNzxNbPKwj4qxkdo3VVgT.eval"
+    }
+   }
+  },
+  {
    "id": "gemini3flash",
    "name": "Gemini 3 Flash",
    "org": "Google DeepMind",
    "released": "2025-12-17",
    "open": false,
-   "eci": 152.01,
+   "eci": 152.25,
    "price": null,
    "scores": {
     "swebench": {
@@ -3186,223 +3281,10 @@
      "setting": "low"
     },
     "chess": {
-     "v": 39,
-     "se": 4.9,
+     "v": 40,
+     "se": 4.92,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUUNZJtgib9XbCjLEdhtGaT.eval"
-    }
-   }
-  },
-  {
-   "id": "kimik26",
-   "name": "Kimi K2.6",
-   "org": "Moonshot",
-   "released": "2026-04-20",
-   "open": true,
-   "eci": 151.06,
-   "price": {
-    "input": 0.95,
-    "output": 4,
-    "blended": 1.7125,
-    "provider": "moonshotai",
-    "modelsDevId": "kimi-k2.6"
-   },
-   "scores": {
-    "swebench": {
-     "v": 76.7,
-     "se": 1.92,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbUPtAK7spEwvmiC8pi6afc.eval"
-    },
-    "frontiermath-t4": {
-     "v": 25.6,
-     "se": 7.08,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeVKA2eavdRAbSN6AnzyBxA.eval"
-    },
-    "frontiermath": {
-     "v": 57.2,
-     "se": 2.94,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBxrNfyMffkVUq4n7U5eK3Q.eval"
-    },
-    "aime": {
-     "v": 96.1,
-     "se": 2.38,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBTeRdhgt6TFBj6QkGX2j6P.eval"
-    },
-    "gpqa": {
-     "v": 90.8,
-     "se": 1.72,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLjgJoDosTLkiGVT59smA7q.eval"
-    },
-    "simpleqa": {
-     "v": 34.9,
-     "se": 1.51,
-     "setting": "default"
-    },
-    "mystery": {
-     "v": 18,
-     "se": 3.86,
-     "setting": "default"
-    },
-    "chess": {
-     "v": 20,
-     "se": 4.02,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FehqiuEDETZTqJ8zt6Mc7Ja.eval"
-    }
-   }
-  },
-  {
-   "id": "mistrallarge4",
-   "name": "Mistral Large 4",
-   "org": "Mistral AI",
-   "released": "2026-10-29",
-   "open": true,
-   "eci": 150.59,
-   "price": null,
-   "scores": {
-    "aime": {
-     "v": 99.4,
-     "se": 0.39,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgmJrht9jW92sRXiYyfSqEP.eval"
-    },
-    "gpqa": {
-     "v": 90.2,
-     "se": 1.81,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbrFy5AcCtkxoccgJToWYmR.eval"
-    },
-    "simpleqa": {
-     "v": 22.4,
-     "se": 1.32,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJYSfRXRddi6hYzpnSD3G7V.eval"
-    },
-    "mystery": {
-     "v": 20,
-     "se": 4.02,
-     "setting": "high"
-    },
-    "chess": {
-     "v": 29,
-     "se": 4.56,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPuHzUbC9C2fJAq7iA5wQpv.eval"
-    }
-   }
-  },
-  {
-   "id": "inklingsmall",
-   "name": "Inkling-Small",
-   "org": "Thinking Machines",
-   "released": "2026-07-15",
-   "open": true,
-   "eci": 150.46,
-   "price": {
-    "input": 0.58,
-    "output": 1.44,
-    "blended": 0.795,
-    "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small"
-   },
-   "scores": {
-    "frontiermath-t4": {
-     "v": 17.1,
-     "se": 5.95,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDVD8G8DHNyzkowBzK7JvMt.eval"
-    },
-    "frontiermath": {
-     "v": 46.3,
-     "se": 2.96,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FB6bZbqickq8o2fQcgDmzMo.eval"
-    },
-    "aime": {
-     "v": 90,
-     "se": 3.96,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F53BDFebxiT9KGeP5FRt6bJ.eval"
-    },
-    "gpqa": {
-     "v": 88.5,
-     "se": 1.91,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjTHw5SET8usd7emYPjEDjS.eval"
-    },
-    "simpleqa": {
-     "v": 19.1,
-     "se": 1.24,
-     "setting": "xhigh",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeJfbDKqeg9kNXFoxpeV7HG.eval"
-    },
-    "mystery": {
-     "v": 6,
-     "se": 2.39,
-     "setting": "xhigh"
-    }
-   }
-  },
-  {
-   "id": "kimik27code",
-   "name": "Kimi K2.7 Code",
-   "org": "Moonshot",
-   "released": "2026-06-12",
-   "open": true,
-   "eci": 150.23,
-   "price": {
-    "input": 0.95,
-    "output": 4,
-    "blended": 1.7125,
-    "provider": "moonshotai",
-    "modelsDevId": "kimi-k2.7-code"
-   },
-   "scores": {
-    "deepswe": {
-     "v": 30.5,
-     "se": 0.26,
-     "setting": "default"
-    },
-    "frontiermath-t4": {
-     "v": 12.2,
-     "se": 5.17,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUTVSgirxQpTgmTHbgE9EUk.eval"
-    },
-    "frontiermath": {
-     "v": 54,
-     "se": 2.96,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FX3RxRkt2pBUXYJjAQHsUo6.eval"
-    },
-    "aime": {
-     "v": 95.6,
-     "se": 3.11,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FENc5ZM5TpBYNKkTWN4xyQM.eval"
-    },
-    "gpqa": {
-     "v": 87.9,
-     "se": 2.33,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FXneEig6pACkAWeekvgCwNk.eval"
-    },
-    "simpleqa": {
-     "v": 36.5,
-     "se": 1.52,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5AijYw5bFJtSuahnbzNo6Z.eval"
-    },
-    "chess": {
-     "v": 14,
-     "se": 3.49,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbSyTSKD8RiRNZCGNu6MnFp.eval"
     }
    }
   },
@@ -3412,7 +3294,7 @@
    "org": "Anthropic",
    "released": "2025-11-24",
    "open": false,
-   "eci": 150.2,
+   "eci": 151.82,
    "price": {
     "input": 5,
     "output": 25,
@@ -3476,12 +3358,133 @@
    }
   },
   {
+   "id": "kimik26",
+   "name": "Kimi K2.6",
+   "org": "Moonshot",
+   "released": "2026-04-20",
+   "open": true,
+   "eci": 151.56,
+   "price": {
+    "input": 0.95,
+    "output": 4,
+    "blended": 1.7125,
+    "provider": "moonshotai",
+    "modelsDevId": "kimi-k2.6"
+   },
+   "scores": {
+    "swebench": {
+     "v": 76.7,
+     "se": 1.92,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbUPtAK7spEwvmiC8pi6afc.eval"
+    },
+    "frontiermath-t4": {
+     "v": 25.6,
+     "se": 7.08,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeVKA2eavdRAbSN6AnzyBxA.eval"
+    },
+    "frontiermath": {
+     "v": 57.2,
+     "se": 2.94,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBxrNfyMffkVUq4n7U5eK3Q.eval"
+    },
+    "aime": {
+     "v": 96.1,
+     "se": 2.38,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBTeRdhgt6TFBj6QkGX2j6P.eval"
+    },
+    "gpqa": {
+     "v": 90.8,
+     "se": 1.72,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLjgJoDosTLkiGVT59smA7q.eval"
+    },
+    "simpleqa": {
+     "v": 34.9,
+     "se": 1.51,
+     "setting": "default"
+    },
+    "mystery": {
+     "v": 18,
+     "se": 3.86,
+     "setting": "default"
+    },
+    "chess": {
+     "v": 20,
+     "se": 4.02,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FehqiuEDETZTqJ8zt6Mc7Ja.eval"
+    }
+   }
+  },
+  {
+   "id": "kimik27code",
+   "name": "Kimi K2.7 Code",
+   "org": "Moonshot",
+   "released": "2026-06-12",
+   "open": true,
+   "eci": 151.16,
+   "price": {
+    "input": 0.95,
+    "output": 4,
+    "blended": 1.7125,
+    "provider": "moonshotai",
+    "modelsDevId": "kimi-k2.7-code"
+   },
+   "scores": {
+    "deepswe": {
+     "v": 30.5,
+     "se": 0.26,
+     "setting": "default"
+    },
+    "frontiermath-t4": {
+     "v": 12.2,
+     "se": 5.17,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUTVSgirxQpTgmTHbgE9EUk.eval"
+    },
+    "frontiermath": {
+     "v": 54,
+     "se": 2.96,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FX3RxRkt2pBUXYJjAQHsUo6.eval"
+    },
+    "aime": {
+     "v": 95.6,
+     "se": 3.11,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FENc5ZM5TpBYNKkTWN4xyQM.eval"
+    },
+    "gpqa": {
+     "v": 87.9,
+     "se": 2.33,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FXneEig6pACkAWeekvgCwNk.eval"
+    },
+    "simpleqa": {
+     "v": 36.5,
+     "se": 1.52,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5AijYw5bFJtSuahnbzNo6Z.eval"
+    },
+    "chess": {
+     "v": 14,
+     "se": 3.49,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbSyTSKD8RiRNZCGNu6MnFp.eval"
+    }
+   }
+  },
+  {
    "id": "gpt51",
    "name": "GPT-5.1",
    "org": "OpenAI",
    "released": "2025-11-13",
    "open": false,
-   "eci": 149.89,
+   "eci": 150.87,
    "price": {
     "input": 1.25,
     "output": 10,
@@ -3528,12 +3531,64 @@
    }
   },
   {
+   "id": "inklingsmall",
+   "name": "Inkling-Small",
+   "org": "Thinking Machines",
+   "released": "2026-07-15",
+   "open": true,
+   "eci": 150.79,
+   "price": {
+    "input": 0.3,
+    "output": 1.2,
+    "blended": 0.525,
+    "provider": "thinkingmachines",
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+   },
+   "scores": {
+    "frontiermath-t4": {
+     "v": 17.1,
+     "se": 5.95,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDVD8G8DHNyzkowBzK7JvMt.eval"
+    },
+    "frontiermath": {
+     "v": 46.3,
+     "se": 2.96,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FB6bZbqickq8o2fQcgDmzMo.eval"
+    },
+    "aime": {
+     "v": 90,
+     "se": 3.96,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F53BDFebxiT9KGeP5FRt6bJ.eval"
+    },
+    "gpqa": {
+     "v": 88.5,
+     "se": 1.91,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjTHw5SET8usd7emYPjEDjS.eval"
+    },
+    "simpleqa": {
+     "v": 19.1,
+     "se": 1.24,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeJfbDKqeg9kNXFoxpeV7HG.eval"
+    },
+    "mystery": {
+     "v": 6,
+     "se": 2.39,
+     "setting": "xhigh"
+    }
+   }
+  },
+  {
    "id": "glm51",
    "name": "GLM-5.1",
    "org": "Z.ai (Zhipu AI)",
    "released": "2026-04-07",
    "open": true,
-   "eci": 149.88,
+   "eci": 150.67,
    "price": {
     "input": 1.4,
     "output": 4.4,
@@ -3580,58 +3635,12 @@
    }
   },
   {
-   "id": "qwen36maxpreview",
-   "name": "Qwen 3.6 Max (Preview)",
-   "org": "Alibaba",
-   "released": "2026-04-20",
-   "open": false,
-   "eci": 149.38,
-   "price": {
-    "input": 1.3,
-    "output": 7.8,
-    "blended": 2.925,
-    "provider": "alibaba",
-    "modelsDevId": "qwen3.6-max-preview"
-   },
-   "scores": {
-    "swebench": {
-     "v": 76.7,
-     "se": 1.92,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFkDMVLdEnJDR5PyUCT6BNQ.eval"
-    },
-    "aime": {
-     "v": 91.1,
-     "se": 4.29,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEfJpx5HztMmL5EQSwsyqMe.eval"
-    },
-    "gpqa": {
-     "v": 87.4,
-     "se": 2.37,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJv2hJvjpvA8xJW3Bzv7bfw.eval"
-    },
-    "simpleqa": {
-     "v": 52,
-     "se": 1.58,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FiyPiR8GUuyNNA6Fssziq32.eval"
-    },
-    "mystery": {
-     "v": 19,
-     "se": 3.94,
-     "setting": "none"
-    }
-   }
-  },
-  {
    "id": "deepseekv4pro",
    "name": "DeepSeek-V4-Pro",
    "org": "DeepSeek",
    "released": "2026-04-24",
    "open": true,
-   "eci": 149.13,
+   "eci": 150.13,
    "price": null,
    "scores": {
     "swebench": {
@@ -3689,7 +3698,7 @@
    "org": "xAI",
    "released": "2026-04-17",
    "open": false,
-   "eci": 148.95,
+   "eci": 150,
    "price": null,
    "scores": {
     "frontiermath-t4": {
@@ -3731,12 +3740,58 @@
    }
   },
   {
+   "id": "qwen36maxpreview",
+   "name": "Qwen 3.6 Max (Preview)",
+   "org": "Alibaba",
+   "released": "2026-04-20",
+   "open": false,
+   "eci": 149.77,
+   "price": {
+    "input": 1.3,
+    "output": 7.8,
+    "blended": 2.925,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-max-preview"
+   },
+   "scores": {
+    "swebench": {
+     "v": 76.7,
+     "se": 1.92,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFkDMVLdEnJDR5PyUCT6BNQ.eval"
+    },
+    "aime": {
+     "v": 91.1,
+     "se": 4.29,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEfJpx5HztMmL5EQSwsyqMe.eval"
+    },
+    "gpqa": {
+     "v": 87.4,
+     "se": 2.37,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJv2hJvjpvA8xJW3Bzv7bfw.eval"
+    },
+    "simpleqa": {
+     "v": 52,
+     "se": 1.58,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FiyPiR8GUuyNNA6Fssziq32.eval"
+    },
+    "mystery": {
+     "v": 19,
+     "se": 3.94,
+     "setting": "none"
+    }
+   }
+  },
+  {
    "id": "gpt54mini",
    "name": "GPT-5.4 Mini",
    "org": "OpenAI",
    "released": "2026-03-17",
    "open": false,
-   "eci": 148.82,
+   "eci": 149.34,
    "price": {
     "input": 0.75,
     "output": 4.5,
@@ -3787,12 +3842,105 @@
    }
   },
   {
+   "id": "qwen36plus",
+   "name": "Qwen 3.6 Plus",
+   "org": "Alibaba",
+   "released": "2026-03-31",
+   "open": false,
+   "eci": 148.8,
+   "price": {
+    "input": 0.5,
+    "output": 3,
+    "blended": 1.125,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.6-plus"
+   },
+   "scores": {
+    "swebench": {
+     "v": 57.9,
+     "se": 2.25,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F8HV4HP9EM5KuLSwzifuLye.eval"
+    },
+    "frontiermath": {
+     "v": 38.2,
+     "se": 2.88,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjbyVWnEvvFVNNc8AEF6WcQ.eval"
+    },
+    "aime": {
+     "v": 93.3,
+     "se": 3.76,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjYiGAFfUQKJuRStPzU3PX3.eval"
+    },
+    "gpqa": {
+     "v": 88.4,
+     "se": 2.28,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Ff6ZdMtRpdfskGbrBCzrKSn.eval"
+    },
+    "simpleqa": {
+     "v": 44.1,
+     "se": 1.57,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4LWNorP8Fy8V8doxirNFcH.eval"
+    },
+    "mystery": {
+     "v": 12,
+     "se": 3.27,
+     "setting": "none"
+    },
+    "chess": {
+     "v": 16,
+     "se": 3.68,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSP9UFPzxVnsbzs2kExP2bh.eval"
+    }
+   }
+  },
+  {
+   "id": "kimik25",
+   "name": "Kimi K2.5",
+   "org": "Moonshot",
+   "released": "2026-01-27",
+   "open": true,
+   "eci": 148.72,
+   "price": null,
+   "scores": {
+    "swebench": {
+     "v": 73.8,
+     "se": 2,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5wVjUb3yn6bdjPSfPEMuiZ.eval"
+    },
+    "aime": {
+     "v": 92.2,
+     "se": 3.9,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmbfZvrSNoXSJqCyD4VKqLe.eval"
+    },
+    "gpqa": {
+     "v": 87.6,
+     "se": 1.9,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFmqGUq87N4JcuSbo6Uu3U5.eval"
+    },
+    "simpleqa": {
+     "v": 34.3,
+     "se": 1.5,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRbXXg4JEbTSBnzw3CMSHnD.eval"
+    }
+   }
+  },
+  {
    "id": "inkling",
    "name": "Inkling",
    "org": "Thinking Machines",
    "released": "2026-07-15",
    "open": true,
-   "eci": 148.51,
+   "eci": 148.39,
    "price": {
     "input": 1.87,
     "output": 4.68,
@@ -3845,95 +3993,42 @@
    }
   },
   {
-   "id": "kimik25",
-   "name": "Kimi K2.5",
-   "org": "Moonshot",
-   "released": "2026-01-27",
-   "open": true,
-   "eci": 148.11,
-   "price": null,
-   "scores": {
-    "swebench": {
-     "v": 73.8,
-     "se": 2,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5wVjUb3yn6bdjPSfPEMuiZ.eval"
-    },
-    "aime": {
-     "v": 92.2,
-     "se": 3.9,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmbfZvrSNoXSJqCyD4VKqLe.eval"
-    },
-    "gpqa": {
-     "v": 87.6,
-     "se": 1.9,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFmqGUq87N4JcuSbo6Uu3U5.eval"
-    },
-    "simpleqa": {
-     "v": 34.3,
-     "se": 1.5,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRbXXg4JEbTSBnzw3CMSHnD.eval"
-    }
-   }
-  },
-  {
-   "id": "qwen36plus",
-   "name": "Qwen 3.6 Plus",
+   "id": "qwen35397ba17b",
+   "name": "Qwen3.5 397B-A17B",
    "org": "Alibaba",
-   "released": "2026-03-31",
-   "open": false,
-   "eci": 147.81,
+   "released": "2026-02-13",
+   "open": true,
+   "eci": 147.87,
    "price": {
-    "input": 0.5,
-    "output": 3,
-    "blended": 1.125,
+    "input": 0.6,
+    "output": 3.6,
+    "blended": 1.35,
     "provider": "alibaba",
-    "modelsDevId": "qwen3.6-plus"
+    "modelsDevId": "qwen3.5-397b-a17b"
    },
    "scores": {
-    "swebench": {
-     "v": 57.9,
-     "se": 2.25,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F8HV4HP9EM5KuLSwzifuLye.eval"
-    },
     "frontiermath": {
-     "v": 38.2,
-     "se": 2.88,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjbyVWnEvvFVNNc8AEF6WcQ.eval"
+     "v": 31.2,
+     "se": 2.75,
+     "setting": "none",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FA4yUA9PfzRr92JAqDDo9ro.eval"
     },
     "aime": {
-     "v": 93.3,
-     "se": 3.76,
+     "v": 88.9,
+     "se": 4.74,
      "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjYiGAFfUQKJuRStPzU3PX3.eval"
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJYuFdyZZSiMvmSZNzMTywb.eval"
     },
     "gpqa": {
-     "v": 88.4,
-     "se": 2.28,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Ff6ZdMtRpdfskGbrBCzrKSn.eval"
-    },
-    "simpleqa": {
-     "v": 44.1,
-     "se": 1.57,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4LWNorP8Fy8V8doxirNFcH.eval"
+     "v": 86.4,
+     "se": 2.45,
+     "setting": "none",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbXrmQqzF9sXbuZfRrSc7NP.eval"
     },
     "mystery": {
-     "v": 12,
-     "se": 3.27,
+     "v": 18,
+     "se": 3.86,
      "setting": "none"
-    },
-    "chess": {
-     "v": 14,
-     "se": 3.49,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSP9UFPzxVnsbzs2kExP2bh.eval"
     }
    }
   },
@@ -3943,7 +4038,7 @@
    "org": "Alibaba",
    "released": "2026-06-02",
    "open": false,
-   "eci": 147.11,
+   "eci": 147.84,
    "price": {
     "input": 0.4,
     "output": 1.6,
@@ -3983,7 +4078,7 @@
    "org": "MiniMax",
    "released": "2026-06-01",
    "open": true,
-   "eci": 146.92,
+   "eci": 147.6,
    "price": {
     "input": 0.3,
     "output": 1.2,
@@ -4010,50 +4105,78 @@
      "setting": "none"
     },
     "chess": {
-     "v": 13,
-     "se": 3.38,
+     "v": 17,
+     "se": 3.78,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCtmxkTPbFRofQWTkEw5aSe.eval"
     }
    }
   },
   {
-   "id": "qwen35397ba17b",
-   "name": "Qwen3.5 397B-A17B",
+   "id": "qwen35plushosted397ba17b",
+   "name": "Qwen 3.5 Plus (hosted 397B-A17B)",
    "org": "Alibaba",
-   "released": "2026-02-13",
-   "open": true,
-   "eci": 146.85,
-   "price": {
-    "input": 0.6,
-    "output": 3.6,
-    "blended": 1.35,
-    "provider": "alibaba",
-    "modelsDevId": "qwen3.5-397b-a17b"
-   },
+   "released": "2026-02-16",
+   "open": false,
+   "eci": 147.21,
+   "price": null,
    "scores": {
-    "frontiermath": {
-     "v": 31.2,
-     "se": 2.75,
-     "setting": "none",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FA4yUA9PfzRr92JAqDDo9ro.eval"
-    },
     "aime": {
-     "v": 88.9,
-     "se": 4.74,
+     "v": 86.7,
+     "se": 5.12,
      "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FJYuFdyZZSiMvmSZNzMTywb.eval"
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FcFbntXuxUtfreULvt7vEt7.eval"
     },
     "gpqa": {
-     "v": 86.4,
-     "se": 2.45,
-     "setting": "none",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbXrmQqzF9sXbuZfRrSc7NP.eval"
+     "v": 84.8,
+     "se": 2.55,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmGXYSUNCMisvaRzhQp6g2L.eval"
+    },
+    "simpleqa": {
+     "v": 25.4,
+     "se": 1.38,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjrawnM2wHFbVfJFJsap4kS.eval"
     },
     "mystery": {
-     "v": 18,
-     "se": 3.86,
+     "v": 17,
+     "se": 3.78,
      "setting": "none"
+    },
+    "chess": {
+     "v": 9,
+     "se": 2.88,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FXEaDaqM3oaPcrtQ6XH5fGS.eval"
+    }
+   }
+  },
+  {
+   "id": "nemotron3ultra",
+   "name": "Nemotron 3 Ultra",
+   "org": "Nvidia",
+   "released": "2026-06-04",
+   "open": true,
+   "eci": 147.1,
+   "price": null,
+   "scores": {
+    "aime": {
+     "v": 86.7,
+     "se": 5.12,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWYTWr3Xk4qxymhMsm7vRQ2.eval"
+    },
+    "gpqa": {
+     "v": 85.4,
+     "se": 2.52,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbpZy8tAbh7UV6A6U7XZtBg.eval"
+    },
+    "mystery": {
+     "v": 20,
+     "se": 4.02,
+     "setting": "default"
     }
    }
   },
@@ -4063,7 +4186,7 @@
    "org": "Alibaba",
    "released": "2026-04-22",
    "open": true,
-   "eci": 146.32,
+   "eci": 146.71,
    "price": {
     "input": 0.6,
     "output": 3.6,
@@ -4098,42 +4221,37 @@
    }
   },
   {
-   "id": "qwen35plushosted397ba17b",
-   "name": "Qwen 3.5 Plus (hosted 397B-A17B)",
-   "org": "Alibaba",
-   "released": "2026-02-16",
-   "open": false,
-   "eci": 146.25,
-   "price": null,
+   "id": "glm5",
+   "name": "GLM-5",
+   "org": "Z.ai (Zhipu AI)",
+   "released": "2026-02-11",
+   "open": true,
+   "eci": 146.43,
+   "price": {
+    "input": 1,
+    "output": 3.2,
+    "blended": 1.55,
+    "provider": "zai",
+    "modelsDevId": "glm-5"
+   },
    "scores": {
-    "aime": {
-     "v": 86.7,
-     "se": 5.12,
+    "swebench": {
+     "v": 72.1,
+     "se": 2.09,
      "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FcFbntXuxUtfreULvt7vEt7.eval"
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhKkJEu4ueLiNWsTtrJ78PS.eval"
+    },
+    "aime": {
+     "v": 80,
+     "se": 6,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fccbx7KQY9bTD563vzBXwSg.eval"
     },
     "gpqa": {
-     "v": 84.8,
-     "se": 2.55,
+     "v": 87.8,
+     "se": 2.34,
      "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmGXYSUNCMisvaRzhQp6g2L.eval"
-    },
-    "simpleqa": {
-     "v": 25.4,
-     "se": 1.38,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjrawnM2wHFbVfJFJsap4kS.eval"
-    },
-    "mystery": {
-     "v": 17,
-     "se": 3.78,
-     "setting": "none"
-    },
-    "chess": {
-     "v": 8,
-     "se": 2.73,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FXEaDaqM3oaPcrtQ6XH5fGS.eval"
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fn4hyz75SVpwPEisKVVjvNg.eval"
     }
    }
   },
@@ -4143,7 +4261,7 @@
    "org": "OpenAI",
    "released": "2026-03-17",
    "open": false,
-   "eci": 146.14,
+   "eci": 146.4,
    "price": {
     "input": 0.2,
     "output": 1.25,
@@ -4196,75 +4314,12 @@
    }
   },
   {
-   "id": "nemotron3ultra",
-   "name": "Nemotron 3 Ultra",
-   "org": "Nvidia",
-   "released": "2026-06-04",
-   "open": true,
-   "eci": 146.02,
-   "price": null,
-   "scores": {
-    "aime": {
-     "v": 86.7,
-     "se": 5.12,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWYTWr3Xk4qxymhMsm7vRQ2.eval"
-    },
-    "gpqa": {
-     "v": 85.4,
-     "se": 2.52,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbpZy8tAbh7UV6A6U7XZtBg.eval"
-    },
-    "mystery": {
-     "v": 20,
-     "se": 4.02,
-     "setting": "default"
-    }
-   }
-  },
-  {
-   "id": "glm5",
-   "name": "GLM-5",
-   "org": "Z.ai (Zhipu AI)",
-   "released": "2026-02-11",
-   "open": true,
-   "eci": 145.79,
-   "price": {
-    "input": 1,
-    "output": 3.2,
-    "blended": 1.55,
-    "provider": "zai",
-    "modelsDevId": "glm-5"
-   },
-   "scores": {
-    "swebench": {
-     "v": 72.1,
-     "se": 2.09,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhKkJEu4ueLiNWsTtrJ78PS.eval"
-    },
-    "aime": {
-     "v": 80,
-     "se": 6,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fccbx7KQY9bTD563vzBXwSg.eval"
-    },
-    "gpqa": {
-     "v": 87.8,
-     "se": 2.34,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fn4hyz75SVpwPEisKVVjvNg.eval"
-    }
-   }
-  },
-  {
    "id": "gemini35flashlite",
    "name": "Gemini 3.5 Flash-Lite",
    "org": "Google DeepMind",
    "released": "2026-07-21",
    "open": false,
-   "eci": 144.97,
+   "eci": 145.59,
    "price": {
     "input": 0.3,
     "output": 2.5,
@@ -4311,42 +4366,31 @@
    }
   },
   {
-   "id": "qwen37flash",
-   "name": "Qwen3.7 Flash",
-   "org": "Alibaba",
-   "released": "2026-07-27",
-   "open": false,
-   "eci": 144.14,
-   "price": {
-    "input": 0.03,
-    "output": 0.13,
-    "blended": 0.055,
-    "provider": "alibaba",
-    "modelsDevId": "qwen3.7-flash"
-   },
+   "id": "gemma431bit",
+   "name": "Gemma 4 31B IT",
+   "org": "Google DeepMind",
+   "released": "2026-04-02",
+   "open": true,
+   "eci": 144.24,
+   "price": null,
    "scores": {
-    "frontiermath": {
-     "v": 19.3,
-     "se": 2.34,
-     "setting": "none",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdoNrgGQY5SytQV22WRqw5L.eval"
-    },
     "aime": {
-     "v": 86.7,
-     "se": 5.12,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTjoS7sNuqVTc4LVyGRo4wa.eval"
+     "v": 73.3,
+     "se": 6.67,
+     "setting": "minimal",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjFJucVunfLgoQqoFvPVQWP.eval"
     },
     "gpqa": {
-     "v": 82.3,
-     "se": 2.72,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fi6i3gQf3ng2aAipvowPpws.eval"
+     "v": 75.8,
+     "se": 3.05,
+     "setting": "minimal",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FP5L8qbXo42vTvbU3UvTNjk.eval"
     },
-    "mystery": {
-     "v": 15,
-     "se": 3.59,
-     "setting": "default"
+    "simpleqa": {
+     "v": 10.4,
+     "se": 0.97,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FD5cbXacPnJ8akq2jAtifEQ.eval"
     }
    }
   },
@@ -4356,7 +4400,7 @@
    "org": "Alibaba",
    "released": "2026-04-14",
    "open": true,
-   "eci": 143.81,
+   "eci": 144,
    "price": {
     "input": 0.375,
     "output": 2.25,
@@ -4391,53 +4435,12 @@
    }
   },
   {
-   "id": "glm47",
-   "name": "GLM-4.7",
-   "org": "Z.ai (Zhipu AI)",
-   "released": "2025-12-22",
-   "open": true,
-   "eci": 143.65,
-   "price": {
-    "input": 0.6,
-    "output": 2.2,
-    "blended": 1,
-    "provider": "zai",
-    "modelsDevId": "glm-4.7"
-   },
-   "scores": {
-    "aime": {
-     "v": 83.3,
-     "se": 4.77,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGYzmrzMfeSjNjm2J6L9PeT.eval"
-    },
-    "gpqa": {
-     "v": 83.3,
-     "se": 2.37,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6phXzd4aCbnBUSQmBsaywa.eval"
-    },
-    "simpleqa": {
-     "v": 32.2,
-     "se": 1.48,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaYau6EG7CCaWVSyVq3vvQc.eval"
-    },
-    "chess": {
-     "v": 21,
-     "se": 4.09,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9rDLegdh3zmBfFzTj3fkCc.eval"
-    }
-   }
-  },
-  {
    "id": "qwen35flashhosted35ba3b",
    "name": "Qwen 3.5 Flash (hosted 35B-A3B)",
    "org": "Alibaba",
    "released": "2026-02-25",
    "open": false,
-   "eci": 143.61,
+   "eci": 143.78,
    "price": null,
    "scores": {
     "frontiermath": {
@@ -4478,41 +4481,12 @@
    }
   },
   {
-   "id": "gemma431bit",
-   "name": "Gemma 4 31B IT",
-   "org": "Google DeepMind",
-   "released": "2026-04-02",
-   "open": true,
-   "eci": 143.08,
-   "price": null,
-   "scores": {
-    "aime": {
-     "v": 73.3,
-     "se": 6.67,
-     "setting": "minimal",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjFJucVunfLgoQqoFvPVQWP.eval"
-    },
-    "gpqa": {
-     "v": 75.8,
-     "se": 3.05,
-     "setting": "minimal",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FP5L8qbXo42vTvbU3UvTNjk.eval"
-    },
-    "simpleqa": {
-     "v": 10.4,
-     "se": 0.97,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FD5cbXacPnJ8akq2jAtifEQ.eval"
-    }
-   }
-  },
-  {
    "id": "qwen36flash",
    "name": "Qwen 3.6 Flash",
    "org": "Alibaba",
    "released": "2026-04-27",
    "open": false,
-   "eci": 142.97,
+   "eci": 143.7,
    "price": {
     "input": 0.25,
     "output": 1.5,
@@ -4559,8 +4533,49 @@
    }
   },
   {
-   "id": "doubaoseedevolving",
-   "name": "Doubao Seed Evolving",
+   "id": "glm47",
+   "name": "GLM-4.7",
+   "org": "Z.ai (Zhipu AI)",
+   "released": "2025-12-22",
+   "open": true,
+   "eci": 143.24,
+   "price": {
+    "input": 0.6,
+    "output": 2.2,
+    "blended": 1,
+    "provider": "zai",
+    "modelsDevId": "glm-4.7"
+   },
+   "scores": {
+    "aime": {
+     "v": 83.3,
+     "se": 4.77,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGYzmrzMfeSjNjm2J6L9PeT.eval"
+    },
+    "gpqa": {
+     "v": 83.3,
+     "se": 2.37,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6phXzd4aCbnBUSQmBsaywa.eval"
+    },
+    "simpleqa": {
+     "v": 32.2,
+     "se": 1.48,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaYau6EG7CCaWVSyVq3vvQc.eval"
+    },
+    "chess": {
+     "v": 21,
+     "se": 4.09,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9rDLegdh3zmBfFzTj3fkCc.eval"
+    }
+   }
+  },
+  {
+   "id": "doubaoseedevolvingnov2026",
+   "name": "Doubao Seed Evolving (Nov 2026)",
    "org": "ByteDance",
    "released": "2026-11-02",
    "open": false,
@@ -4584,61 +4599,52 @@
      "se": 1.56,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPWieWgMJqvCcm7zkN9iYqH.eval"
+    },
+    "chess": {
+     "v": 40,
+     "se": 4.92,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDDxB37H4uXfuBeSeD3UJWJ.eval"
     }
    }
   },
   {
-   "id": "mistrallarge4preview",
-   "name": "Mistral Large 4 Preview",
-   "org": "Mistral AI",
-   "released": "2026-10-06",
-   "open": true,
+   "id": "qwen37flash",
+   "name": "Qwen3.7 Flash",
+   "org": "Alibaba",
+   "released": "2026-07-27",
+   "open": false,
    "eci": null,
-   "price": null,
+   "price": {
+    "input": 0.03,
+    "output": 0.13,
+    "blended": 0.055,
+    "provider": "alibaba",
+    "modelsDevId": "qwen3.7-flash"
+   },
    "scores": {
-    "weirdml": {
-     "v": 4.4,
-     "se": 0.72,
-     "setting": "high"
-    },
-    "frontiermath-t4": {
-     "v": 26.8,
-     "se": 7.01,
-     "setting": "high"
-    },
     "frontiermath": {
-     "v": 58.6,
-     "se": 2.92,
-     "setting": "high"
+     "v": 19.3,
+     "se": 2.34,
+     "setting": "none",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdoNrgGQY5SytQV22WRqw5L.eval"
     },
     "aime": {
-     "v": 98.3,
-     "se": 0.64,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPby5WuP8Muu6Jzs2v5gB7F.eval"
+     "v": 86.7,
+     "se": 5.12,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTjoS7sNuqVTc4LVyGRo4wa.eval"
     },
     "gpqa": {
-     "v": 88.1,
-     "se": 1.93,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FEkx5phukyiJhAcQodMfS2p.eval"
-    },
-    "simpleqa": {
-     "v": 20,
-     "se": 1.27,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhvNNKdnzLvr9X8zVxWKcfk.eval"
+     "v": 82.3,
+     "se": 2.72,
+     "setting": "default",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fi6i3gQf3ng2aAipvowPpws.eval"
     },
     "mystery": {
-     "v": 17,
-     "se": 3.78,
-     "setting": "high"
-    },
-    "chess": {
-     "v": 33,
-     "se": 4.73,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeNdDCt2u6A8mPisK56SApU.eval"
+     "v": 15,
+     "se": 3.59,
+     "setting": "default"
     }
    }
   },
@@ -4668,6 +4674,12 @@
      "se": 1.45,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9wS2NJacFaJp9tkq8FSRyF.eval"
+    },
+    "chess": {
+     "v": 26,
+     "se": 4.41,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F8EDZwAT98nwY8hB5DD75Br.eval"
     }
    }
   },
@@ -4697,12 +4709,18 @@
      "se": 1.57,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F7TdGnviq5zZhNSXK5nJSAL.eval"
+    },
+    "chess": {
+     "v": 21,
+     "se": 4.09,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhF9zXdtPjSgoDRQuPyfncZ.eval"
     }
    }
   },
   {
-   "id": "doubaoseed20lite260428",
-   "name": "Doubao Seed 2.0 Lite 260428",
+   "id": "doubaoseed20liteapr2026",
+   "name": "Doubao Seed 2.0 Lite (Apr 2026)",
    "org": "ByteDance",
    "released": "2026-04-28",
    "open": false,
@@ -4726,6 +4744,12 @@
      "se": 1.47,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F3rTiRa2THK8MWXtVJZQHxS.eval"
+    },
+    "chess": {
+     "v": 20,
+     "se": 4.02,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FeqmrbJKgZ9iXXB9MvYThrJ.eval"
     }
    }
   },
@@ -4755,6 +4779,12 @@
      "se": 1.55,
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGvNEYw523w8aUy63WpgovD.eval"
+    },
+    "chess": {
+     "v": 20,
+     "se": 4.02,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBdoepct3UJMwAXZEGdYqxP.eval"
     }
    }
   }
@@ -10182,6 +10212,143 @@
      }
     }
    ]
+  },
+  {
+   "no": 38,
+   "day": "2026-11-19",
+   "a": "gpt61sol",
+   "b": "claudefable5",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt61sol",
+     "name": "GPT-6.1 Sol",
+     "org": "OpenAI",
+     "released": "2026-09-29",
+     "open": false,
+     "eci": 168.94,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-sol"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 38.3,
+       "se": 1.06,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDi7y6sES4PGQbXNkXYhdqM.eval"
+      },
+      "gpqa": {
+       "v": 95.4,
+       "se": 1.38,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLspviLnbeZ82WCngWp6rwR.eval"
+      },
+      "simpleqa": {
+       "v": 73.9,
+       "se": 1.39,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdfT5VD7cQug8XW6GQHyJUF.eval"
+      },
+      "mystery": {
+       "v": 80,
+       "se": 4.02,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudefable5",
+     "name": "Claude Fable 5",
+     "org": "Anthropic",
+     "released": "2026-06-09",
+     "open": false,
+     "eci": 164.19,
+     "price": {
+      "input": 10,
+      "output": 50,
+      "blended": 20,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 69.9,
+       "se": 1.66,
+       "setting": "xhigh"
+      },
+      "mirrorcode": {
+       "v": 63.9,
+       "se": 10.4,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 15.6,
+       "se": 1.03,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 90.2,
+       "se": 4.6,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FReDAtJGGfRtrEGGWf4Zbsd.eval"
+      },
+      "frontiermath": {
+       "v": 87,
+       "se": 1.99,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FE28uZiJvrPgKtawbJpoZQ8.eval"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhwrnvtEbDAocFtjcsHqsQh.eval"
+      },
+      "gpqa": {
+       "v": 85.9,
+       "se": 2.48,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FS5pm7ctk9zgPfbyHrbD9AV.eval"
+      },
+      "simpleqa": {
+       "v": 70.7,
+       "se": 1.44,
+       "setting": "xhigh"
+      },
+      "mystery": {
+       "v": 52,
+       "se": 5.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -10271,7 +10438,9 @@
    "doubaoseed21turbo": "2026-11-04",
    "doubaoseed21pro": "2026-11-04",
    "doubaoseed20lite260428": "2026-11-04",
-   "doubaoseed20pro": "2026-11-04"
+   "doubaoseed20pro": "2026-11-04",
+   "doubaoseedevolvingnov2026": "2026-11-05",
+   "doubaoseed20liteapr2026": "2026-11-05"
   }
  },
  "titles": {
