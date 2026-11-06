@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-05T06:37:01.147Z",
+ "generatedAt": "2026-11-06T06:36:45.598Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3538,11 +3538,11 @@
    "open": true,
    "eci": 150.79,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small"
    },
    "scores": {
     "frontiermath-t4": {
@@ -10344,6 +10344,137 @@
       "mystery": {
        "v": 52,
        "se": 5.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 39,
+   "day": "2026-11-20",
+   "a": "gpt61sol",
+   "b": "claudeopus55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gpt61sol",
+     "name": "GPT-6.1 Sol",
+     "org": "OpenAI",
+     "released": "2026-09-29",
+     "open": false,
+     "eci": 168.94,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-sol"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 38.3,
+       "se": 1.06,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDi7y6sES4PGQbXNkXYhdqM.eval"
+      },
+      "gpqa": {
+       "v": 95.4,
+       "se": 1.38,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLspviLnbeZ82WCngWp6rwR.eval"
+      },
+      "simpleqa": {
+       "v": 73.9,
+       "se": 1.39,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdfT5VD7cQug8XW6GQHyJUF.eval"
+      },
+      "mystery": {
+       "v": 80,
+       "se": 4.02,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudeopus55",
+     "name": "Claude Opus 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-22",
+     "open": false,
+     "eci": 168.36,
+     "price": {
+      "input": 4,
+      "output": 20,
+      "blended": 8,
+      "provider": "anthropic",
+      "modelsDevId": "claude-opus-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 78.9,
+       "se": 7.88,
+       "setting": "high"
+      },
+      "weirdml": {
+       "v": 31.2,
+       "se": 0.61,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 95,
+       "se": 4.12,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 91.2,
+       "se": 1.68,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLSfona7P3jCAnZFXJ2YA7F.eval"
+      },
+      "gpqa": {
+       "v": 90.6,
+       "se": 1.94,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6gmbahPSxHf9xVhAYqpnhi.eval"
+      },
+      "simpleqa": {
+       "v": 72.2,
+       "se": 1.42,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCgLfiGcNwMPVzxr8GdNUAK.eval"
+      },
+      "mystery": {
+       "v": 71,
+       "se": 4.56,
        "setting": "max"
       }
      }
