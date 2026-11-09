@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-08T06:34:37.127Z",
+ "generatedAt": "2026-11-09T06:44:40.767Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -10774,6 +10774,140 @@
       "mystery": {
        "v": 33,
        "se": 4.73,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 42,
+   "day": "2026-11-23",
+   "a": "qwen38max",
+   "b": "kimik3",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "qwen38max",
+     "name": "Qwen 3.8 Max",
+     "org": "Alibaba",
+     "released": "2026-08-02",
+     "open": false,
+     "eci": 157.43,
+     "price": {
+      "input": 2,
+      "output": 6,
+      "blended": 3,
+      "provider": "alibaba",
+      "modelsDevId": "qwen3.8-max"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 57.5,
+       "se": 1.36,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPBRdMZyz4L4CqPpXyLD2Lk.eval"
+      },
+      "frontiermath": {
+       "v": 74.7,
+       "se": 2.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FABT89ieSWGnGj4RYMduHiG.eval"
+      },
+      "aime": {
+       "v": 99.4,
+       "se": 0.39,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FaGRKHaq9uSawfYVpC565zU.eval"
+      },
+      "gpqa": {
+       "v": 92.7,
+       "se": 1.69,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FTEVNDC9QXBh7PQvX9kHZip.eval"
+      },
+      "simpleqa": {
+       "v": 45.8,
+       "se": 1.58,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fbfftd5EzUK9yAekafEofvK.eval"
+      },
+      "mystery": {
+       "v": 38,
+       "se": 4.88,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "kimik3",
+     "name": "Kimi K3",
+     "org": "Moonshot",
+     "released": "2026-07-16",
+     "open": true,
+     "eci": 158.51,
+     "price": {
+      "input": 3,
+      "output": 15,
+      "blended": 6,
+      "provider": "moonshotai",
+      "modelsDevId": "kimi-k3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 68.5,
+       "se": 2.31,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 7.5,
+       "se": 0.69,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 39,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZERSAQwxBAevQzBsWfUie.eval"
+      },
+      "frontiermath": {
+       "v": 72.2,
+       "se": 2.66,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 97.2,
+       "se": 1.12,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FA33om9MTYMC7xYeLv9X7Ha.eval"
+      },
+      "gpqa": {
+       "v": 93.1,
+       "se": 1.49,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FB8MaPUe3EYwUZASsNqE7C9.eval"
+      },
+      "simpleqa": {
+       "v": 50.6,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmZLWt2JSYvJyGhMvji7CT8.eval"
+      },
+      "mystery": {
+       "v": 26,
+       "se": 4.41,
        "setting": "max"
       }
      }
