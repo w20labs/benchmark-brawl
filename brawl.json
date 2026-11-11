@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-10T06:36:21.960Z",
+ "generatedAt": "2026-11-11T06:36:49.758Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -287,9 +287,10 @@
      "setting": "xhigh"
     },
     "mirrorcode": {
-     "v": 46.7,
-     "se": 11.86,
-     "setting": "high"
+     "v": 60,
+     "se": 11.82,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFGZUtmNQZpZtk8ft5uCJkA.eval"
     },
     "weirdml": {
      "v": 42.2,
@@ -352,6 +353,12 @@
     "modelsDevId": "gpt-6.1-sol"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 61.1,
+     "se": 11.35,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjGPEpcBgJ4gakLdxgAqbR8.eval"
+    },
     "weirdml": {
      "v": 38.3,
      "se": 1.06,
@@ -414,9 +421,9 @@
    },
    "scores": {
     "mirrorcode": {
-     "v": 78.9,
-     "se": 7.88,
-     "setting": "high"
+     "v": 95.6,
+     "se": 2.55,
+     "setting": "max"
     },
     "weirdml": {
      "v": 31.2,
@@ -479,6 +486,11 @@
     "modelsDevId": "gpt-6.1-terra"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 76.7,
+     "se": 9.32,
+     "setting": "max"
+    },
     "weirdml": {
      "v": 28.1,
      "se": 0.77,
@@ -535,9 +547,10 @@
    },
    "scores": {
     "mirrorcode": {
-     "v": 73.3,
-     "se": 9.17,
-     "setting": "high"
+     "v": 93.3,
+     "se": 3.92,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fj3QzF2QVnNghvyFneqEuiu.eval"
     },
     "weirdml": {
      "v": 26,
@@ -661,6 +674,12 @@
     "modelsDevId": "claude-sonnet-5-5"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 97.8,
+     "se": 1.51,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUTD5SC5v2BgiwNauF9YrFo.eval"
+    },
     "weirdml": {
      "v": 19.9,
      "se": 0.81,
@@ -726,6 +745,12 @@
      "v": 73.6,
      "se": 1.98,
      "setting": "max"
+    },
+    "mirrorcode": {
+     "v": 87.8,
+     "se": 7.18,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmNbPPJ3qiGSKnpqRsbxeKv.eval"
     },
     "weirdml": {
      "v": 19,
@@ -795,9 +820,9 @@
      "setting": "xhigh"
     },
     "mirrorcode": {
-     "v": 63.9,
-     "se": 10.4,
-     "setting": "high"
+     "v": 70,
+     "se": 10.44,
+     "setting": "max"
     },
     "weirdml": {
      "v": 15.6,
@@ -861,6 +886,11 @@
     "modelsDevId": "gpt-6-sol"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 48.9,
+     "se": 11.21,
+     "setting": "max"
+    },
     "weirdml": {
      "v": 19.7,
      "se": 0.66,
@@ -1049,6 +1079,12 @@
    "eci": 162.01,
    "price": null,
    "scores": {
+    "mirrorcode": {
+     "v": 45.6,
+     "se": 10.6,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4SF6nvuJows76zkypDWF3b.eval"
+    },
     "weirdml": {
      "v": 15.2,
      "se": 0.57,
@@ -1096,6 +1132,12 @@
      "v": 69.6,
      "se": 1.3,
      "setting": "max"
+    },
+    "mirrorcode": {
+     "v": 41.1,
+     "se": 12.37,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FVubr2UGkJt5WdCCxePP6bL.eval"
     },
     "frontiermath-t4": {
      "v": 70.7,
@@ -1154,6 +1196,12 @@
     "modelsDevId": "claude-haiku-5-5"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 78.9,
+     "se": 8.05,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FifSAAMJA9S73m6pAyRWxUD.eval"
+    },
     "weirdml": {
      "v": 11.7,
      "se": 0.81,
@@ -1273,9 +1321,9 @@
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLbhPRqUkXrs5KJ7vyT4CR7.eval"
     },
     "mirrorcode": {
-     "v": 10,
-     "se": 6.04,
-     "setting": "high"
+     "v": 23.3,
+     "se": 10.13,
+     "setting": "xhigh"
     },
     "frontiermath-t4": {
      "v": 72.5,
@@ -1337,6 +1385,12 @@
      "v": 59,
      "se": 0.9,
      "setting": "max"
+    },
+    "mirrorcode": {
+     "v": 65.6,
+     "se": 10.85,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2Nf4PQvFjvbixGhtQXGQoS.eval"
     },
     "frontiermath-t4": {
      "v": 56.1,
@@ -1462,6 +1516,12 @@
      "se": 0.72,
      "setting": "high"
     },
+    "mirrorcode": {
+     "v": 38.9,
+     "se": 11.92,
+     "setting": "high",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FFi32v8c7rD82qhgYVcsz7g.eval"
+    },
     "weirdml": {
      "v": 7.4,
      "se": 0.51,
@@ -1527,6 +1587,12 @@
      "v": 68.5,
      "se": 2.31,
      "setting": "max"
+    },
+    "mirrorcode": {
+     "v": 54.4,
+     "se": 11.44,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbeEmcaWF8wxsWTLD5bMYxi.eval"
     },
     "weirdml": {
      "v": 7.5,
@@ -1653,6 +1719,11 @@
    "eci": 157.97,
    "price": null,
    "scores": {
+    "mirrorcode": {
+     "v": 54.4,
+     "se": 10.85,
+     "setting": "max"
+    },
     "weirdml": {
      "v": 6.7,
      "se": 0.66,
@@ -1783,9 +1854,9 @@
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fi9HTMbAxcwsrTf2w2FuJ6N.eval"
     },
     "mirrorcode": {
-     "v": 15.6,
-     "se": 7.71,
-     "setting": "high"
+     "v": 23.3,
+     "se": 8.1,
+     "setting": "xhigh"
     },
     "frontiermath-t4": {
      "v": 49,
@@ -1919,6 +1990,12 @@
      "se": 1.36,
      "setting": "xhigh"
     },
+    "mirrorcode": {
+     "v": 52.2,
+     "se": 10.89,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRQRuLNXoCHzNMEbJCcUVVD.eval"
+    },
     "frontiermath-t4": {
      "v": 46.3,
      "se": 7.88,
@@ -2043,6 +2120,11 @@
      "se": 2.04,
      "setting": "max"
     },
+    "mirrorcode": {
+     "v": 21.1,
+     "se": 9.82,
+     "setting": "max"
+    },
     "weirdml": {
      "v": 5.2,
      "se": 0.71,
@@ -2108,6 +2190,11 @@
     "deepswe": {
      "v": 53.8,
      "se": 2.16,
+     "setting": "max"
+    },
+    "mirrorcode": {
+     "v": 63.3,
+     "se": 10.69,
      "setting": "max"
     },
     "frontiermath-t4": {
@@ -2229,6 +2316,11 @@
    "eci": 156.45,
    "price": null,
    "scores": {
+    "mirrorcode": {
+     "v": 64.4,
+     "se": 11.37,
+     "setting": "max"
+    },
     "weirdml": {
      "v": 5.9,
      "se": 0.91,
@@ -2295,6 +2387,12 @@
      "se": 1.86,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F2hH2GAPUFaJR7pfVKhhicg.eval"
+    },
+    "mirrorcode": {
+     "v": 33.3,
+     "se": 10.03,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQ8sNp4aYrjtYQgVS3BRDTd.eval"
     },
     "frontiermath-t4": {
      "v": 26.8,
@@ -2427,6 +2525,11 @@
     "modelsDevId": "grok-4.7"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 54.4,
+     "se": 11.44,
+     "setting": "xhigh"
+    },
     "weirdml": {
      "v": 8.5,
      "se": 0.62,
@@ -2488,6 +2591,12 @@
     "modelsDevId": "deepseek-v4-pro"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 33.3,
+     "se": 10.03,
+     "setting": "max",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4sSMLxWLPihKZSUFVUjwTh.eval"
+    },
     "frontiermath-t4": {
      "v": 26.8,
      "se": 7.01,
@@ -2540,6 +2649,12 @@
    "eci": 155.83,
    "price": null,
    "scores": {
+    "mirrorcode": {
+     "v": 47.8,
+     "se": 10.27,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWPxarSzywRZJNbqmd4gMDK.eval"
+    },
     "frontiermath-t4": {
      "v": 34.1,
      "se": 7.5,
@@ -2702,6 +2817,11 @@
     "deepswe": {
      "v": 46.7,
      "se": 1.89,
+     "setting": "high"
+    },
+    "mirrorcode": {
+     "v": 23.3,
+     "se": 9.32,
      "setting": "high"
     },
     "frontiermath-t4": {
@@ -2934,6 +3054,11 @@
      "setting": "high",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9owdbpnWJ5pkQQC3GWKP5L.eval"
     },
+    "mirrorcode": {
+     "v": 32.2,
+     "se": 9.96,
+     "setting": "xhigh"
+    },
     "weirdml": {
      "v": 5,
      "se": 0.5,
@@ -3113,6 +3238,11 @@
      "setting": "max",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4AfhcmYVNrw6gM5u8CQsyy.eval"
     },
+    "mirrorcode": {
+     "v": 36.7,
+     "se": 11.52,
+     "setting": "max"
+    },
     "frontiermath-t4": {
      "v": 29.3,
      "se": 7.19,
@@ -3249,6 +3379,11 @@
    "eci": 152.55,
    "price": null,
    "scores": {
+    "mirrorcode": {
+     "v": 27.8,
+     "se": 8.86,
+     "setting": "high"
+    },
     "weirdml": {
      "v": 4.4,
      "se": 0.73,
@@ -11093,6 +11228,125 @@
       "mystery": {
        "v": 84,
        "se": 3.68,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 44,
+   "day": "2026-11-25",
+   "a": "claudehaiku55",
+   "b": "musespark13",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudehaiku55",
+     "name": "Claude Haiku 5.5",
+     "org": "Anthropic",
+     "released": "2026-10-07",
+     "open": false,
+     "eci": 160.25,
+     "price": {
+      "input": 0.1,
+      "output": 0.5,
+      "blended": 0.2,
+      "provider": "anthropic",
+      "modelsDevId": "claude-haiku-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 78.9,
+       "se": 8.05,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FifSAAMJA9S73m6pAyRWxUD.eval"
+      },
+      "weirdml": {
+       "v": 11.7,
+       "se": 0.81,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 75.1,
+       "se": 2.57,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 98.9,
+       "se": 0.54,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FiiEPrSjWXHH6Zq9CK4Zmcr.eval"
+      },
+      "gpqa": {
+       "v": 89.6,
+       "se": 1.98,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZEKWTGJiWFscHimMkiUmec.eval"
+      },
+      "simpleqa": {
+       "v": 23.8,
+       "se": 1.35,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNwnrUMtveqHDYB2Um4ycmA.eval"
+      },
+      "mystery": {
+       "v": 30,
+       "se": 4.61,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "musespark13",
+     "name": "Muse Spark 1.3",
+     "org": "Meta AI",
+     "released": "2026-09-02",
+     "open": false,
+     "eci": 157.97,
+     "price": null,
+     "scores": {
+      "mirrorcode": {
+       "v": 54.4,
+       "se": 10.85,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 6.7,
+       "se": 0.66,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 74.4,
+       "se": 2.59,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 99.2,
+       "se": 0.62,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWmxkx5m3qaQuwzem6gzZmg.eval"
+      },
+      "mystery": {
+       "v": 25,
+       "se": 4.46,
        "setting": "max"
       }
      }
