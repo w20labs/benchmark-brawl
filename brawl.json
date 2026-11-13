@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T06:37:42.690Z",
+ "generatedAt": "2026-11-13T06:37:19.436Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -245,8 +245,8 @@
      "setting": "max"
     },
     "gpqa": {
-     "v": 93.9,
-     "se": 1.63,
+     "v": 96,
+     "se": 1.31,
      "setting": "max"
     },
     "simpleqa": {
@@ -263,6 +263,58 @@
      "v": 79,
      "se": 4.09,
      "setting": "max"
+    }
+   }
+  },
+  {
+   "id": "gemini4carbon",
+   "name": "Gemini 4 Carbon",
+   "org": "Google DeepMind",
+   "released": "2026-11-10",
+   "open": false,
+   "eci": 169.76,
+   "price": {
+    "input": 2,
+    "output": 10,
+    "blended": 4,
+    "provider": "google",
+    "modelsDevId": "gemini-4-carbon"
+   },
+   "scores": {
+    "frontiermath-t4": {
+     "v": 95.1,
+     "se": 3.41,
+     "setting": "high"
+    },
+    "frontiermath": {
+     "v": 90.5,
+     "se": 1.74,
+     "setting": "high"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "high"
+    },
+    "gpqa": {
+     "v": 96.5,
+     "se": 1.21,
+     "setting": "high"
+    },
+    "simpleqa": {
+     "v": 77.7,
+     "se": 1.32,
+     "setting": "high"
+    },
+    "mystery": {
+     "v": 73,
+     "se": 4.46,
+     "setting": "high"
+    },
+    "chess": {
+     "v": 78,
+     "se": 4.16,
+     "setting": "high"
     }
    }
   },
@@ -380,10 +432,9 @@
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLSfona7P3jCAnZFXJ2YA7F.eval"
     },
     "gpqa": {
-     "v": 90.6,
-     "se": 1.94,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F6gmbahPSxHf9xVhAYqpnhi.eval"
+     "v": 94.1,
+     "se": 1.52,
+     "setting": "max"
     },
     "simpleqa": {
      "v": 72.2,
@@ -663,7 +714,7 @@
    "id": "gemini4argon",
    "name": "Gemini 4 Argon",
    "org": "Google DeepMind",
-   "released": "2026-09-30",
+   "released": "2026-10-13",
    "open": false,
    "eci": 166.48,
    "price": {
@@ -848,10 +899,9 @@
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FhwrnvtEbDAocFtjcsHqsQh.eval"
     },
     "gpqa": {
-     "v": 85.9,
-     "se": 2.48,
-     "setting": "max",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FS5pm7ctk9zgPfbyHrbD9AV.eval"
+     "v": 93.9,
+     "se": 1.69,
+     "setting": "max"
     },
     "simpleqa": {
      "v": 70.7,
@@ -3553,7 +3603,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5"
+    "modelsDevId": "claude-opus-4-5-20251101"
    },
    "scores": {
     "swebench": {
@@ -3791,11 +3841,11 @@
    "open": true,
    "eci": 150.75,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small"
    },
    "scores": {
     "frontiermath-t4": {
@@ -11499,6 +11549,116 @@
      }
     }
    ]
+  },
+  {
+   "no": 46,
+   "day": "2026-11-27",
+   "a": "gemini4carbon",
+   "b": "claudefable52",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "gemini4carbon",
+     "name": "Gemini 4 Carbon",
+     "org": "Google DeepMind",
+     "released": "2026-11-10",
+     "open": false,
+     "eci": 169.76,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "google",
+      "modelsDevId": "gemini-4-carbon"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 95.1,
+       "se": 3.41,
+       "setting": "high"
+      },
+      "frontiermath": {
+       "v": 90.5,
+       "se": 1.74,
+       "setting": "high"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "high"
+      },
+      "gpqa": {
+       "v": 96.5,
+       "se": 1.21,
+       "setting": "high"
+      },
+      "simpleqa": {
+       "v": 77.7,
+       "se": 1.32,
+       "setting": "high"
+      },
+      "mystery": {
+       "v": 73,
+       "se": 4.46,
+       "setting": "high"
+      }
+     }
+    },
+    {
+     "id": "claudefable52",
+     "name": "Claude Fable 5.2",
+     "org": "Anthropic",
+     "released": "2026-11-09",
+     "open": false,
+     "eci": 173.44,
+     "price": {
+      "input": 8,
+      "output": 40,
+      "blended": 16,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5-2"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 95.1,
+       "se": 1.28,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 99.7,
+       "se": 0.28,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 96,
+       "se": 1.31,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 94,
+       "se": 0.75,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 90,
+       "se": 3.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -11592,7 +11752,8 @@
    "doubaoseedevolvingnov2026": "2026-11-05",
    "doubaoseed20liteapr2026": "2026-11-05",
    "kimik31pro": "2026-11-07",
-   "claudefable52": "2026-11-10"
+   "claudefable52": "2026-11-10",
+   "gemini4carbon": "2026-11-13"
   }
  },
  "titles": {
