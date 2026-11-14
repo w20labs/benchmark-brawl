@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-13T06:37:19.436Z",
+ "generatedAt": "2026-11-14T06:35:13.212Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -2042,9 +2042,9 @@
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FnCmGWWMBip2s9AVEZNYXDX.eval"
     },
     "mirrorcode": {
-     "v": 31.1,
-     "se": 9.04,
-     "setting": "high"
+     "v": 43.3,
+     "se": 9.59,
+     "setting": "max"
     },
     "frontiermath-t4": {
      "v": 31.7,
@@ -3430,8 +3430,8 @@
    "price": null,
    "scores": {
     "mirrorcode": {
-     "v": 27.8,
-     "se": 8.86,
+     "v": 40,
+     "se": 10.64,
      "setting": "high"
     },
     "weirdml": {
@@ -3603,7 +3603,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5-20251101"
+    "modelsDevId": "claude-opus-4-5"
    },
    "scores": {
     "swebench": {
@@ -3778,58 +3778,6 @@
      "se": 3.49,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbSyTSKD8RiRNZCGNu6MnFp.eval"
-    }
-   }
-  },
-  {
-   "id": "gpt51",
-   "name": "GPT-5.1",
-   "org": "OpenAI",
-   "released": "2025-11-13",
-   "open": false,
-   "eci": 150.94,
-   "price": {
-    "input": 1.25,
-    "output": 10,
-    "blended": 3.4375,
-    "provider": "openai",
-    "modelsDevId": "gpt-5.1"
-   },
-   "scores": {
-    "swebench": {
-     "v": 68,
-     "se": 2.12,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYoHtZpMNdsRE6qdj2K4Ucj.eval"
-    },
-    "aime": {
-     "v": 88.6,
-     "se": 4.05,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmYKKTdV27TRJv9FpUg7rkn.eval"
-    },
-    "gpqa": {
-     "v": 87.6,
-     "se": 1.88,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCSVtMksEVjBNsGJGjW4GcQ.eval"
-    },
-    "simpleqa": {
-     "v": 48,
-     "se": 1.58,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQCLnRy69NBH9ip3VYtQneh.eval"
-    },
-    "mystery": {
-     "v": 19,
-     "se": 3.94,
-     "setting": "low"
-    },
-    "chess": {
-     "v": 42,
-     "se": 4.96,
-     "setting": "high",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FHKQxqBGokn83tHr5wGJiZX.eval"
     }
    }
   },
@@ -11654,6 +11602,130 @@
       "mystery": {
        "v": 90,
        "se": 3.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 47,
+   "day": "2026-11-28",
+   "a": "gemini4carbon",
+   "b": "gpt61sol",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gemini4carbon",
+     "name": "Gemini 4 Carbon",
+     "org": "Google DeepMind",
+     "released": "2026-11-10",
+     "open": false,
+     "eci": 169.76,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "google",
+      "modelsDevId": "gemini-4-carbon"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 95.1,
+       "se": 3.41,
+       "setting": "high"
+      },
+      "frontiermath": {
+       "v": 90.5,
+       "se": 1.74,
+       "setting": "high"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "high"
+      },
+      "gpqa": {
+       "v": 96.5,
+       "se": 1.21,
+       "setting": "high"
+      },
+      "simpleqa": {
+       "v": 77.7,
+       "se": 1.32,
+       "setting": "high"
+      },
+      "mystery": {
+       "v": 73,
+       "se": 4.46,
+       "setting": "high"
+      }
+     }
+    },
+    {
+     "id": "gpt61sol",
+     "name": "GPT-6.1 Sol",
+     "org": "OpenAI",
+     "released": "2026-09-29",
+     "open": false,
+     "eci": 168.48,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.1-sol"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 61.1,
+       "se": 11.35,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FjGPEpcBgJ4gakLdxgAqbR8.eval"
+      },
+      "weirdml": {
+       "v": 38.3,
+       "se": 1.06,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 93.7,
+       "se": 1.44,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDi7y6sES4PGQbXNkXYhdqM.eval"
+      },
+      "gpqa": {
+       "v": 95.4,
+       "se": 1.38,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FLspviLnbeZ82WCngWp6rwR.eval"
+      },
+      "simpleqa": {
+       "v": 73.9,
+       "se": 1.39,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdfT5VD7cQug8XW6GQHyJUF.eval"
+      },
+      "mystery": {
+       "v": 80,
+       "se": 4.02,
        "setting": "max"
       }
      }
