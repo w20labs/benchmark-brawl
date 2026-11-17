@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-16T06:53:15.315Z",
+ "generatedAt": "2026-11-17T06:38:22.518Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -214,58 +214,6 @@
   "puzzles"
  ],
  "models": [
-  {
-   "id": "claudefable52",
-   "name": "Claude Fable 5.2",
-   "org": "Anthropic",
-   "released": "2026-11-09",
-   "open": false,
-   "eci": 173.44,
-   "price": {
-    "input": 8,
-    "output": 40,
-    "blended": 16,
-    "provider": "anthropic",
-    "modelsDevId": "claude-fable-5-2"
-   },
-   "scores": {
-    "frontiermath-t4": {
-     "v": 100,
-     "se": 0,
-     "setting": "max"
-    },
-    "frontiermath": {
-     "v": 95.1,
-     "se": 1.28,
-     "setting": "max"
-    },
-    "aime": {
-     "v": 99.7,
-     "se": 0.28,
-     "setting": "max"
-    },
-    "gpqa": {
-     "v": 96,
-     "se": 1.31,
-     "setting": "max"
-    },
-    "simpleqa": {
-     "v": 94,
-     "se": 0.75,
-     "setting": "max"
-    },
-    "mystery": {
-     "v": 90,
-     "se": 3.02,
-     "setting": "max"
-    },
-    "chess": {
-     "v": 79,
-     "se": 4.09,
-     "setting": "max"
-    }
-   }
-  },
   {
    "id": "gemini4carbon",
    "name": "Gemini 4 Carbon",
@@ -3603,7 +3551,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5"
+    "modelsDevId": "claude-opus-4-5-20251101"
    },
    "scores": {
     "swebench": {
@@ -3789,11 +3737,11 @@
    "open": true,
    "eci": 150.75,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144"
    },
    "scores": {
     "frontiermath-t4": {
@@ -4821,6 +4769,52 @@
      "se": 4.09,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9rDLegdh3zmBfFzTj3fkCc.eval"
+    }
+   }
+  },
+  {
+   "id": "claudefable52claudemythos52",
+   "name": "Claude Fable 5.2,Claude Mythos 5.2",
+   "org": "Anthropic",
+   "released": "2026-11-09",
+   "open": false,
+   "eci": null,
+   "price": null,
+   "scores": {
+    "frontiermath-t4": {
+     "v": 100,
+     "se": 0,
+     "setting": "max"
+    },
+    "frontiermath": {
+     "v": 95.1,
+     "se": 1.28,
+     "setting": "max"
+    },
+    "aime": {
+     "v": 99.7,
+     "se": 0.28,
+     "setting": "max"
+    },
+    "gpqa": {
+     "v": 96,
+     "se": 1.31,
+     "setting": "max"
+    },
+    "simpleqa": {
+     "v": 94,
+     "se": 0.75,
+     "setting": "max"
+    },
+    "mystery": {
+     "v": 90,
+     "se": 3.02,
+     "setting": "max"
+    },
+    "chess": {
+     "v": 79,
+     "se": 4.09,
+     "setting": "max"
     }
    }
   },
@@ -11975,6 +11969,132 @@
      }
     }
    ]
+  },
+  {
+   "no": 50,
+   "day": "2026-12-01",
+   "a": "musespark13",
+   "b": "gpt54",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "musespark13",
+     "name": "Muse Spark 1.3",
+     "org": "Meta AI",
+     "released": "2026-09-02",
+     "open": false,
+     "eci": 158.24,
+     "price": null,
+     "scores": {
+      "mirrorcode": {
+       "v": 54.4,
+       "se": 10.85,
+       "setting": "max"
+      },
+      "weirdml": {
+       "v": 6.7,
+       "se": 0.66,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 74.4,
+       "se": 2.59,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 99.2,
+       "se": 0.62,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FWmxkx5m3qaQuwzem6gzZmg.eval"
+      },
+      "mystery": {
+       "v": 25,
+       "se": 4.46,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "gpt54",
+     "name": "GPT-5.4",
+     "org": "OpenAI",
+     "released": "2026-03-05",
+     "open": false,
+     "eci": 157.85,
+     "price": {
+      "input": 2.5,
+      "output": 15,
+      "blended": 5.625,
+      "provider": "openai",
+      "modelsDevId": "gpt-5.4"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 51.8,
+       "se": 0.77,
+       "setting": "xhigh"
+      },
+      "swebench": {
+       "v": 76.9,
+       "se": 1.92,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fi9HTMbAxcwsrTf2w2FuJ6N.eval"
+      },
+      "mirrorcode": {
+       "v": 23.3,
+       "se": 8.1,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 49,
+       "se": 8,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FdoiQDghqnLzbE8CFijLNQJ.eval"
+      },
+      "frontiermath": {
+       "v": 78.6,
+       "se": 2.43,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FPaYEQ37A2n6giYBwZGBnXY.eval"
+      },
+      "aime": {
+       "v": 97.8,
+       "se": 2.22,
+       "setting": "high",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDpPahiEawokzgidE3cNZbS.eval"
+      },
+      "gpqa": {
+       "v": 93.3,
+       "se": 1.8,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FfFatyce8UvpN7ZivdmrhAy.eval"
+      },
+      "simpleqa": {
+       "v": 45.1,
+       "se": 1.57,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FAzCkm282PLhDdLJ8DnAQQc.eval"
+      },
+      "mystery": {
+       "v": 37,
+       "se": 4.85,
+       "setting": "xhigh"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -12069,7 +12189,8 @@
    "doubaoseed20liteapr2026": "2026-11-05",
    "kimik31pro": "2026-11-07",
    "claudefable52": "2026-11-10",
-   "gemini4carbon": "2026-11-13"
+   "gemini4carbon": "2026-11-13",
+   "claudefable52claudemythos52": "2026-11-17"
   }
  },
  "titles": {
