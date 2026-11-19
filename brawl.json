@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-18T06:38:05.442Z",
+ "generatedAt": "2026-11-19T06:38:32.620Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3398,35 +3398,6 @@
    }
   },
   {
-   "id": "gemini3pro",
-   "name": "Gemini 3 Pro",
-   "org": "Google DeepMind",
-   "released": "2025-11-18",
-   "open": false,
-   "eci": 153.04,
-   "price": null,
-   "scores": {
-    "swebench": {
-     "v": 72.9,
-     "se": 2.02,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F5XdYZBG5Wy8DUMRqcYv4fn.eval"
-    },
-    "aime": {
-     "v": 91.4,
-     "se": 3.66,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4QM4h7ndQiDRL2anjKeddK.eval"
-    },
-    "gpqa": {
-     "v": 92.6,
-     "se": 1.65,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCg54udQGcTCnfDGX2qePLZ.eval"
-    }
-   }
-  },
-  {
    "id": "claudesonnet46",
    "name": "Claude Sonnet 4.6",
    "org": "Anthropic",
@@ -3665,7 +3636,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5-20251101"
+    "modelsDevId": "claude-opus-4-5"
    },
    "scores": {
     "swebench": {
@@ -3851,11 +3822,11 @@
    "open": true,
    "eci": 150.78,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144"
    },
    "scores": {
     "frontiermath-t4": {
@@ -4883,6 +4854,62 @@
      "se": 4.09,
      "setting": "default",
      "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F9rDLegdh3zmBfFzTj3fkCc.eval"
+    }
+   }
+  },
+  {
+   "id": "gemini4hydrogen",
+   "name": "Gemini 4 Hydrogen",
+   "org": "Google DeepMind",
+   "released": "2026-11-12",
+   "open": false,
+   "eci": null,
+   "price": {
+    "input": 1.5,
+    "output": 7.5,
+    "blended": 3,
+    "provider": "google",
+    "modelsDevId": "gemini-4-hydrogen"
+   },
+   "scores": {
+    "frontiermath-t4": {
+     "v": 87.8,
+     "se": 5.17,
+     "setting": "xhigh"
+    },
+    "frontiermath": {
+     "v": 88.1,
+     "se": 1.92,
+     "setting": "xhigh"
+    },
+    "aime": {
+     "v": 100,
+     "se": 0,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4UjF9rJBYSXuztFtjTmPWS.eval"
+    },
+    "gpqa": {
+     "v": 96.8,
+     "se": 1.17,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FXRQWGQeJDNvVcvSYCn247P.eval"
+    },
+    "simpleqa": {
+     "v": 70.9,
+     "se": 1.44,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBTWvEjbekh8TC7kWurJnrR.eval"
+    },
+    "mystery": {
+     "v": 65,
+     "se": 4.79,
+     "setting": "xhigh"
+    },
+    "chess": {
+     "v": 60,
+     "se": 4.92,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FSnB9m45ECMFY69gqyZDvWh.eval"
     }
    }
   },
@@ -12310,6 +12337,126 @@
      }
     }
    ]
+  },
+  {
+   "no": 52,
+   "day": "2026-12-03",
+   "a": "gpt62astra",
+   "b": "claudefable52",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "gpt62astra",
+     "name": "GPT-6.2 Astra",
+     "org": "OpenAI",
+     "released": "2026-11-17",
+     "open": false,
+     "eci": 174.17,
+     "price": {
+      "input": 8,
+      "output": 40,
+      "blended": 16,
+      "provider": "openai",
+      "modelsDevId": "gpt-6.2-astra"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 67.8,
+       "se": 11.67,
+       "setting": "max"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 92.6,
+       "se": 1.55,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 96.8,
+       "se": 1.23,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 78.5,
+       "se": 1.3,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 95,
+       "se": 2.19,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "claudefable52",
+     "name": "Claude Fable 5.2",
+     "org": "Anthropic",
+     "released": "2026-11-09",
+     "open": false,
+     "eci": 173.5,
+     "price": {
+      "input": 8,
+      "output": 40,
+      "blended": 16,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5-2"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 43.1,
+       "se": 0.69,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 95.1,
+       "se": 1.28,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 99.7,
+       "se": 0.28,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 96,
+       "se": 1.31,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 94,
+       "se": 0.75,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 90,
+       "se": 3.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
   }
  ],
  "arrivals": {
@@ -12406,7 +12553,8 @@
    "claudefable52": "2026-11-10",
    "gemini4carbon": "2026-11-13",
    "claudefable52claudemythos52": "2026-11-17",
-   "gpt62astra": "2026-11-18"
+   "gpt62astra": "2026-11-18",
+   "gemini4hydrogen": "2026-11-19"
   }
  },
  "titles": {
