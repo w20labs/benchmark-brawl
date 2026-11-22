@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-21T06:36:39.847Z",
+ "generatedAt": "2026-11-22T06:36:28.495Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3698,7 +3698,7 @@
     "output": 25,
     "blended": 10,
     "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5"
+    "modelsDevId": "claude-opus-4-5-20251101"
    },
    "scores": {
     "swebench": {
@@ -3884,11 +3884,11 @@
    "open": true,
    "eci": 150.77,
    "price": {
-    "input": 0.3,
-    "output": 1.2,
-    "blended": 0.525,
+    "input": 0.58,
+    "output": 1.44,
+    "blended": 0.795,
     "provider": "thinkingmachines",
-    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144:sampling-nvfp4"
+    "modelsDevId": "thinkingmachines/Inkling-Small:peft:262144"
    },
    "scores": {
     "frontiermath-t4": {
@@ -12751,6 +12751,124 @@
        "se": 1.58,
        "setting": "xhigh",
        "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FRfSJbuuuMkeVHQj7xrth4u.eval"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 55,
+   "day": "2026-12-06",
+   "a": "gemini4neon",
+   "b": "claudefable52",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "gemini4neon",
+     "name": "Gemini 4 Neon",
+     "org": "Google DeepMind",
+     "released": "2026-11-18",
+     "open": false,
+     "eci": null,
+     "price": {
+      "input": 3,
+      "output": 15,
+      "blended": 6,
+      "provider": "google",
+      "modelsDevId": "gemini-4-neon"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 97.6,
+       "se": 2.44,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 91.2,
+       "se": 1.68,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYsAqrfCM6uNnSuhZn6VWg5.eval"
+      },
+      "gpqa": {
+       "v": 96.3,
+       "se": 1.29,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FoRxFiWKdd7DmcfFkg999ph.eval"
+      },
+      "simpleqa": {
+       "v": 75.2,
+       "se": 1.37,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FoNv3qiZwkezTmFHngNKsne.eval"
+      },
+      "mystery": {
+       "v": 85,
+       "se": 3.59,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "claudefable52",
+     "name": "Claude Fable 5.2",
+     "org": "Anthropic",
+     "released": "2026-11-09",
+     "open": false,
+     "eci": 173.4,
+     "price": {
+      "input": 8,
+      "output": 40,
+      "blended": 16,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5-2"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 43.1,
+       "se": 0.69,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 95.1,
+       "se": 1.28,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 99.7,
+       "se": 0.28,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 96,
+       "se": 1.31,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 94,
+       "se": 0.75,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 90,
+       "se": 3.02,
+       "setting": "max"
       }
      }
     }
