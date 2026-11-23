@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-22T06:36:28.495Z",
+ "generatedAt": "2026-11-23T06:48:03.615Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -12868,6 +12868,150 @@
       "mystery": {
        "v": 90,
        "se": 3.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 56,
+   "day": "2026-12-07",
+   "a": "claudehaiku55",
+   "b": "kimik3",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "claudehaiku55",
+     "name": "Claude Haiku 5.5",
+     "org": "Anthropic",
+     "released": "2026-10-07",
+     "open": false,
+     "eci": 160.33,
+     "price": {
+      "input": 0.1,
+      "output": 0.5,
+      "blended": 0.2,
+      "provider": "anthropic",
+      "modelsDevId": "claude-haiku-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 78.9,
+       "se": 8.05,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FifSAAMJA9S73m6pAyRWxUD.eval"
+      },
+      "weirdml": {
+       "v": 11.7,
+       "se": 0.81,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 46.3,
+       "se": 7.88,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 75.1,
+       "se": 2.57,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 98.9,
+       "se": 0.54,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FiiEPrSjWXHH6Zq9CK4Zmcr.eval"
+      },
+      "gpqa": {
+       "v": 89.6,
+       "se": 1.98,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FZEKWTGJiWFscHimMkiUmec.eval"
+      },
+      "simpleqa": {
+       "v": 23.8,
+       "se": 1.35,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FNwnrUMtveqHDYB2Um4ycmA.eval"
+      },
+      "mystery": {
+       "v": 30,
+       "se": 4.61,
+       "setting": "max"
+      }
+     }
+    },
+    {
+     "id": "kimik3",
+     "name": "Kimi K3",
+     "org": "Moonshot",
+     "released": "2026-07-16",
+     "open": true,
+     "eci": 158.61,
+     "price": {
+      "input": 3,
+      "output": 15,
+      "blended": 6,
+      "provider": "moonshotai",
+      "modelsDevId": "kimi-k3"
+     },
+     "scores": {
+      "deepswe": {
+       "v": 68.5,
+       "se": 2.31,
+       "setting": "max"
+      },
+      "mirrorcode": {
+       "v": 54.4,
+       "se": 11.44,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbeEmcaWF8wxsWTLD5bMYxi.eval"
+      },
+      "weirdml": {
+       "v": 7.5,
+       "se": 0.71,
+       "setting": "high"
+      },
+      "frontiermath-t4": {
+       "v": 39,
+       "se": 7.71,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FgZERSAQwxBAevQzBsWfUie.eval"
+      },
+      "frontiermath": {
+       "v": 72.2,
+       "se": 2.66,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 97.2,
+       "se": 1.12,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FA33om9MTYMC7xYeLv9X7Ha.eval"
+      },
+      "gpqa": {
+       "v": 93.1,
+       "se": 1.49,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FB8MaPUe3EYwUZASsNqE7C9.eval"
+      },
+      "simpleqa": {
+       "v": 50.6,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmZLWt2JSYvJyGhMvji7CT8.eval"
+      },
+      "mystery": {
+       "v": 26,
+       "se": 4.41,
        "setting": "max"
       }
      }
