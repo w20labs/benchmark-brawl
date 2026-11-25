@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-24T06:39:07.287Z",
+ "generatedAt": "2026-11-25T06:39:46.547Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -3687,75 +3687,6 @@
    }
   },
   {
-   "id": "claudeopus45",
-   "name": "Claude Opus 4.5",
-   "org": "Anthropic",
-   "released": "2025-11-24",
-   "open": false,
-   "eci": 151.87,
-   "price": {
-    "input": 5,
-    "output": 25,
-    "blended": 10,
-    "provider": "anthropic",
-    "modelsDevId": "claude-opus-4-5-20251101"
-   },
-   "scores": {
-    "swebench": {
-     "v": 76.7,
-     "se": 1.92,
-     "setting": "default",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmKQKxkpGDrFHBPBYR3mBrB.eval"
-    },
-    "weirdml": {
-     "v": 6.5,
-     "se": 0.81,
-     "setting": "high"
-    },
-    "frontiermath-t4": {
-     "v": 4.9,
-     "se": 3.41,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2Fazk4theXxAsizmoi2HDD49.eval"
-    },
-    "frontiermath": {
-     "v": 34.4,
-     "se": 2.82,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FmS5EwCRZVpvUvJEehPUDZu.eval"
-    },
-    "aime": {
-     "v": 86.1,
-     "se": 4.26,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FikUWdu6HJ2qRgZynfzDCFe.eval"
-    },
-    "gpqa": {
-     "v": 86,
-     "se": 2.07,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FKwwo3UFcPDk6iLAeSeeRaa.eval"
-    },
-    "simpleqa": {
-     "v": 45.7,
-     "se": 1.58,
-     "setting": "32K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FCA5LW4phRnHSsZUGXEm8H6.eval"
-    },
-    "mystery": {
-     "v": 22,
-     "se": 4.16,
-     "setting": "48K"
-    },
-    "chess": {
-     "v": 14,
-     "se": 3.49,
-     "setting": "59K",
-     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FDPuTDKvupUqKgkdVj7Awsp.eval"
-    }
-   }
-  },
-  {
    "id": "kimik26",
    "name": "Kimi K2.6",
    "org": "Moonshot",
@@ -4092,13 +4023,7 @@
    "released": "2026-04-20",
    "open": false,
    "eci": 149.86,
-   "price": {
-    "input": 1.3,
-    "output": 7.8,
-    "blended": 2.925,
-    "provider": "alibaba",
-    "modelsDevId": "qwen3.6-max-preview"
-   },
+   "price": null,
    "scores": {
     "swebench": {
      "v": 76.7,
@@ -4982,7 +4907,13 @@
    "released": "2026-11-16",
    "open": false,
    "eci": null,
-   "price": null,
+   "price": {
+    "input": 1.5,
+    "output": 4.5,
+    "blended": 2.25,
+    "provider": "alibaba",
+    "modelsDevId": "qwen4-max"
+   },
    "scores": {
     "frontiermath-t4": {
      "v": 53.7,
@@ -13184,6 +13115,124 @@
       "mystery": {
        "v": 36,
        "se": 4.82,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 58,
+   "day": "2026-12-09",
+   "a": "gemini4neon",
+   "b": "claudefable52",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": true,
+   "fighters": [
+    {
+     "id": "gemini4neon",
+     "name": "Gemini 4 Neon",
+     "org": "Google DeepMind",
+     "released": "2026-11-18",
+     "open": false,
+     "eci": null,
+     "price": {
+      "input": 3,
+      "output": 15,
+      "blended": 6,
+      "provider": "google",
+      "modelsDevId": "gemini-4-neon"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 97.6,
+       "se": 2.44,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 91.2,
+       "se": 1.68,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FYsAqrfCM6uNnSuhZn6VWg5.eval"
+      },
+      "gpqa": {
+       "v": 96.3,
+       "se": 1.29,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FoRxFiWKdd7DmcfFkg999ph.eval"
+      },
+      "simpleqa": {
+       "v": 75.2,
+       "se": 1.37,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FoNv3qiZwkezTmFHngNKsne.eval"
+      },
+      "mystery": {
+       "v": 85,
+       "se": 3.59,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "claudefable52",
+     "name": "Claude Fable 5.2",
+     "org": "Anthropic",
+     "released": "2026-11-09",
+     "open": false,
+     "eci": 173.4,
+     "price": {
+      "input": 8,
+      "output": 40,
+      "blended": 16,
+      "provider": "anthropic",
+      "modelsDevId": "claude-fable-5-2"
+     },
+     "scores": {
+      "weirdml": {
+       "v": 43.1,
+       "se": 0.69,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 100,
+       "se": 0,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 95.1,
+       "se": 1.28,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 99.7,
+       "se": 0.28,
+       "setting": "max"
+      },
+      "gpqa": {
+       "v": 96,
+       "se": 1.31,
+       "setting": "max"
+      },
+      "simpleqa": {
+       "v": 94,
+       "se": 0.75,
+       "setting": "max"
+      },
+      "mystery": {
+       "v": 90,
+       "se": 3.02,
        "setting": "max"
       }
      }
