@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-25T06:39:46.547Z",
+ "generatedAt": "2026-11-26T06:39:38.650Z",
  "benchmarks": [
   {
    "id": "deepswe",
@@ -4859,6 +4859,11 @@
     "modelsDevId": "gemini-4-neon"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 61.1,
+     "se": 11.8,
+     "setting": "xhigh"
+    },
     "frontiermath-t4": {
      "v": 97.6,
      "se": 2.44,
@@ -4915,6 +4920,12 @@
     "modelsDevId": "qwen4-max"
    },
    "scores": {
+    "mirrorcode": {
+     "v": 47.8,
+     "se": 11.25,
+     "setting": "xhigh",
+     "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F44TVnFtXhLtSszbkuZaduk.eval"
+    },
     "frontiermath-t4": {
      "v": 53.7,
      "se": 7.88,
@@ -13233,6 +13244,133 @@
       "mystery": {
        "v": 90,
        "se": 3.02,
+       "setting": "max"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "no": 59,
+   "day": "2026-12-10",
+   "a": "gemini4hydrogen",
+   "b": "claudesonnet55",
+   "rounds": [
+    "coding",
+    "math",
+    "science",
+    "facts",
+    "puzzles"
+   ],
+   "featured": false,
+   "fighters": [
+    {
+     "id": "gemini4hydrogen",
+     "name": "Gemini 4 Hydrogen",
+     "org": "Google DeepMind",
+     "released": "2026-11-12",
+     "open": false,
+     "eci": 166.81,
+     "price": {
+      "input": 1.5,
+      "output": 7.5,
+      "blended": 3,
+      "provider": "google",
+      "modelsDevId": "gemini-4-hydrogen"
+     },
+     "scores": {
+      "frontiermath-t4": {
+       "v": 87.8,
+       "se": 5.17,
+       "setting": "xhigh"
+      },
+      "frontiermath": {
+       "v": 88.1,
+       "se": 1.92,
+       "setting": "xhigh"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2F4UjF9rJBYSXuztFtjTmPWS.eval"
+      },
+      "gpqa": {
+       "v": 96.8,
+       "se": 1.17,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FXRQWGQeJDNvVcvSYCn247P.eval"
+      },
+      "simpleqa": {
+       "v": 70.9,
+       "se": 1.44,
+       "setting": "xhigh",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FBTWvEjbekh8TC7kWurJnrR.eval"
+      },
+      "mystery": {
+       "v": 65,
+       "se": 4.79,
+       "setting": "xhigh"
+      }
+     }
+    },
+    {
+     "id": "claudesonnet55",
+     "name": "Claude Sonnet 5.5",
+     "org": "Anthropic",
+     "released": "2026-09-28",
+     "open": false,
+     "eci": 166.6,
+     "price": {
+      "input": 2,
+      "output": 10,
+      "blended": 4,
+      "provider": "anthropic",
+      "modelsDevId": "claude-sonnet-5-5"
+     },
+     "scores": {
+      "mirrorcode": {
+       "v": 97.8,
+       "se": 1.51,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FUTD5SC5v2BgiwNauF9YrFo.eval"
+      },
+      "weirdml": {
+       "v": 19.9,
+       "se": 0.82,
+       "setting": "xhigh"
+      },
+      "frontiermath-t4": {
+       "v": 80.5,
+       "se": 6.27,
+       "setting": "max"
+      },
+      "frontiermath": {
+       "v": 88.8,
+       "se": 1.87,
+       "setting": "max"
+      },
+      "aime": {
+       "v": 100,
+       "se": 0,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FbSEaZLPehiNVDQL7HP9EJS.eval"
+      },
+      "gpqa": {
+       "v": 95.6,
+       "se": 1.37,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FQPk8jbJvo4986sbWtdte6J.eval"
+      },
+      "simpleqa": {
+       "v": 46.5,
+       "se": 1.58,
+       "setting": "max",
+       "log": "https://logs.epoch.ai/inspect-viewer/36231d6d/viewer.html?log_file=https%3A%2F%2Flogs.epoch.ai%2Finspect_ai_logs%2FGtJ5yd3ZPQ7HVcm6Q9ssQz.eval"
+      },
+      "mystery": {
+       "v": 65,
+       "se": 4.79,
        "setting": "max"
       }
      }
